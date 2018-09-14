@@ -14,14 +14,18 @@ typedef struct Shape {
 	int color_G;
 	int color_B;
 	int size;
-	BOOL look;
+	int Speed;
+	BOOL LOOK; //방향 T = 아래 F = UP
+	BOOL SIZE;
 	BOOL Sha;//모양
 	int Go;//방향
 };
+
 Shape shape[10];//사각형 정의
 int shape_count = 0;//10개 넘어가는거 체크
 
 void Mouse(int button, int state, int x, int y);
+void Keyboard(unsigned char key, int x, int y);
 void Timerfunction(int value);
 
 void main(int argc, char *argv[]) {
@@ -33,6 +37,7 @@ void main(int argc, char *argv[]) {
 		shape[i].size= 0;
 		shape[i].pos.x = 0;
 		shape[i].pos.y = 0;
+		shape[i].Speed = i * 0.2;
 
 	}
 	int MainMenu;
@@ -51,6 +56,7 @@ void main(int argc, char *argv[]) {
 
 	glutDisplayFunc(drawScene);
 	glutMouseFunc(Mouse);
+	glutKeyboardFunc(Keyboard);
 	glutTimerFunc(100, Timerfunction, 1);
 	glutReshapeFunc(Reshape);
 
@@ -86,6 +92,8 @@ GLvoid drawScene(GLvoid)
 void Mouse(int button, int state, int x, int y) {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
 	{
+		shape[shape_count].Go = 1;
+		shape[shape_count].LOOK = TRUE;
 		shape[shape_count].pos.x = x; //마우스 좌표를 넘긴다.
 		shape[shape_count].pos.y = y;
 			shape[shape_count].color_R = 100;
@@ -106,9 +114,9 @@ void Timerfunction(int value) {
 	for (int i = 0; i < 10; i++) {
 		shape[i].color_R += 10;
 
-		if (shape[i].look) {
+		if (shape[i].SIZE) {
 			if (shape[i].size == 20) {
-				shape[i].look = FALSE;
+				shape[i].SIZE = FALSE;
 				shape[i].color_R = 0;
 			}
 			shape[i].color_B -= 10;
@@ -117,7 +125,7 @@ void Timerfunction(int value) {
 		}
 		else {
 			if (shape[i].size == 10) {
-				shape[i].look = TRUE;
+				shape[i].SIZE = TRUE;
 				shape[i].color_R = 0;
 
 			}
@@ -127,14 +135,46 @@ void Timerfunction(int value) {
 		}
 	
 	//사각형 움직이기
-		if (shape[i].pos.x + shape[i].size > WideSize || shape[i].pos.y + shape[i].size > ) {
-			shape[i].Go = 1;
+		if (shape[i].pos.x + shape[i].size > WideSize || shape[i].pos.y + shape[i].size > HighSize) {
+			if (shape[i].LOOK == TRUE){
+				shape[i].Go = 2;
+			}
+			else if (shape[i].LOOK == FALSE) {
+				shape[i].Go = 3;
+			}
 		}
-		else {
-			shape[i].pos.x += 10;
-			shape[i].pos.y += 10;
+		else if (shape[i].pos.x - shape[i].size  < 0  || shape[i].pos.y - shape[i].size  < 0) {
+			if (shape[i].LOOK == TRUE) {
+				shape[i].Go = 1;
+			}
+			else if (shape[i].LOOK == FALSE) {
+				shape[i].Go = 4;
+			}
 		}
-	
+		
+		//커맨드에 따라 입력을 받는다.
+		
+		if (shape[i].Go == 1) {
+			shape[i].pos.x += 10 + shape[i].Speed;
+			shape[i].pos.y += 10 + shape[i].Speed;
+			shape[i].LOOK = TRUE;
+
+		}
+		else if (shape[i].Go == 2) {
+			shape[i].pos.x += 10 + shape[i].Speed;
+			shape[i].pos.y -= 10 + shape[i].Speed;
+			shape[i].LOOK = FALSE;
+		}
+		else if (shape[i].Go == 3) {
+			shape[i].pos.x -= 10 + shape[i].Speed;
+			shape[i].pos.y -= 10 + shape[i].Speed;
+			shape[i].LOOK = FALSE;
+		}
+		else if (shape[i].Go == 4) {
+			shape[i].pos.x -= 10 + shape[i].Speed;
+			shape[i].pos.y += 10 + shape[i].Speed;
+			shape[i].LOOK = TRUE;
+		}
 	}
 
 
@@ -144,6 +184,25 @@ void Timerfunction(int value) {
 
 	glutTimerFunc(100, Timerfunction, 1); //타이머 다시 출력
 	
+}
+
+void Keyboard(unsigned char key, int x, int y){
+	switch (key)
+	{
+	case 'q'://빠르게
+		for (int i = 0; i < 10; i++) {
+			shape[i].Speed += 2;
+		}
+		break;
+	case 's'://느리게
+		for (int i = 0; i < 10; i++) {
+			shape[i].Speed -= 2;
+		}
+		break;
+	default:
+		;
+		break;
+	}
 }
 
 GLvoid Reshape(int w, int h)
