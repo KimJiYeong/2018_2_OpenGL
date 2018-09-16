@@ -24,7 +24,10 @@
     <ClCompile Include="ex3.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="ex4.cpp">
+    <ClCompile Include="ex6.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ex4,5.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
