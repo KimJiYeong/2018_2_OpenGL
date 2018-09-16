@@ -26,11 +26,19 @@ BOOL Mouse_Act_On; //마우스 활성화 여부
 void Keyboard(unsigned char key, int x, int y);
 BOOL Keyboard_Act_On; //키보드 활성화 여부
 
+//색 선정
+typedef struct Color
+{
+	int R;
+	int B;
+	int G;
+};
+
 
 void main(int argc, char *argv[]) {
 	//초기화
 	
-
+	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA);
 	glutInitWindowPosition(100, 100);//윈도우 띄우기 좌표
 	glutInitWindowSize(WideSize, HighSize); //윈도우 띄우기 크기
