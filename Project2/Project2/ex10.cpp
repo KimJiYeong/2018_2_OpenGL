@@ -38,9 +38,10 @@ typedef struct Color
 typedef struct Shape {
 	POINT pt;//좌표
 	int size;//사이즈
+	int trans_size;
 	BOOL collide;//충돌
 	Color cl;//컬러
-	
+
 	//삼각형 애니메이션 변수
 	BOOL coll_Move;//지우개랑 처음으로 만날때
 	BOOL Shape_Tri;//모양이 삼각형
@@ -48,8 +49,8 @@ typedef struct Shape {
 	int tri2_pt;//사다리꼴
 	int Time_count; //타이머 카운트
 
-	BOOL LOOK =false;
-	int Go = rand()%4 +1;
+	BOOL LOOK = false;
+	int Go = rand() % 4 + 1;
 };
 
 
@@ -106,23 +107,26 @@ GLvoid drawScene(GLvoid)
 	glClear(GL_COLOR_BUFFER_BIT);
 	//출력
 	for (int i = 0; i < 30; i++) {
-			glColor4f(
-				(float)back[i].cl.R / 255,
-				(float)back[i].cl.G / 255,
-				(float)back[i].cl.B / 255, 1.0f
-			);
-			glBegin(GL_POLYGON);
-			glVertex2i(back[i].pt.x - back[i].size, back[i].pt.y - back[i].size);
-			glVertex2i(back[i].pt.x - back[i].tri2_pt, back[i].pt.y + back[i].size);
-			glVertex2i(back[i].pt.x + back[i].tri2_pt, back[i].pt.y + back[i].size);
-			glVertex2i(back[i].pt.x + back[i].size, back[i].pt.y - back[i].size);
+
+		//back[i].size += back[i].trans_size;
+
+		glColor4f(
+			(float)back[i].cl.R / 255,
+			(float)back[i].cl.G / 255,
+			(float)back[i].cl.B / 255, 1.0f
+		);
+		glBegin(GL_POLYGON);
+		glVertex2i(back[i].pt.x - back[i].size, back[i].pt.y - back[i].size);
+		glVertex2i(back[i].pt.x - back[i].tri2_pt, back[i].pt.y + back[i].size);
+		glVertex2i(back[i].pt.x + back[i].tri2_pt, back[i].pt.y + back[i].size);
+		glVertex2i(back[i].pt.x + back[i].size, back[i].pt.y - back[i].size);
 
 
-			glEnd();
+		glEnd();
 
 	}
 
-	
+
 
 	if (left_button) {
 		glColor4f(
@@ -161,7 +165,7 @@ void Motion(int x, int y) {
 	}
 
 	for (int i = 0; i < 30; i++) {
-		
+
 		if (!back[i].Shape_Tri) {
 			//삼각형일 때 지우개 사각형과 충돌체크를 하지 않는다.
 			if (erase.pt.x + erase.size > back[i].pt.x - back[i].size
@@ -181,35 +185,40 @@ void Timerfunction(int value) {
 	//타이머 내용 입력
 	for (int i = 0; i < 30; i++)
 	{
-
-		if (back[i].Shape_Tri) {//삼각형이 되면
-			back[i].Time_count++;
-			if (back[i].Time_count < 10) {
-				back[i].size += 2;
-			}
-			else {
-				if (back[i].Time_count == 20) {
-					back[i].Time_count = 0;
-				}
-				back[i].size -= 2;
-			}
-		}
-
-
-		if (back[i].collide) {//충돌하면
-			if (back[i].tri2_pt > 0) {
-				back[i].tri2_pt--;
-				back[i].Shape_Tri = TRUE;
-			}
 		
+		if (back[i].collide) {//충돌하면
+	
+			if (back[i].tri2_pt >= 0) {
+				if (back[i].tri2_pt == 0) {
+					back[i].Shape_Tri = TRUE; //삼각형 만들기 실행
+				
+				}
+				back[i].tri2_pt--;
+
+			}
+			if (back[i].Shape_Tri) {//삼각형이 되면
+				
+				
+				if (back[i].Time_count > 20) {
+					back[i].Shape_Tri = FALSE;
+					back[i].collide = FALSE;
+				}
+					back[i].size++;
+				back[i].Time_count++; //시간초 증가
+
+			}
+
 		}
-		else {//충돌 안했을때
-			if ((back[i].Time_count % 1 == 0)&& back[i].Shape_Tri) {
+		else {
+			back[i].Time_count = 0;
+			if (back[i].tri2_pt < 10)
 				back[i].tri2_pt++;
-				back[i].Shape_Tri = FALSE;
+			if (back[i].size > 10) {
+				back[i].size--;
 			}
 		}
-		if (back[i].pt.x+ back[i].size > WideSize || back[i].pt.y + back[i].size > HighSize) {
+		//------이동하는 부분
+		if (back[i].pt.x + back[i].size > WideSize || back[i].pt.y + back[i].size > HighSize) {
 			if (back[i].LOOK == TRUE) {
 				back[i].Go = 2;
 			}
@@ -217,7 +226,7 @@ void Timerfunction(int value) {
 				back[i].Go = 3;
 			}
 		}
-		else if (back[i].pt.x - back[i].size  < 0 || back[i].pt.y - back[i].size  < 0) {
+		else if (back[i].pt.x - back[i].size < 0 || back[i].pt.y - back[i].size < 0) {
 			if (back[i].LOOK == TRUE) {
 				back[i].Go = 1;
 			}
@@ -251,7 +260,7 @@ void Timerfunction(int value) {
 			back[i].LOOK = TRUE;
 		}
 	}
-	
+
 
 	glutPostRedisplay(); //타이머에 넣는다.
 	glutTimerFunc(100, Timerfunction, 1); //타이머 다시 출력
@@ -270,7 +279,6 @@ void Keyboard(unsigned char key, int x, int y) {
 			back[i].cl.G = rand() % 255;
 			back[i].cl.B = rand() % 255;
 			back[i].size = 10;
-
 			back[i].collide = FALSE;
 			back[i].tri2_pt = back[i].size; //사다리꼴 만들기
 

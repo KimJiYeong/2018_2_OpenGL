@@ -1,10 +1,10 @@
 ﻿  ex10.cpp
 d:\back_git\2018_2_opengl\project2\project2\ex10.cpp(36): warning C4091: 'typedef ': 변수를 선언하지 않으면 'Color' 왼쪽은 무시됩니다.
-d:\back_git\2018_2_opengl\project2\project2\ex10.cpp(53): warning C4091: 'typedef ': 변수를 선언하지 않으면 'Shape' 왼쪽은 무시됩니다.
-d:\back_git\2018_2_opengl\project2\project2\ex10.cpp(62): warning C4326: 'main'의 반환 형식이 'int'이어야 하는데 'void'입니다.
-d:\back_git\2018_2_opengl\project2\project2\ex10.cpp(98): warning C4244: '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-d:\back_git\2018_2_opengl\project2\project2\ex10.cpp(137): warning C4244: '인수': 'LONG'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-d:\back_git\2018_2_opengl\project2\project2\ex10.cpp(136): warning C4244: '인수': 'LONG'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-d:\back_git\2018_2_opengl\project2\project2\ex10.cpp(135): warning C4244: '인수': 'LONG'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-d:\back_git\2018_2_opengl\project2\project2\ex10.cpp(134): warning C4244: '인수': 'LONG'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\back_git\2018_2_opengl\project2\project2\ex10.cpp(54): warning C4091: 'typedef ': 변수를 선언하지 않으면 'Shape' 왼쪽은 무시됩니다.
+d:\back_git\2018_2_opengl\project2\project2\ex10.cpp(63): warning C4326: 'main'의 반환 형식이 'int'이어야 하는데 'void'입니다.
+d:\back_git\2018_2_opengl\project2\project2\ex10.cpp(99): warning C4244: '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\back_git\2018_2_opengl\project2\project2\ex10.cpp(141): warning C4244: '인수': 'LONG'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\back_git\2018_2_opengl\project2\project2\ex10.cpp(140): warning C4244: '인수': 'LONG'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\back_git\2018_2_opengl\project2\project2\ex10.cpp(139): warning C4244: '인수': 'LONG'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+d:\back_git\2018_2_opengl\project2\project2\ex10.cpp(138): warning C4244: '인수': 'LONG'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   Project2.vcxproj -> D:\Back_git\2018_2_OpenGL\Project2\Debug\Project2.exe
