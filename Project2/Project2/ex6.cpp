@@ -64,7 +64,7 @@ void main(int argc, char *argv[]) {
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA);
 	glutInitWindowPosition(100, 100);//윈도우 띄우기 좌표
 	glutInitWindowSize(WideSize, HighSize); //윈도우 띄우기 크기
-	glutCreateWindow("ex4");
+	glutCreateWindow("ex6");
 	// - 랜덤으로 시작 도형 설정하기
 	//도형 그리기
 

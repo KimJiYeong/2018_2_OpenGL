@@ -1,7 +1,6 @@
 #include <GL/freeglut.h> 
 #include <random>
 #include <time.h>
-#include "ex9.h"
 
 GLvoid Reshape(int w, int h);
 
