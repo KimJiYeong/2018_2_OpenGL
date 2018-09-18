@@ -48,7 +48,11 @@ typedef struct Shape {
 	int tri2_pt;//사다리꼴
 	int Time_count; //타이머 카운트
 
+	BOOL LOOK =false;
+	int Go = rand()%4 +1;
 };
+
+
 
 Shape back[30]; //배경 함수
 Shape erase;//지우개 함수
@@ -62,7 +66,7 @@ void main(int argc, char *argv[]) {
 		back[i].cl.R = rand() % 255;
 		back[i].cl.G = rand() % 255;
 		back[i].cl.B = rand() % 255;
-		back[i].size = 15;
+		back[i].size = 10;
 		back[i].tri2_pt = back[i].size; //사다리꼴 만들기
 
 		back[i].collide = FALSE;
@@ -177,20 +181,74 @@ void Timerfunction(int value) {
 	//타이머 내용 입력
 	for (int i = 0; i < 30; i++)
 	{
-		back[i].Time_count++;
+
+		if (back[i].Shape_Tri) {//삼각형이 되면
+			back[i].Time_count++;
+			if (back[i].Time_count < 10) {
+				back[i].size += 2;
+			}
+			else {
+				if (back[i].Time_count == 20) {
+					back[i].Time_count = 0;
+				}
+				back[i].size -= 2;
+			}
+		}
+
 
 		if (back[i].collide) {//충돌하면
 			if (back[i].tri2_pt > 0) {
 				back[i].tri2_pt--;
 				back[i].Shape_Tri = TRUE;
 			}
-			
+		
 		}
 		else {//충돌 안했을때
-			back[i].Shape_Tri = FALSE;
-			if (back[i].Time_count % 1 == 0) {
+			if ((back[i].Time_count % 1 == 0)&& back[i].Shape_Tri) {
 				back[i].tri2_pt++;
+				back[i].Shape_Tri = FALSE;
 			}
+		}
+		if (back[i].pt.x+ back[i].size > WideSize || back[i].pt.y + back[i].size > HighSize) {
+			if (back[i].LOOK == TRUE) {
+				back[i].Go = 2;
+			}
+			else if (back[i].LOOK == FALSE) {
+				back[i].Go = 3;
+			}
+		}
+		else if (back[i].pt.x - back[i].size  < 0 || back[i].pt.y - back[i].size  < 0) {
+			if (back[i].LOOK == TRUE) {
+				back[i].Go = 1;
+			}
+			else if (back[i].LOOK == FALSE) {
+				back[i].Go = 4;
+			}
+		}
+
+
+		//커맨드에 따라 입력을 받는다.
+
+		if (back[i].Go == 1) {
+			back[i].pt.x += 10;
+			back[i].pt.y += 10;
+			back[i].LOOK = TRUE;
+
+		}
+		else if (back[i].Go == 2) {
+			back[i].pt.x += 10;
+			back[i].pt.y -= 10;
+			back[i].LOOK = FALSE;
+		}
+		else if (back[i].Go == 3) {
+			back[i].pt.x -= 10;
+			back[i].pt.y -= 10;
+			back[i].LOOK = FALSE;
+		}
+		else if (back[i].Go == 4) {
+			back[i].pt.x -= 10;
+			back[i].pt.y += 10;
+			back[i].LOOK = TRUE;
 		}
 	}
 	
@@ -214,10 +272,13 @@ void Keyboard(unsigned char key, int x, int y) {
 			back[i].size = 10;
 
 			back[i].collide = FALSE;
+			back[i].tri2_pt = back[i].size; //사다리꼴 만들기
 
-			back[i].pt.x = rand() % WideSize - back[i].size;
-			back[i].pt.y = rand() % HighSize - back[i].size;
+			back[i].pt.x = rand() % WideSize + back[i].size;
+			back[i].pt.y = rand() % HighSize + back[i].size;
 
+			back[i].LOOK = false;
+			back[i].Go = rand() % 4 + 1;
 		}
 		break;
 	default:
