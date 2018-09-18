@@ -24,6 +24,8 @@ typedef struct Shape {
 	BOOL Sha;//모양
 	int Go;//방향
 	
+	POINT save;
+
 	//실습 6번-------
 	BOOL Spec_play = FALSE; //특수 키 활성화 여부
 	int Spec_Go; //특수 좌표 조작
@@ -33,6 +35,8 @@ typedef struct Shape {
 
 Shape shape[9];//사각형 정의
 int shape_count = 0;//10개 넘어가는거 체크
+int shape_count2 = 0;
+BOOL COUNT = FALSE;
 
 void Mouse(int button, int state, int x, int y);
 void Keyboard(unsigned char key, int x, int y);
@@ -79,7 +83,7 @@ GLvoid drawScene(GLvoid)
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	//4각형 출력
-	for (int i = 0; i < 9; i++) {
+	for (int i = 0; i < shape_count2; i++) {
 		glColor4f(
 			(float)shape[i].color_R / 255,
 			(float)shape[i].color_G / 255,
@@ -123,9 +127,16 @@ void Mouse(int button, int state, int x, int y) {
 		shape[shape_count].size = 10;
 		if (shape_count == 10) {
 			shape_count = 0;
+			COUNT = TRUE;
 		}
 		else {
 			shape_count++;
+			if (COUNT) {
+				shape_count2 = 9;
+			}
+			else {
+				shape_count2++;
+			}
 		}
 
 	}
@@ -168,50 +179,34 @@ void Timerfunction(int value) {
 	//한바퀴 도는거 마저 하기
 
 			if (shape[i].Spec_play) { //사각형 돌기가 활성화 되어있다.
-
-				if (shape[i].pos.x + shape[i].size + 20> WideSize || shape[i].pos.y + shape[i].size > HighSize) {
-					if (shape[i].LOOK == TRUE) {
-						shape[i].Go = 2;
+				//(shape[i].pos.x + shape[i].size > WideSize &&
+				if ( shape[i].Spec_Go == 1) {
+					if ((shape[i].pos.x + shape[i].size + 10 > WideSize)) {
+						shape[i].Spec_Go = 2;
 					}
-					else if (shape[i].LOOK == FALSE) {
-						if (shape[i].pos.y + shape[i].size + 50 > HighSize)
-							shape[i].Go = 4;
-						shape[i].Go = 3;
-					}
-				}
-				else if (shape[i].pos.x - shape[i].size - 20 < 0 || shape[i].pos.y - shape[i].size  - 20< 0) {
-					if (shape[i].LOOK == TRUE) {
-						shape[i].Go = 1;
-					}
-					else if (shape[i].LOOK == FALSE) {
-						shape[i].Go = 4;
-					}
-				}
-
-
-				//커맨드에 따라 입력을 받는다.
-
-				if (shape[i].Go == 1) {
 					shape[i].pos.x += 10 + shape[i].Speed;
-					shape[i].LOOK = TRUE;
-
-				}
-				else if (shape[i].Go == 2) {
-					shape[i].pos.y -= 10 + shape[i].Speed;
-					shape[i].LOOK = FALSE;
-				}
-				else if (shape[i].Go == 3) {
-				//	shape[i].pos.x -= 10 + shape[i].Speed;
+				}	
+				else if(shape[i].Spec_Go == 2) {
+					if ((shape[i].pos.y + shape[i].size + 10 > HighSize)) {
+						shape[i].Spec_Go = 3;
+					}
 					shape[i].pos.y += 10 + shape[i].Speed;
-					shape[i].LOOK = FALSE;
 				}
-				else if (shape[i].Go == 4) {
+				else if (shape[i].Spec_Go == 3) {
+					if (shape[i].pos.x - shape[i].size - 10 < 0)
+						shape[i].Spec_Go = 4;
 					shape[i].pos.x -= 10 + shape[i].Speed;
-				//	shape[i].pos.y += 10 + shape[i].Speed;
-					shape[i].LOOK = TRUE;
 				}
-
-
+				else if(shape[i].Spec_Go == 4) {
+					if (shape[i].pos.y - shape[i].size - 10 < shape[i].save.y)
+						shape[i].Spec_Go = 5;
+					shape[i].pos.y -= 10 + shape[i].Speed;
+				}
+				else if (shape[i].Spec_Go == 5) {
+					if (shape[i].pos.x + shape[i].size - 10 > shape[i].save.x)
+						shape[i].Spec_play = FALSE;
+					shape[i].pos.x += 10 + shape[i].Speed;
+				}
 
 			}//if 끝
 			else {//특수 키 입력이 아닐때
@@ -288,17 +283,181 @@ void Keyboard(unsigned char key, int x, int y) {
 			Time_Stop = FALSE;
 		}
 		break;
+	case '1'://모든 사각형 액션
+		shape[0].Spec_Count++;
+			if (shape[0].Spec_Count % 2 == 1) {
+				shape[0].save.x = shape[0].pos.x;
+				shape[0].save.y = shape[0].pos.y;
+				shape[0].Spec_play = TRUE;
+				shape[0].Spec_Go = 1;
+				shape[0].Spec_look = TRUE;
+			}
+			else if (shape[0].Spec_Count % 2 == 0) {
+				shape[0].Spec_play = FALSE;
+				shape[0].Spec_look = FALSE;
+				shape[0].Spec_Go = 1;
+			}
+
+		break;
+	case '2'://모든 사각형 액션
+		shape[1].Spec_Count++;
+		if (shape[1].Spec_Count % 2 == 1) {
+			shape[1].save.x = shape[1].pos.x;
+			shape[1].save.y = shape[1].pos.y;
+			shape[1].Spec_play = TRUE;
+			shape[1].Spec_Go = 1;
+			shape[1].Spec_look = TRUE;
+		}
+		else if (shape[1].Spec_Count % 2 == 0) {
+			shape[1].Spec_play = FALSE;
+			shape[1].Spec_look = FALSE;
+			shape[1].Spec_Go = 1;
+		}
+
+		break;
+	case '3'://모든 사각형 액션
+		shape[2].Spec_Count++;
+		if (shape[2].Spec_Count % 2 == 1) {
+			shape[2].save.x = shape[2].pos.x;
+			shape[2].save.y = shape[2].pos.y;
+			shape[2].Spec_play = TRUE;
+			shape[2].Spec_Go = 1;
+			shape[2].Spec_look = TRUE;
+		}
+		else if (shape[2].Spec_Count % 2 == 0) {
+			shape[2].Spec_play = FALSE;
+			shape[2].Spec_look = FALSE;
+			shape[2].Spec_Go = 1;
+		}
+
+		break;
+	case '4'://모든 사각형 액션
+		shape[3].Spec_Count++;
+		if (shape[3].Spec_Count % 2 == 1) {
+			shape[3].save.x = shape[3].pos.x;
+			shape[3].save.y = shape[3].pos.y;
+			shape[3].Spec_play = TRUE;
+			shape[3].Spec_Go = 1;
+			shape[3].Spec_look = TRUE;
+		}
+		else if (shape[3].Spec_Count % 2 == 0) {
+			shape[3].Spec_play = FALSE;
+			shape[3].Spec_look = FALSE;
+			shape[3].Spec_Go = 1;
+		}
+
+		break;
+	case '5'://모든 사각형 액션
+		shape[4].Spec_Count++;
+		if (shape[4].Spec_Count % 2 == 1) {
+			shape[4].save.x = shape[4].pos.x;
+			shape[4].save.y = shape[4].pos.y;
+			shape[4].Spec_play = TRUE;
+			shape[4].Spec_Go = 1;
+			shape[4].Spec_look = TRUE;
+		}
+		else if (shape[4].Spec_Count % 2 == 0) {
+			shape[4].Spec_play = FALSE;
+			shape[4].Spec_look = FALSE;
+			shape[4].Spec_Go = 1;
+		}
+
+		break;
+	case '6'://모든 사각형 액션
+		shape[5].Spec_Count++;
+		if (shape[5].Spec_Count % 2 == 1) {
+			shape[5].save.x = shape[5].pos.x;
+			shape[5].save.y = shape[5].pos.y;
+			shape[5].Spec_play = TRUE;
+			shape[5].Spec_Go = 1;
+			shape[5].Spec_look = TRUE;
+		}
+		else if (shape[5].Spec_Count % 2 == 0) {
+			shape[5].Spec_play = FALSE;
+			shape[5].Spec_look = FALSE;
+			shape[5].Spec_Go = 1;
+		}
+
+		break;
+	case '7'://모든 사각형 액션
+		shape[6].Spec_Count++;
+		if (shape[6].Spec_Count % 2 == 1) {
+			shape[6].save.x = shape[6].pos.x;
+			shape[6].save.y = shape[6].pos.y;
+			shape[6].Spec_play = TRUE;
+			shape[6].Spec_Go = 1;
+			shape[6].Spec_look = TRUE;
+		}
+		else if (shape[6].Spec_Count % 2 == 0) {
+			shape[6].Spec_play = FALSE;
+			shape[6].Spec_look = FALSE;
+			shape[6].Spec_Go = 1;
+		}
+
+		break;
+	case '8'://모든 사각형 액션
+		shape[7].Spec_Count++;
+		if (shape[7].Spec_Count % 2 == 1) {
+			shape[7].save.x = shape[7].pos.x;
+			shape[7].save.y = shape[7].pos.y;
+			shape[7].Spec_play = TRUE;
+			shape[7].Spec_Go = 1;
+			shape[7].Spec_look = TRUE;
+		}
+		else if (shape[7].Spec_Count % 2 == 0) {
+			shape[7].Spec_play = FALSE;
+			shape[7].Spec_look = FALSE;
+			shape[7].Spec_Go = 1;
+		}
+
+		break;
+	case '9'://모든 사각형 액션
+		shape[8].Spec_Count++;
+		if (shape[8].Spec_Count % 2 == 1) {
+			shape[8].save.x = shape[8].pos.x;
+			shape[8].save.y = shape[8].pos.y;
+			shape[8].Spec_play = TRUE;
+			shape[8].Spec_Go = 1;
+			shape[8].Spec_look = TRUE;
+		}
+		else if (shape[8].Spec_Count % 2 == 0) {
+			shape[8].Spec_play = FALSE;
+			shape[8].Spec_look = FALSE;
+			shape[8].Spec_Go = 1;
+		}
+
+		break;
+	case '0'://모든 사각형 액션
+		shape[9].Spec_Count++;
+		if (shape[9].Spec_Count % 2 == 1) {
+			shape[9].save.x = shape[9].pos.x;
+			shape[9].save.y = shape[9].pos.y;
+			shape[9].Spec_play = TRUE;
+			shape[9].Spec_Go = 1;
+			shape[9].Spec_look = TRUE;
+		}
+		else if (shape[9].Spec_Count % 2 == 0) {
+			shape[9].Spec_play = FALSE;
+			shape[9].Spec_look = FALSE;
+			shape[9].Spec_Go = 1;
+		}
+
+		break;
+
 	case 'o'://모든 사각형 액션
 		for (int i = 0; i < 9; i++) {
 			shape[i].Spec_Count++;
 			if (shape[i].Spec_Count % 2 == 1) {
+				shape[i].save.x = shape[i].pos.x;
+				shape[i].save.y = shape[i].pos.y;
 				shape[i].Spec_play = TRUE;
-				shape[i].Spec_Go = 4;
+				shape[i].Spec_Go = 1;
 				shape[i].Spec_look = TRUE;
 			}
 			else if (shape[i].Spec_Count % 2 == 0) {
 				shape[i].Spec_play = FALSE;
 				shape[i].Spec_look = FALSE;
+				shape[i].Spec_Go = 1;
 			}
 		}
 		
