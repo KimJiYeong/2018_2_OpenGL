@@ -1,6 +1,14 @@
-﻿  ex2.cpp
-d:\back_git\2018_2_opengl\project2\project2\ex2.cpp(35): warning C4091: 'typedef ': 변수를 선언하지 않으면 'Color' 왼쪽은 무시됩니다.
-d:\back_git\2018_2_opengl\project2\project2\ex2.cpp(46): warning C4326: 'main'의 반환 형식이 'int'이어야 하는데 'void'입니다.
-d:\back_git\2018_2_opengl\project2\project2\ex2.cpp(87): warning C4244: '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-d:\back_git\2018_2_opengl\project2\project2\ex2.cpp(104): warning C4244: '인수': 'int'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  Project2.vcxproj -> D:\Back_git\2018_2_OpenGL\Project2\Debug\Project2.exe
+﻿  ex9.cpp
+c:\git\2018_2_opengl\project2\project2\ex9.cpp(37): warning C4091: 'typedef ': 변수를 선언하지 않으면 'Color' 왼쪽은 무시됩니다.
+c:\git\2018_2_opengl\project2\project2\ex9.cpp(44): warning C4091: 'typedef ': 변수를 선언하지 않으면 'Shape' 왼쪽은 무시됩니다.
+c:\git\2018_2_opengl\project2\project2\ex9.cpp(51): warning C4326: 'main'의 반환 형식이 'int'이어야 하는데 'void'입니다.
+c:\git\2018_2_opengl\project2\project2\ex9.cpp(87): warning C4244: '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\git\2018_2_opengl\project2\project2\ex9.cpp(109): warning C4244: '인수': 'LONG'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\git\2018_2_opengl\project2\project2\ex9.cpp(108): warning C4244: '인수': 'LONG'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\git\2018_2_opengl\project2\project2\ex9.cpp(107): warning C4244: '인수': 'LONG'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\git\2018_2_opengl\project2\project2\ex9.cpp(106): warning C4244: '인수': 'LONG'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\git\2018_2_opengl\project2\project2\ex9.cpp(125): warning C4244: '인수': 'LONG'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\git\2018_2_opengl\project2\project2\ex9.cpp(124): warning C4244: '인수': 'LONG'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\git\2018_2_opengl\project2\project2\ex9.cpp(123): warning C4244: '인수': 'LONG'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\git\2018_2_opengl\project2\project2\ex9.cpp(122): warning C4244: '인수': 'LONG'에서 'GLfloat'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  Project2.vcxproj -> C:\git\2018_2_OpenGL\Project2\Debug\Project2.exe

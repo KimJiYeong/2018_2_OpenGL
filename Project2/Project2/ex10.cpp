@@ -140,7 +140,7 @@ GLvoid drawScene(GLvoid)
 			erase.pt.x + erase.size,
 			erase.pt.y + erase.size
 		);
-		glEnd();
+
 	}
 
 	glFlush();
