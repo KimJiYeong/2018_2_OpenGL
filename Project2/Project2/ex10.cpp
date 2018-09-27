@@ -51,6 +51,7 @@ typedef struct Shape {
 
 	BOOL LOOK = false;
 	int Go = rand() % 4 + 1;
+	BOOL Draw_Now = FALSE;
 };
 
 
@@ -166,6 +167,7 @@ void Motion(int x, int y) {
 
 	for (int i = 0; i < 30; i++) {
 
+
 		if (!back[i].Shape_Tri) {
 			//삼각형일 때 지우개 사각형과 충돌체크를 하지 않는다.
 			if (erase.pt.x + erase.size > back[i].pt.x - back[i].size
@@ -174,10 +176,10 @@ void Motion(int x, int y) {
 				&& erase.pt.y - erase.size < back[i].pt.y + back[i].size
 				) {
 				back[i].collide = TRUE;
+				back[i].Draw_Now = TRUE;
 				back[i].Time_count = 0;
 			}
 		}
-
 	}
 
 }
@@ -185,28 +187,30 @@ void Timerfunction(int value) {
 	//타이머 내용 입력
 	for (int i = 0; i < 30; i++)
 	{
-		
 		if (back[i].collide) {//충돌하면
-	
-			if (back[i].tri2_pt >= 0) {
-				if (back[i].tri2_pt == 0) {
-					back[i].Shape_Tri = TRUE; //삼각형 만들기 실행
-				
-				}
-				back[i].tri2_pt--;
+				if (back[i].tri2_pt >= 0) {
+					if (back[i].tri2_pt == 0) {
+						back[i].Shape_Tri = TRUE; //삼각형 만들기 실행
 
-			}
-			if (back[i].Shape_Tri) {//삼각형이 되면
-				
-				
-				if (back[i].Time_count > 20) {
-					back[i].Shape_Tri = FALSE;
-					back[i].collide = FALSE;
+					}
+					if (back[i].Draw_Now) {
+						back[i].tri2_pt--;
+					}
 				}
-					back[i].size++;
-				back[i].Time_count++; //시간초 증가
+				if (back[i].Shape_Tri) {//삼각형이 되면
+					if (back[i].Time_count > 20) {
+						back[i].Shape_Tri = FALSE;
+						back[i].collide = FALSE;
+						back[i].Draw_Now = FALSE;
+					}
+					if (back[i].Draw_Now) {
+						back[i].size++;
+						back[i].Time_count++; //시간초 증가
+					}
+		
+				}
 
-			}
+		
 
 		}
 		else {

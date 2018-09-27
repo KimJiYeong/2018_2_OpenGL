@@ -24,5 +24,8 @@
     <ClCompile Include="기본.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="연습용.cpp">
+      <Filter>소스 파일\GL1</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
