@@ -44,7 +44,7 @@ typedef struct Shape
 	int y;
 	int z;
 };
-Shape sp[PT];//도형
+Shape sp1[PT];//도형
 int st_help; // 직선그리기 도우미
 
 POINT move;
@@ -104,7 +104,7 @@ GLvoid drawScene(GLvoid)
 	glColor3f(1.0, 1.0, 1.0);
 	glBegin(GL_POINTS);
 	for (int i = 0; i < PT; i++) {
-		glVertex3i(sp[i].x , sp[i].y, sp[i].z);//도형 그리기
+		glVertex3i(sp1[i].x , sp1[i].y, sp1[i].z);//도형 그리기
 	}
 	glEnd();
 
@@ -149,9 +149,9 @@ void Keyboard(unsigned char key, int x, int y) {
 		move.y = 0;
 
 		for (int i = 0; i < PT; i++) {
-			sp[i].x = i * WideSize / 50;
-			sp[i].y = 100 * sin(PI * i * 10 / 90) + HighSize / 2;
-			sp[i].z = 100;
+			sp1[i].x = i * WideSize / 50;
+			sp1[i].y = 100 * sin(PI * i * 10 / 90) + HighSize / 2;
+			sp1[i].z = 100;
 		}
 		break;
 	case '2'://스프링
@@ -159,9 +159,9 @@ void Keyboard(unsigned char key, int x, int y) {
 		move.x = 0;
 		move.y = 0;
 		for (int i = 0; i < PT; i++) {
-			sp[i].x = 100 * cos(PI * i * 10 / 90) + WideSize / 50 + i * 10;
-			sp[i].y = 100 * sin(PI * i * 10 / 90) + HighSize / 2;
-			sp[i].z = 100;
+			sp1[i].x = 100 * cos(PI * i * 10 / 90) + WideSize / 50 + i * 10;
+			sp1[i].y = 100 * sin(PI * i * 10 / 90) + HighSize / 2;
+			sp1[i].z = 100;
 		}
 		break;
 	case '3'://리본
@@ -172,46 +172,46 @@ void Keyboard(unsigned char key, int x, int y) {
 		//왼쪽 리본
 		st_help = 0;
 		for (int i = 0; i < PT/6 * 1; i++) {
-			sp[i].x = -st_help * 6+ WideSize/2;
-			sp[i].y = -st_help * 6+ HighSize/2;
-			sp[i].z = 100;
+			sp1[i].x = -st_help * 6+ WideSize/2;
+			sp1[i].y = -st_help * 6+ HighSize/2;
+			sp1[i].z = 100;
 			st_help++;
 		}
 		st_help = 0;
 		for (int i = PT / 6 * 1; i < PT / 6 * 2; i++) {
-			sp[i].x = sp[PT / 6 * 1 - 1].x;
-			sp[i].y = st_help * 12 + sp[PT / 6 * 1 - 1].y;
-			sp[i].z = 100;
+			sp1[i].x = sp1[PT / 6 * 1 - 1].x;
+			sp1[i].y = st_help * 12 + sp1[PT / 6 * 1 - 1].y;
+			sp1[i].z = 100;
 			st_help++;
 		}
 		st_help = 0;
 		for (int i = PT / 6 * 2; i < PT / 6 * 3; i++) {
-			sp[i].x = -st_help * 6 + WideSize / 2;
-			sp[i].y = st_help * 6 + HighSize / 2;
-			sp[i].z = 100;
+			sp1[i].x = -st_help * 6 + WideSize / 2;
+			sp1[i].y = st_help * 6 + HighSize / 2;
+			sp1[i].z = 100;
 			st_help++;
 		}
 				
 		//오른쪽
 		st_help = 0;
 		for (int i = PT/6 * 3; i < PT / 6 * 4; i++) {
-			sp[i].x = st_help * 6 + WideSize / 2;
-			sp[i].y = -st_help * 6 + HighSize / 2;
-			sp[i].z = 100;
+			sp1[i].x = st_help * 6 + WideSize / 2;
+			sp1[i].y = -st_help * 6 + HighSize / 2;
+			sp1[i].z = 100;
 			st_help++;
 		}
 		st_help = 0;
 		for (int i = PT / 6 * 4; i < PT / 6 * 5; i++) {
-			sp[i].x = sp[PT / 6 * 4 - 1].x;
-			sp[i].y = st_help * 12 + sp[PT / 6 * 4 - 1].y;
-			sp[i].z = 100;
+			sp1[i].x = sp1[PT / 6 * 4 - 1].x;
+			sp1[i].y = st_help * 12 + sp1[PT / 6 * 4 - 1].y;
+			sp1[i].z = 100;
 			st_help++;
 		}
 		st_help = 0;
 		for (int i = PT / 6 * 5; i < PT / 6 * 6; i++) {
-			sp[i].x = st_help * 6 + WideSize / 2;
-			sp[i].y = st_help * 6 + HighSize / 2;
-			sp[i].z = 100;
+			sp1[i].x = st_help * 6 + WideSize / 2;
+			sp1[i].y = st_help * 6 + HighSize / 2;
+			sp1[i].z = 100;
 			st_help++;
 		}
 
@@ -223,30 +223,30 @@ void Keyboard(unsigned char key, int x, int y) {
 		move.y = 0;
 		st_help = 0;
 		for (int i = PT / 4 * 0; i < PT / 4 * 1; i++) {
-			sp[i].x = WideSize / 5 * 2;
-			sp[i].y = st_help * HighSize /100 + HighSize / 5 * 2;
-			sp[i].z = 100;
+			sp1[i].x = WideSize / 5 * 2;
+			sp1[i].y = st_help * HighSize /100 + HighSize / 5 * 2;
+			sp1[i].z = 100;
 			st_help++;
 		}
 		st_help = 0;
 		for (int i = PT / 4 * 1; i < PT / 4 * 2; i++) {
-			sp[i].x = st_help * WideSize / 100 + sp[PT / 4 * 1 - 1].x;
-			sp[i].y = sp[PT / 4 * 1 - 1].y;
-			sp[i].z = 100;
+			sp1[i].x = st_help * WideSize / 100 + sp1[PT / 4 * 1 - 1].x;
+			sp1[i].y = sp1[PT / 4 * 1 - 1].y;
+			sp1[i].z = 100;
 			st_help++;
 		}
 		st_help = 0;
 		for (int i = PT / 4 * 2; i < PT / 4 * 3; i++) {
-			sp[i].x = sp[PT / 4 * 2 - 1].x;
-			sp[i].y = sp[PT / 4 * 2 - 1].y - st_help * HighSize / 100;
-			sp[i].z = 100;
+			sp1[i].x = sp1[PT / 4 * 2 - 1].x;
+			sp1[i].y = sp1[PT / 4 * 2 - 1].y - st_help * HighSize / 100;
+			sp1[i].z = 100;
 			st_help++;
 		}
 		st_help = 0;
 		for (int i = PT / 4 * 3; i < PT / 4 * 4; i++) {
-			sp[i].x = sp[PT / 4 * 3 - 1].x - st_help * WideSize / 100;
-			sp[i].y = sp[PT / 4 * 3 - 1].y ;
-			sp[i].z = 100;
+			sp1[i].x = sp1[PT / 4 * 3 - 1].x - st_help * WideSize / 100;
+			sp1[i].y = sp1[PT / 4 * 3 - 1].y ;
+			sp1[i].z = 100;
 			st_help++;
 		}
 		break;
