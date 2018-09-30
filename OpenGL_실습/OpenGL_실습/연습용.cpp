@@ -1,7 +1,7 @@
 #include <GL/freeglut.h> 
 #include <random>
 #include <time.h>
-
+#include <math.h>
 GLvoid Reshape(int w, int h);
 
 //해상도 설정
@@ -31,19 +31,50 @@ BOOL Keyboard_Act_On; //키보드 활성화 여부
 typedef struct Color
 {
 	int R;
-	int B;
 	int G;
+	int B;
 };
+typedef struct Translate_pos {
+	float x;
+	float y;
+	float z;
+	float degree;
+};
+
+#define PT 100//도형 갯수 설정
+#define PI 3.141592 //파이
+typedef struct Shape
+{
+	Color cl;//색상
+	Translate_pos pos;
+	Translate_pos move;
+	Translate_pos scale;
+	Translate_pos rot;
+
+	int size;
+	int select;
+	int height;
+	int slice;
+	int stacks;
+};
+
+int click_count;
+int save_count;
+int st_help;
+
+BOOL Save = false;
+BOOL ani = FALSE;
+BOOL Look = FALSE;
 
 
 void main(int argc, char *argv[]) {
-	//초기화
+
 
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(100, 100);//윈도우 띄우기 좌표
 	glutInitWindowSize(WideSize, HighSize); //윈도우 띄우기 크기
-	glutCreateWindow("ex4");
+	glutCreateWindow("ex11");
 	// - 랜덤으로 시작 도형 설정하기
 	//도형 그리기
 
@@ -61,22 +92,23 @@ GLvoid drawScene(GLvoid)
 {
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
-	glMatrixMode(GL_MODELVIEW);
-	//출력
-	glLoadIdentity();
-	glBegin(GL_LINES);
-	glVertex2i(-200, 0);
-	glVertex2i(200, 0);
-	glVertex2i(0, -200);
-	glVertex2i(0, 200);
-	glEnd();
 
-	glLoadIdentity();
-	glTranslated(0.2,0,0);
-	glRotated(Time_count, 0, 1 , 1);
-	glutWireCube(0.5);
-	//3D 출력
-	glFlush();
+	glLineWidth(2);
+	glColor3f((float)255 / 255, (float)255 / 255, (float)255 / 255);
+
+
+	glMatrixMode(GL_MODELVIEW);
+	//출력 설정
+	glColor3f((float)100 / 255, (float)200 / 255, (float)100 / 255);
+	//좌표축 그리기
+
+	glPushMatrix(); //상태 저장 열기
+
+
+	glPopMatrix(); //상태 저장 닫기
+
+
+	glutSwapBuffers();
 }
 
 void Mouse(int button, int state, int x, int y) {
@@ -84,12 +116,12 @@ void Mouse(int button, int state, int x, int y) {
 	{
 
 	}
-
 }
 void Timerfunction(int value) {
-
-	//타이머 내용 입력
 	Time_count++;
+	//타이머 내용 입력
+
+
 	glutPostRedisplay(); //타이머에 넣는다.
 	glutTimerFunc(100, Timerfunction, 1); //타이머 다시 출력
 
@@ -98,9 +130,10 @@ void Timerfunction(int value) {
 void Keyboard(unsigned char key, int x, int y) {
 	switch (key)
 	{
-	case 'q'://빠르게
+	case 'y':
 
 		break;
+
 	default:
 		;
 		break;
@@ -110,6 +143,6 @@ void Keyboard(unsigned char key, int x, int y) {
 GLvoid Reshape(int w, int h)
 {
 	glViewport(-1, -1, w, h);
-	glOrtho( 0, WideSize, HighSize, 0, -Z_Size/2, Z_Size/2); //윈도우를 초기화 하는 함수입니다!
+	glOrtho(0, WideSize, HighSize, 0, -Z_Size / 2, Z_Size / 2); //윈도우를 초기화 하는 함수입니다!
 
 }

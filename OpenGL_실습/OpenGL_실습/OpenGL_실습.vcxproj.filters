@@ -42,5 +42,8 @@
     <ClCompile Include="ex13.cpp">
       <Filter>소스 파일\GL1</Filter>
     </ClCompile>
+    <ClCompile Include="ex12.cpp">
+      <Filter>소스 파일\GL1</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

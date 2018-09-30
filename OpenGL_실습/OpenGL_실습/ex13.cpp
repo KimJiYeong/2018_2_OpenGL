@@ -35,10 +35,10 @@ typedef struct Color
 	int B;
 };
 typedef struct Translate_pos {
-	int x;
-	int y;
-	int z;
-	int degree;
+	float x;
+	float y;
+	float z;
+	float degree;
 };
 
 #define PT 100//도형 갯수 설정
@@ -65,15 +65,15 @@ BOOL Save = false;
 BOOL ani = FALSE;
 BOOL Look = FALSE;
 Shape sp1[PT];
-Shape small[PT];
+Shape small[2];
 Shape tra;
 
 void main(int argc, char *argv[]) {
 	//초기화
 	st_help = 0;
 	for (int i = PT / 3 * 0; i < PT / 3 * 1; i++) {
-		sp1[i].pos.x = st_help * 5 ;
-		sp1[i].pos.y = st_help * 10- 150;
+		sp1[i].pos.x = st_help * 5;
+		sp1[i].pos.y = st_help * 10 - 150;
 		st_help++;
 	}
 	st_help = 0;
@@ -89,24 +89,12 @@ void main(int argc, char *argv[]) {
 		st_help++;
 	}
 	//작은 삼각형
-	st_help = 0;
-	for (int i = PT / 3 * 0; i < PT / 3 * 1; i++) {
-		small[i].pos.x = st_help * 1;
-		small[i].pos.y = st_help * 1;
-		st_help++;
+	for (int i = 0; i < 2; i++) {
+		small[i].size = 50;
 	}
-	st_help = 0;
-	for (int i = PT / 3 * 1; i < PT / 3* 2; i++) {
-		small[i].pos.x = -st_help * 2 + small[PT / 3 * 1 - 1].pos.x;
-		small[i].pos.y = small[PT / 3 * 1 - 1].pos.y;
-		st_help++;
-	}
-	st_help = 0;
-	for (int i = PT / 3 * 2; i < PT / 3 * 3; i++) {
-		small[i].pos.x = st_help * 1 + small[PT / 3 * 2 - 1].pos.x;
-		small[i].pos.y = -st_help * 1 + small[PT / 3 * 2 - 1].pos.y;
-		st_help++;
-	}
+	tra.rot.x = 1;
+	tra.rot.y = 1;
+	tra.rot.z = 1;
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
@@ -142,7 +130,7 @@ GLvoid drawScene(GLvoid)
 	glVertex2i(WideSize / 2, 0);
 	glVertex2i(WideSize / 2, HighSize);
 	glEnd();*/
-
+	
 	glMatrixMode(GL_MODELVIEW);
 	//출력 설정
 	glColor3f((float)100 / 255, (float)200 / 255, (float)100 / 255);
@@ -153,54 +141,55 @@ GLvoid drawScene(GLvoid)
 
 	glPushMatrix();
 	glTranslated(WideSize / 2, HighSize / 2, 0);
+	//glPushMatrix();
+	glScaled(tra.rot.x, tra.rot.y, tra.rot.z);
 	glRotatef(0 + tra.rot.degree, 0, 1, 0);
 	glBegin(GL_POINTS);
-		for (int i = 0; i < PT; i++) {
-			glVertex3i(sp1[i].pos.x, sp1[i].pos.y, sp1[i].pos.z);
-			
-		}
-		glEnd();
-		
-		glPushMatrix();
-		glRotatef(90 + tra.rot.degree, 0, 1, 0);
-		glBegin(GL_POINTS);
-		for (int i = 0; i < PT; i++) {
-			glVertex3i(sp1[i].pos.x, sp1[i].pos.y, sp1[i].pos.z);
-		
-		}
-		glEnd();
-		glPopMatrix();
-	
-	//----------작은 삼각형
-		glPushMatrix(); //상태 저장 열기
-		for (int i = 0; i < PT; i++) {
-			glPushMatrix();
-			glTranslated(sp1[PT / 3 * 0].pos.x, sp1[PT / 3 * 0].pos.y, 0);
-			glRotatef(0 + tra.rot.degree, 0, 1, 0);
-			glTranslated(small[i].move.x,small[i].move.y, 0);
-			glBegin(GL_POINTS);
-				glVertex3i(small[i].pos.x, small[i].pos.y, small[i].pos.z);
-			glEnd();
-			glPopMatrix();
-		}
-		glPopMatrix();
+	for (int i = 0; i < PT; i++) {
+		glVertex3i(sp1[i].pos.x, sp1[i].pos.y, sp1[i].pos.z);
 
-		glPushMatrix();
+	}
+	glEnd();
+
+	glPushMatrix();
 	glRotatef(90 + tra.rot.degree, 0, 1, 0);
 	glBegin(GL_POINTS);
 	for (int i = 0; i < PT; i++) {
-		glVertex3i(small[i].pos.x, small[i].pos.y, small[i].pos.z);
+		glVertex3i(sp1[i].pos.x, sp1[i].pos.y, sp1[i].pos.z);
 
 	}
+	glEnd();
+	glPopMatrix();
+
+
+	//----------작은 삼각형
+
+
+	glPushMatrix(); //상태 저장 열기
+	//glTranslated(sp1[0].pos.x, sp1[0].pos.y, sp1[0].pos.z);//좌표값 위치 변경
+	glScaled(1, 1, 1);
+	glBegin(GL_TRIANGLES);
+	glVertex3i(small[0].pos.x, small[0].pos.y - small[0].size / 2, small[0].pos.z);
+	glVertex3i(small[0].pos.x + small[0].size / 2, small[0].pos.y + small[0].size / 2, small[0].pos.z);				
+	glVertex3i(small[0].pos.x - small[0].size / 2, small[0].pos.y + small[0].size / 2, small[0].pos.z);
+	glEnd();
+	glPopMatrix();//상태저장 닫기
+
+	glPushMatrix();
+	glRotatef(90 + tra.rot.degree, 0, 1, 0);
+	glBegin(GL_TRIANGLES);
+	glVertex3i(small[0].pos.x, small[0].pos.y - small[0].size / 2, small[0].pos.z);
+	glVertex3i(small[0].pos.x + small[0].size / 2, small[0].pos.y + small[0].size / 2, small[0].pos.z);
+	glVertex3i(small[0].pos.x - small[0].size / 2, small[0].pos.y + small[0].size / 2, small[0].pos.z);
 	glEnd();
 
 	glPopMatrix();
 	glPopMatrix(); //상태 저장 닫기
 
-	
-		
-		glPopMatrix(); //상태 저장 닫기
-	
+
+
+	glPopMatrix(); //상태 저장 닫기
+
 
 	glutSwapBuffers();
 }
@@ -212,26 +201,37 @@ void Mouse(int button, int state, int x, int y) {
 	}
 }
 void Timerfunction(int value) {
-
+	Time_count++;
 	//타이머 내용 입력
 	
+	if (Time_count < PT) {
+		if (Time_count == PT - 1) {
+			Time_count = 0;
+	}
+		small[0].pos.x = sp1[Time_count].pos.x;
+		small[0].pos.y = sp1[Time_count].pos.y;
+		small[0].pos.z = sp1[Time_count].pos.z;
+
+	}
+
+
 	//꼭지점과 꼭지점사이의 거리를 100으로 나눠서
 	//곱한다 가 아닌가?
 	//꼭지점과 꼭지점 사이의 거리를 100으로 나눈다. -> movex라는 이동변수로 따로 만든다.
-	
+	/*
 	tra.move.x += (sp1[PT / 3 * 1].pos.x - sp1[PT / 3 * 0].pos.x) / 100;
 	tra.move.y += (sp1[PT / 3 * 1].pos.y - sp1[PT / 3 * 0].pos.y) / 100;
 
-	
+
 	for (int i = 0; i < PT; i++) {
-		
+
 			if (small[i].move.x < (sp1[PT / 3 * 1].pos.x - sp1[PT / 3 * 0].pos.x)) {
 				small[i].move.x = tra.move.x;
 				small[i].move.y = tra.move.y;
 			}
-		
 	}
-	
+	*/
+
 	glutPostRedisplay(); //타이머에 넣는다.
 	glutTimerFunc(100, Timerfunction, 1); //타이머 다시 출력
 
@@ -252,7 +252,21 @@ void Keyboard(unsigned char key, int x, int y) {
 			tra.rot.degree = 0;
 		}
 		tra.rot.degree += 2;
+		break;
+	case 's':
+		if (tra.rot.x > 0) {
+			tra.rot.x -= 0.1;
+			tra.rot.y -= 0.1;
+			tra.rot.z -= 0.1;
+		}
+		break;
+	case 'S':
+		if (tra.rot.x < 300) {
+			tra.rot.x += 0.1;
+			tra.rot.y += 0.1;
+			tra.rot.z += 0.1;
 
+		}
 		break;
 
 	default:
