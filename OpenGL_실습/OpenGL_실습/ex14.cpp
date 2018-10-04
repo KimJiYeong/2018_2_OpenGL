@@ -141,7 +141,7 @@ void Mouse(int button, int state, int x, int y) {
 		sp[click_count].pos.x = x;
 		sp[click_count].pos.y = y;
 		//도형 선택
-		sp[click_count].select = rand() % 4;
+		sp[click_count].select = rand() % 5;
 		//도형 설정
 		sp[click_count].size = rand() % 100 + 50;
 		sp[click_count].slice = rand()% 10 + 4;

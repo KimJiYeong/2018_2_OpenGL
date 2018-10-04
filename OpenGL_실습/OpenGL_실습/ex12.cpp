@@ -120,7 +120,7 @@ GLvoid drawScene(GLvoid)
 	if (!Mouse_Act_On) {
 		glTranslated(WideSize / 2, HighSize / 2, 0); //도형 그리기 할때는 초기화 시켜준다.
 	}
-	glRotatef(tra.rot.degree, 1, 0, 0);
+	glRotatef(tra.rot.degree, 0, 1, 0);
 
 	for (int i = 0; i < PT - 1; i++) {
 		glBegin(GL_LINES);
