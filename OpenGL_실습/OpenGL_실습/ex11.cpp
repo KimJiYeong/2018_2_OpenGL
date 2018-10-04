@@ -50,13 +50,13 @@ int st_help; // 직선그리기 도우미
 POINT move;
 POINT scale;
 POINT rot;
-
+POINT dm;
 BOOL ani = FALSE;
 BOOL Look = FALSE;
 
 void main(int argc, char *argv[]) {
 	//초기화
-
+	scale.x = 1;
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(100, 100);//윈도우 띄우기 좌표
@@ -91,7 +91,6 @@ GLvoid drawScene(GLvoid)
 	glVertex2i(WideSize / 2, 0);
 	glVertex2i(WideSize / 2, HighSize);
 	glEnd();
-
 	glMatrixMode(GL_MODELVIEW);
 	//출력 설정
 	//좌표축 그리기
@@ -99,6 +98,10 @@ GLvoid drawScene(GLvoid)
 	glPushMatrix(); //상태 저장 열기
 	//변형
 	glTranslated(move.x, move.y, 0);
+	glTranslatef(400, 300, 0);
+	glScaled(scale.x, scale.x, 1);
+	glTranslatef(-400, -300, 0);
+
 	//glScaled(scale.x,0,0);
 	glPointSize(2);
 	glColor3f(1.0, 1.0, 1.0);
@@ -107,8 +110,8 @@ GLvoid drawScene(GLvoid)
 		glVertex3i(sp1[i].x , sp1[i].y, sp1[i].z);//도형 그리기
 	}
 	glEnd();
-
 	glPopMatrix(); //상태 저장 닫기
+//	glPopMatrix();
 
 	glutSwapBuffers();
 }
@@ -149,17 +152,18 @@ void Keyboard(unsigned char key, int x, int y) {
 		move.y = 0;
 
 		for (int i = 0; i < PT; i++) {
-			sp1[i].x = i * WideSize / 50;
+			sp1[i].x = i * WideSize / 50 + move.x;
 			sp1[i].y = 100 * sin(PI * i * 10 / 90) + HighSize / 2;
 			sp1[i].z = 100;
 		}
 		break;
+
 	case '2'://스프링
 			 //이동 초기화
 		move.x = 0;
 		move.y = 0;
 		for (int i = 0; i < PT; i++) {
-			sp1[i].x = 100 * cos(PI * i * 10 / 90) + WideSize / 50 + i * 10;
+			sp1[i].x = 100 * cos(PI * i * 10 / 90) + WideSize / 50 + i * 10 + move.x;
 			sp1[i].y = 100 * sin(PI * i * 10 / 90) + HighSize / 2;
 			sp1[i].z = 100;
 		}
@@ -172,21 +176,21 @@ void Keyboard(unsigned char key, int x, int y) {
 		//왼쪽 리본
 		st_help = 0;
 		for (int i = 0; i < PT/6 * 1; i++) {
-			sp1[i].x = -st_help * 6+ WideSize/2;
+			sp1[i].x = -st_help * 6+ WideSize/2 + move.x;
 			sp1[i].y = -st_help * 6+ HighSize/2;
 			sp1[i].z = 100;
 			st_help++;
 		}
 		st_help = 0;
 		for (int i = PT / 6 * 1; i < PT / 6 * 2; i++) {
-			sp1[i].x = sp1[PT / 6 * 1 - 1].x;
+			sp1[i].x = sp1[PT / 6 * 1 - 1].x + move.x;
 			sp1[i].y = st_help * 12 + sp1[PT / 6 * 1 - 1].y;
 			sp1[i].z = 100;
 			st_help++;
 		}
 		st_help = 0;
 		for (int i = PT / 6 * 2; i < PT / 6 * 3; i++) {
-			sp1[i].x = -st_help * 6 + WideSize / 2;
+			sp1[i].x = -st_help * 6 + WideSize / 2 + move.x;
 			sp1[i].y = st_help * 6 + HighSize / 2;
 			sp1[i].z = 100;
 			st_help++;
@@ -195,21 +199,21 @@ void Keyboard(unsigned char key, int x, int y) {
 		//오른쪽
 		st_help = 0;
 		for (int i = PT/6 * 3; i < PT / 6 * 4; i++) {
-			sp1[i].x = st_help * 6 + WideSize / 2;
+			sp1[i].x = st_help * 6 + WideSize / 2 + move.x;
 			sp1[i].y = -st_help * 6 + HighSize / 2;
 			sp1[i].z = 100;
 			st_help++;
 		}
 		st_help = 0;
 		for (int i = PT / 6 * 4; i < PT / 6 * 5; i++) {
-			sp1[i].x = sp1[PT / 6 * 4 - 1].x;
+			sp1[i].x = sp1[PT / 6 * 4 - 1].x + move.x;
 			sp1[i].y = st_help * 12 + sp1[PT / 6 * 4 - 1].y;
 			sp1[i].z = 100;
 			st_help++;
 		}
 		st_help = 0;
 		for (int i = PT / 6 * 5; i < PT / 6 * 6; i++) {
-			sp1[i].x = st_help * 6 + WideSize / 2;
+			sp1[i].x = st_help * 6 + WideSize / 2 + move.x;
 			sp1[i].y = st_help * 6 + HighSize / 2;
 			sp1[i].z = 100;
 			st_help++;
@@ -223,28 +227,28 @@ void Keyboard(unsigned char key, int x, int y) {
 		move.y = 0;
 		st_help = 0;
 		for (int i = PT / 4 * 0; i < PT / 4 * 1; i++) {
-			sp1[i].x = WideSize / 5 * 2;
+			sp1[i].x = WideSize / 5 * 2 +move.x;
 			sp1[i].y = st_help * HighSize /100 + HighSize / 5 * 2;
 			sp1[i].z = 100;
 			st_help++;
 		}
 		st_help = 0;
 		for (int i = PT / 4 * 1; i < PT / 4 * 2; i++) {
-			sp1[i].x = st_help * WideSize / 100 + sp1[PT / 4 * 1 - 1].x;
+			sp1[i].x = st_help * WideSize / 100 + sp1[PT / 4 * 1 - 1].x + move.x;
 			sp1[i].y = sp1[PT / 4 * 1 - 1].y;
 			sp1[i].z = 100;
 			st_help++;
 		}
 		st_help = 0;
 		for (int i = PT / 4 * 2; i < PT / 4 * 3; i++) {
-			sp1[i].x = sp1[PT / 4 * 2 - 1].x;
+			sp1[i].x = sp1[PT / 4 * 2 - 1].x + move.x;
 			sp1[i].y = sp1[PT / 4 * 2 - 1].y - st_help * HighSize / 100;
 			sp1[i].z = 100;
 			st_help++;
 		}
 		st_help = 0;
 		for (int i = PT / 4 * 3; i < PT / 4 * 4; i++) {
-			sp1[i].x = sp1[PT / 4 * 3 - 1].x - st_help * WideSize / 100;
+			sp1[i].x = sp1[PT / 4 * 3 - 1].x - st_help * WideSize / 100 + move.x;
 			sp1[i].y = sp1[PT / 4 * 3 - 1].y ;
 			sp1[i].z = 100;
 			st_help++;
@@ -264,16 +268,16 @@ void Keyboard(unsigned char key, int x, int y) {
 		move.y++;
 		break;
 	case 's':// -
-		scale.y--;
+		scale.x-= 1;
 		break;
 	case 'S':
-		scale.y++;
+		scale.x+= 1;
 		break;
 	case 'r'://-
-		rot.y--;
+		move.x -= 10;
 		break;
 	case 'R':
-		rot.y++;
+		move.x += 10;
 		break;
 	case 'a'://x 축 따라 -
 		Time_count = 0; 
@@ -285,9 +289,12 @@ void Keyboard(unsigned char key, int x, int y) {
 		ani = TRUE;
 		Look = TRUE;
 		break;
-	case 'T':
+	case 't':
 		ani = FALSE;
-
+		break;
+	case 'q' || 'Q':
+		PostQuitMessage(0);
+		break;
 	default:
 		;
 		break;

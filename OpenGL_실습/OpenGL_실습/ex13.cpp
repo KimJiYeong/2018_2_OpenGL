@@ -278,6 +278,6 @@ void Keyboard(unsigned char key, int x, int y) {
 GLvoid Reshape(int w, int h)
 {
 	glViewport(-1, -1, w, h);
-	glOrtho(0, WideSize, HighSize, 0, -Z_Size / 2, Z_Size / 2); //윈도우를 초기화 하는 함수입니다!
-
+	glOrtho(0, WideSize, HighSize, 0, -Z_Size, Z_Size); //윈도우를 초기화 하는 함수입니다!
+	//gluPerspective(WideSize, HighSize, Z_Size / 4 * 1, Z_Size / 4 * 3);
 }

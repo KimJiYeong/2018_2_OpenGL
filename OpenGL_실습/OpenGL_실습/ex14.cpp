@@ -68,15 +68,18 @@ BOOL Look = FALSE;
 Shape sp[PT];
 Shape small[2];
 Shape tra;
+int rot_count;
+int rot_command;
 
 void main(int argc, char *argv[]) {
 	//초기화
-
+	rot_command = 1;
+	rot_count = 0;
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(100, 100);//윈도우 띄우기 좌표
 	glutInitWindowSize(WideSize, HighSize); //윈도우 띄우기 크기
-	glutCreateWindow("ex11");
+	glutCreateWindow("ex14");
 	// - 랜덤으로 시작 도형 설정하기
 	//도형 그리기
 
@@ -108,7 +111,7 @@ GLvoid drawScene(GLvoid)
 		glPushMatrix(); //상태 저장 열기	
 		
 		glTranslated(sp[i].pos.x, sp[i].pos.y, 0);//입력한 곳에 입력된다.
-		glRotatef(sp[i].rot.degree, sp[i].rot.x, sp[i].rot.y, sp[i].rot.z);
+		glRotatef(sp[i].rot.degree * rot_command, sp[i].rot.x, sp[i].rot.y, sp[i].rot.z);
 		glScaled(sp[i].scale.x, sp[i].scale.x, sp[i].scale.x);
 		
 		if (sp[i].select == 0) {//원
@@ -196,7 +199,16 @@ void Keyboard(unsigned char key, int x, int y) {
 	switch (key)
 	{
 	case 'y':
-		;
+		rot_count++;
+		if (rot_count % 2 == 0) {
+			rot_command = 1;
+		}
+		else {
+			rot_command = -1;
+		}
+		break;
+	case 'Y':
+		rot_command = -1;
 		break;
 	default:
 		;
