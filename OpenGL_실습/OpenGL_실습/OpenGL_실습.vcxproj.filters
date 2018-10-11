@@ -19,6 +19,9 @@
     <Filter Include="소스 파일\practice">
       <UniqueIdentifier>{e0944c79-f157-446f-99a5-92c602f89a9b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\GL2">
+      <UniqueIdentifier>{4e052821-d96e-4fef-a6a1-c0ae9d2e960d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="기본.cpp">
@@ -44,6 +47,9 @@
     </ClCompile>
     <ClCompile Include="ex12.cpp">
       <Filter>소스 파일\GL1</Filter>
+    </ClCompile>
+    <ClCompile Include="ex16.cpp">
+      <Filter>소스 파일\GL2</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

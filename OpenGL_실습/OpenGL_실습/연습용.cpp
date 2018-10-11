@@ -41,7 +41,7 @@ typedef struct Translate_pos {
 	float degree;
 };
 
-#define PT 100//도형 갯수 설정
+#define PT 20//도형 갯수 설정
 #define PI 3.141592 //파이
 typedef struct Shape
 {
@@ -56,25 +56,29 @@ typedef struct Shape
 	int height;
 	int slice;
 	int stacks;
+
 };
 
 int click_count;
 int save_count;
 int st_help;
-
 BOOL Save = false;
 BOOL ani = FALSE;
 BOOL Look = FALSE;
-
+Shape sp[PT];
+Shape small[2];
+Shape tra;
+int rot_count;
+int rot_command;
 
 void main(int argc, char *argv[]) {
-
+	//초기화
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(100, 100);//윈도우 띄우기 좌표
 	glutInitWindowSize(WideSize, HighSize); //윈도우 띄우기 크기
-	glutCreateWindow("ex11");
+	glutCreateWindow("ex14");
 	// - 랜덤으로 시작 도형 설정하기
 	//도형 그리기
 
@@ -95,17 +99,8 @@ GLvoid drawScene(GLvoid)
 
 	glLineWidth(2);
 	glColor3f((float)255 / 255, (float)255 / 255, (float)255 / 255);
-
-
 	glMatrixMode(GL_MODELVIEW);
-	//출력 설정
-	glColor3f((float)100 / 255, (float)200 / 255, (float)100 / 255);
 	//좌표축 그리기
-
-	glPushMatrix(); //상태 저장 열기
-
-
-	glPopMatrix(); //상태 저장 닫기
 
 
 	glutSwapBuffers();
@@ -114,13 +109,9 @@ GLvoid drawScene(GLvoid)
 void Mouse(int button, int state, int x, int y) {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
 	{
-
 	}
 }
 void Timerfunction(int value) {
-	Time_count++;
-	//타이머 내용 입력
-
 
 	glutPostRedisplay(); //타이머에 넣는다.
 	glutTimerFunc(100, Timerfunction, 1); //타이머 다시 출력
@@ -130,10 +121,9 @@ void Timerfunction(int value) {
 void Keyboard(unsigned char key, int x, int y) {
 	switch (key)
 	{
-	case 'y':
 
+	case 'Y':\
 		break;
-
 	default:
 		;
 		break;
