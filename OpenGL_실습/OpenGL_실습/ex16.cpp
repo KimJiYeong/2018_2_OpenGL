@@ -71,6 +71,8 @@ Shape tra;
 int rot_count;
 int rot_command;
 
+Shape shape[2];
+
 void SetupRC()
 {
 	//초기화
@@ -79,6 +81,8 @@ void SetupRC()
 void main(int argc, char *argv[]) {
 	//초기화
 	click_count = 0;
+	shape[0].pos.x = 100;
+
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitWindowPosition(100, 100);//윈도우 띄우기 좌표
@@ -93,7 +97,6 @@ void main(int argc, char *argv[]) {
 	glutMouseFunc(Mouse);
 	glutKeyboardFunc(Keyboard);
 	glutTimerFunc(100, Timerfunction, 1);
-	
 	srand(time(NULL));
 	glutMainLoop();
 }
@@ -108,7 +111,6 @@ GLvoid drawScene(GLvoid)
 		camera.x, camera.y, camera.z,  //위5 eye
 		0, 0, 0, //방향 center
 		0, 1, 0); //위쪽방향(건들 ㄴㄴ) up
-
 	glLineWidth(2);
 	glColor3f((float)255 / 255, (float)255 / 255, (float)255 / 255);
 	glMatrixMode(GL_MODELVIEW);
@@ -116,10 +118,11 @@ GLvoid drawScene(GLvoid)
 	
 	glPushMatrix();
 	glScalef(1, 0.001, 1);
-	glutSolidCube(200);
+	glutSolidCube(200);//발판 만들기
 		
-	glPopMatrix();
-	//가운데 막대 그리기
+	glPopMatrix();//좌표계 그리기
+	
+				  //가운데 막대 그리기
 	glColor3f((float)255 / 255, (float)0 / 255, (float)0 / 255);
 
 	for (int i = 0; i < 3; i++) {
@@ -139,8 +142,24 @@ GLvoid drawScene(GLvoid)
 		glScalef(1, 0.1, 0.1);
 		glutSolidCube(40);
 		glPopMatrix();
-	}
+	}//좌표계 그리기
 	
+	glPushMatrix();//도형 그리기
+	for (int i = 0; i < 2; i++) {
+		glRotatef(Time_count, 0, 1, 0);
+		glTranslated(shape[i].pos.x, 0, 0);
+		if (i == 1) {
+		//	glPushMatrix();
+			glTranslated(-shape[i].pos.x, 0, 0);
+			glTranslated(-shape[i].pos.x - 50, 0, 0);
+		//	glPopMatrix();
+		}
+		glRotatef(Time_count, 0, 1, 0);
+		glutSolidCube(30);
+	}
+	glPopMatrix();//도형 그리기
+
+
 	glPopMatrix();
 
 	glutSwapBuffers();
@@ -156,6 +175,7 @@ void Mouse(int button, int state, int x, int y) {
 }
 void Timerfunction(int value) {
 	
+	Time_count += 1;//타이머 카운트
 	glutPostRedisplay(); //타이머에 넣는다.
 	glutTimerFunc(100, Timerfunction, 1); //타이머 다시 출력
 
