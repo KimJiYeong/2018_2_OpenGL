@@ -79,8 +79,6 @@ void SetupRC()
 void main(int argc, char *argv[]) {
 	//초기화
 	click_count = 0;
-	camera.z = 1;
-
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitWindowPosition(100, 100);//윈도우 띄우기 좌표
@@ -107,7 +105,7 @@ GLvoid drawScene(GLvoid)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glPushMatrix();
 	gluLookAt(
-		-camera.x, camera.y, -camera.z,  //위5 eye
+		camera.x, camera.y, camera.z,  //위5 eye
 		0, 0, 0, //방향 center
 		0, 1, 0); //위쪽방향(건들 ㄴㄴ) up
 
@@ -184,11 +182,6 @@ void Keyboard(unsigned char key, int x, int y) {
 	case 'Z':
 		camera.z -= 1;
 		break;
-	case 'r'://카메라 위치 초기화
-		camera.x = 0;
-		camera.y = 0;
-		camera.z = 1;
-		break;
 	default:
 		;
 		break;
@@ -203,7 +196,7 @@ GLvoid Reshape(int w, int h)
 	
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(30, WideSize / HighSize, 1, Z_Size); //윈도우를 초기화 하는 함수입니다!
+	gluPerspective(45, WideSize / HighSize, 1, Z_Size); //윈도우를 초기화 하는 함수입니다!
 	glTranslatef(0, 0, -300);
 	glMatrixMode(GL_MODELVIEW);
 
