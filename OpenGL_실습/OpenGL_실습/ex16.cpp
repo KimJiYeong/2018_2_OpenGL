@@ -116,7 +116,7 @@ GLvoid drawScene(GLvoid)
 	
 	glPushMatrix();
 	glScalef(1, 0.001, 1);
-	glutSolidCube(40);
+	glutSolidCube(200);
 		
 	glPopMatrix();
 	//가운데 막대 그리기
