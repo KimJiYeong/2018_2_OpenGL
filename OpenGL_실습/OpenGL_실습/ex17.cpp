@@ -208,26 +208,28 @@ GLvoid drawScene(GLvoid)
 			//그리기 끝
 
 			//그리기
-			glPushMatrix();
-			glTranslated(70, 0, 0);
-
-			for (int i = 0; i < 3; i++) {
+			
+			
+			for (int i = 1; i < 4; i++) {
+				glPushMatrix();
 				glColor3f((float)0 / 255, (float)0 / 255, (float)255 / 255);
+				glRotatef(Time_count * i, 0, 1, 0);
+				glTranslated(70, 0, 0);
+				glPushMatrix();
 				glTranslated(0, 0, 0);
 				//glPushMatrix();
-				if (i == 0) {
-					glRotatef(90, 1, 0, 0);
-				}
-				else if (i == 1) {
-					glRotatef(90, 0, 1, 0);
-				}
-				else if (i == 2) {
-					glRotatef(90, 0, 0, 1);
-				}
 				//glPopMatrix();
 				glutSolidSphere(15, 15, 15);
+				glPopMatrix();
+				glColor3f((float)0 / 255, (float)255 / 255, (float)0 / 255);
+				glPushMatrix();
+				glRotatef(Time_count * i, 0, 0, 1);
+				glTranslated(30, 0, 0);
+				glutSolidSphere(10, 15, 15);
+
+				glPopMatrix();
+				glPopMatrix();
 			}
-			glPopMatrix();
 			//그리기 끝
 
 			 //glRotatef(Time_count, 0, 1, 0);
@@ -246,7 +248,7 @@ void Mouse(int button, int state, int x, int y) {
 
 }
 void Timerfunction(int value) {
-
+	Time_count++;
 	glutPostRedisplay(); //타이머에 넣는다.
 	glutTimerFunc(100, Timerfunction, 1); //타이머 다시 출력
 
