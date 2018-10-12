@@ -68,7 +68,7 @@ BOOL Save = false;
 BOOL ani = FALSE;
 BOOL Look = FALSE;
 
-Translate_pos camera;
+Shape camera;
 Shape tra;
 int rot_count;
 int rot_command;
@@ -83,9 +83,11 @@ void SetupRC()
 void main(int argc, char *argv[]) {
 	//초기화
 
-	camera.x = 0;
-	camera.y = 1;
-	camera.z = 1;
+
+
+	camera.pos.x = 0;
+	camera.pos.y = 1;
+	camera.pos.z = 1;
 
 	shape[0].pos.x = 100;
 	shape[1].pos.x = 100;
@@ -106,35 +108,70 @@ void main(int argc, char *argv[]) {
 	srand(time(NULL));
 	glutMainLoop();
 }
+void rot_custom(int sel, int degree) {
+	//x = 0
+	//y = 1
+	//z = 2
+	GLdouble x_rotate[16] = {
+		1, 0, 0, 0,
+		0, cos(degree * PI * 10 / 180),  -sin(degree * PI * 10 / 180), 0,
+		0, sin(degree * PI * 10 / 180), cos(degree * PI * 10 / 180), 0,
+		0, 0, 0, 1
+	};
+	GLdouble y_rotate[16] = {
+		cos(degree * PI * 10 / 180), 0, sin(degree * PI * 10 / 180), 0,
+		0, 1,  0, 0,
+		-sin(degree * PI * 10 / 180), 0,cos(degree * PI * 10 / 180), 0,
+		0, 0, 0, 1
+	};
+	GLdouble z_rotate[16] = {
+		cos(degree * PI * 10 / 180),  -sin(degree * PI * 10 / 180), 0,0,
+		sin(degree * PI * 10 / 180), cos(degree * PI * 10 / 180), 0,0,
+		0, 0, 1, 0,
+		0, 0, 0, 1
+	};
 
+	if (sel == 0) {
+		glLoadMatrixd(x_rotate);
+		glMultMatrixd(x_rotate);
+	}
+	else if (sel == 1) {
+
+		glLoadMatrixd(y_rotate);
+		glMultMatrixd(y_rotate);
+	}
+	else if (sel == 2) {
+
+		glLoadMatrixd(z_rotate);
+		glMultMatrixd(z_rotate);
+	}
+	
+};
 GLvoid drawScene(GLvoid)
 {
+	//오늘의 나에게 내가 지금 너무 피곤해서 죽을것같으니
+	//
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glPushMatrix();{
-		glRotatef(view.rot.degree, view.rot.x, view.rot.y, view.rot.z);
-		glTranslated(0, 0, 0);
-		gluLookAt(
-			camera.x, camera.y, camera.z,  //위5 eye
-			0, 0, 0, //방향 center
-			0, camera.y, 0); //위쪽방향(건들 ㄴㄴ) up
-					  //glTranslated(0, 0, 0);
-		glLineWidth(2);
-		glColor3f((float)255 / 255, (float)255 / 255, (float)255 / 255);
-		glMatrixMode(GL_MODELVIEW);
-		//좌표축 그리기
-		glPushMatrix();{
 
-		glTranslated(0, -15, 0);
-		glScalef(1, 0.001, 1);
-		glutSolidCube(200);//발판 만들기
-		glPopMatrix(); 
-		}
+		glMatrixMode(GL_MODELVIEW);
+		//glRotatef(view.rot.degree, view.rot.x, view.rot.y, view.rot.z);
+		rot_custom(select_count, camera.rot.degree);
+		gluLookAt(
+			0, 1 , 10,  //위5 eye
+			0, 0, 0, //방향 center
+			0, 1, 0); //위쪽방향(건들 ㄴㄴ) up
+		//glTranslated(0, 0, 0);
+		
+		glLineWidth(2);
+	
 		//가운데 막대 그리기
 		glColor3f((float)255 / 255, (float)0 / 255, (float)0 / 255);
-
+		glTranslated(0, 0, 0);
 			for (int i = 0; i < 3; i++) {
+
 				glPushMatrix();
 				if (i == 0) {
 					glColor3f((float)255 / 255, (float)0 / 255, (float)0 / 255);
@@ -151,7 +188,15 @@ GLvoid drawScene(GLvoid)
 				glScalef(1, 0.1, 0.1);
 				glutSolidCube(40);
 				glPopMatrix();
+				glPushMatrix();
+				glScaled(1, 0.01, 1);
+				glutSolidCube(20);
+				glPopMatrix();
+
 			}//좌표계 그리기
+
+
+
 
 			 //glRotatef(Time_count, 0, 1, 0);
 	}
@@ -181,71 +226,24 @@ void Keyboard(unsigned char key, int x, int y) {
 	
 	//------------------카메라------------------------
 	case 'x':
-		camera.degree -= 1;
-		camera.z = cos(PI * camera.degree * 10 / 90);
-		camera.y = sin(PI * camera.degree * 10 / 90);
+		camera.rot.degree += 1;
+		select_count = 0;
+		// z는 그대로 camera.z 
 		break;
-
-	case 'X':
-		camera.degree += 1;
-		camera.z = cos(PI * camera.degree * 10 / 90);
-		camera.y = sin(PI * camera.degree * 10 / 90);
-		break;
-
 	case 'y':
-		camera.degree -= 1;
-		camera.x = cos(PI * camera.degree * 10 / 90);
-		camera.z = sin(PI * camera.degree * 10 / 90);
+		camera.rot.degree += 1;
+		select_count = 1;
+		// z는 그대로 camera.z 
 		break;
-	
-	case 'Y':
-		camera.degree += 1;
-		camera.x = cos(PI *camera.degree * 10 / 90);
-		camera.z = sin(PI * camera.degree * 10 / 90);
-		break;
-
 	case 'z':
-		camera.degree -= 1;
-		camera.x = cos(PI *camera.degree * 10 / 90);
-		camera.y = sin(PI * camera.degree * 10 / 90);
-		break;
-	
-	case 'Z':
-		camera.degree += 1;
-		camera.x = cos(PI *camera.degree * 10 / 90);
-		camera.y = sin(PI * camera.degree * 10 / 90);
+		camera.rot.degree += 1;
+		select_count = 2;
+
+
+		// z는 그대로 camera.z 
 		break;
 
-	case 'w':
-		camera.x += 1;
-		break;
-
-	case 's':
-		camera.x -= 1;
-		break;
-
-	case 'd':
-		camera.y += 1;
-		break;
-
-	case 'a':
-		camera.y -= 1;
-		break;
-
-	case '+':
-		camera.z += 1;
-		break;
-
-	case '-':
-		camera.z -= 1;
-		break;
-
-	case 'i':
-		camera.x = 1;
-		camera.y = 1;
-		camera.z = 1;
-		break;
-	//-----------카메라 끝 --------
+		//-----------카메라 끝 --------
 	default:
 		;
 		break;
