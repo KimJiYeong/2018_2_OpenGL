@@ -5,8 +5,8 @@
 GLvoid Reshape(int w, int h);
 
 //해상도 설정
-#define WideSize 800
-#define HighSize 600
+#define WideSize 900
+#define HighSize 900
 #define Z_Size 400
 
 //그리기 제어
@@ -73,7 +73,7 @@ Shape tra;
 int rot_count;
 int rot_command;
 
-Shape shape[2];
+Shape shape[36];
 Shape view;
 void SetupRC()
 {
@@ -83,7 +83,11 @@ void SetupRC()
 void main(int argc, char *argv[]) {
 	//초기화
 
+	for (int i = 0; i < 36; i++) {
+		shape[i].pos.x = 0;
+		shape[i].pos.y = 0;
 
+	}
 
 	camera.pos.x = 0;
 	camera.pos.y = 1;
@@ -156,11 +160,12 @@ GLvoid drawScene(GLvoid)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glPushMatrix();{
 
+		glLoadIdentity();
 		glMatrixMode(GL_MODELVIEW);
 		//glRotatef(view.rot.degree, view.rot.x, view.rot.y, view.rot.z);
 		rot_custom(select_count, camera.rot.degree);
 		gluLookAt(
-			0, 1 , 10,  //위5 eye
+			0, 0 , 1,  //위5 eye
 			0, 0, 0, //방향 center
 			0, 1, 0); //위쪽방향(건들 ㄴㄴ) up
 		//glTranslated(0, 0, 0);
@@ -170,33 +175,60 @@ GLvoid drawScene(GLvoid)
 		//가운데 막대 그리기
 		glColor3f((float)255 / 255, (float)0 / 255, (float)0 / 255);
 		glTranslated(0, 0, 0);
-			for (int i = 0; i < 3; i++) {
+			//for (int i = 0; i < 3; i++) {
 
-				glPushMatrix();
+			//	glPushMatrix();
+			//	if (i == 0) {
+			//		glColor3f((float)255 / 255, (float)0 / 255, (float)0 / 255);
+			//		glRotated(90, 1, 0, 0);
+			//	}
+			//	else if (i == 1) {
+			//		glColor3f((float)0 / 255, (float)255 / 255, (float)0 / 255);
+			//		glRotated(90, 0, 1, 0);
+			//	}
+			//	else if (i == 2) {
+			//		glColor3f((float)0 / 255, (float)0 / 255, (float)255 / 255);
+			//		glRotated(90, 0, 0, 1);
+			//	}
+			//	glScalef(1, 0.1, 0.1);
+			//	glutSolidCube(40);
+			//	glPopMatrix();
+			//	glPushMatrix();
+			//	glScaled(1, 0.01, 1);
+			//	glutSolidCube(20);
+			//	glPopMatrix();
+
+			//}//좌표계 그리기
+
+			//그리기
+			glPushMatrix();
+			glTranslated(0, 0, 0);
+			glutSolidSphere(20, 20, 20);
+			glPopMatrix();
+			//그리기 끝
+
+			//그리기
+			glPushMatrix();
+			glTranslated(70, 0, 0);
+
+			for (int i = 0; i < 3; i++) {
+				glColor3f((float)0 / 255, (float)0 / 255, (float)255 / 255);
+				glTranslated(0, 0, 0);
+				//glPushMatrix();
 				if (i == 0) {
-					glColor3f((float)255 / 255, (float)0 / 255, (float)0 / 255);
-					glRotated(90, 1, 0, 0);
+					glRotatef(90, 1, 0, 0);
 				}
 				else if (i == 1) {
-					glColor3f((float)0 / 255, (float)255 / 255, (float)0 / 255);
-					glRotated(90, 0, 1, 0);
+					glRotatef(90, 0, 1, 0);
 				}
 				else if (i == 2) {
-					glColor3f((float)0 / 255, (float)0 / 255, (float)255 / 255);
-					glRotated(90, 0, 0, 1);
+					glRotatef(90, 0, 0, 1);
 				}
-				glScalef(1, 0.1, 0.1);
-				glutSolidCube(40);
-				glPopMatrix();
-				glPushMatrix();
-				glScaled(1, 0.01, 1);
-				glutSolidCube(20);
-				glPopMatrix();
-
-			}//좌표계 그리기
-
-
-
+				//glPopMatrix();
+				glutSolidSphere(15, 15, 15);
+			}
+			glPopMatrix();
+			//그리기 끝
 
 			 //glRotatef(Time_count, 0, 1, 0);
 	}
@@ -259,7 +291,7 @@ GLvoid Reshape(int w, int h)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(45, WideSize / HighSize, 1, Z_Size); //윈도우를 초기화 하는 함수입니다!
-	glTranslatef(0, 0, -300);
+	glTranslated(0, 0, -300);
 	glMatrixMode(GL_MODELVIEW);
 
 }
