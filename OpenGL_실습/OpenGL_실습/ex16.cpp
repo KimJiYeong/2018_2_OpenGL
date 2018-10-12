@@ -365,6 +365,7 @@ void Keyboard(unsigned char key, int x, int y) {
 		for (int i = 0; i < 2; i++) {
 			shape[i].select = (select_count%4);
 		}
+		break;
 	default:
 		;
 		break;
