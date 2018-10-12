@@ -182,6 +182,11 @@ void Keyboard(unsigned char key, int x, int y) {
 	case 'Z':
 		camera.z -= 1;
 		break;
+	case 'r':
+		camera.x = 0;
+		camera.y = 0;
+		camera.z = 1;
+		break;
 	default:
 		;
 		break;
