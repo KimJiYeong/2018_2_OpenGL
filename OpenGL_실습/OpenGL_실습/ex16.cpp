@@ -74,7 +74,7 @@ int rot_count;
 int rot_command;
 
 Shape shape[2];
-
+Shape view;
 void SetupRC()
 {
 	//초기화
@@ -82,6 +82,11 @@ void SetupRC()
 }
 void main(int argc, char *argv[]) {
 	//초기화
+
+	camera.x = 0;
+	camera.y = 1;
+	camera.z = 1;
+
 	shape[0].pos.x = 100;
 	shape[1].pos.x = 100;
 	glutInit(&argc, argv);
@@ -108,17 +113,19 @@ GLvoid drawScene(GLvoid)
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glPushMatrix();
-	glTranslated(0, 0, 0);
+	glRotatef(view.rot.degree, view.rot.x, view.rot.y, view.rot.z);
+		glTranslated(0, 0, 0);
 	gluLookAt(
 		camera.x, camera.y, camera.z,  //위5 eye
 		0, 0, 0, //방향 center
 		0, 1, 0); //위쪽방향(건들 ㄴㄴ) up
+	//glTranslated(0, 0, 0);
 	glLineWidth(2);
 	glColor3f((float)255 / 255, (float)255 / 255, (float)255 / 255);
 	glMatrixMode(GL_MODELVIEW);
 	//좌표축 그리기
-	
 	glPushMatrix();
+
 	glTranslated(0, -15, 0);
 	glScalef(1, 0.001, 1);
 	glutSolidCube(200);//발판 만들기
@@ -254,25 +261,50 @@ void Timerfunction(int value) {
 void Keyboard(unsigned char key, int x, int y) {
 	switch (key)
 	{
-	case 'x':
-		camera.x += 0.5;
-		break;
 	case 'X':
-		camera.x -= 0.5;
-		break;
-	case 'y':
-		camera.y += 0.5;
+		view.rot.degree += 10;
+		view.rot.x = 1;
+		view.rot.y = 0;
+		view.rot.z = 0;
 		break;
 	case 'Y':
-		camera.y -= 0.5;
-		break;
-	case 'z':
-		camera.z += 0.5;
+		view.rot.degree += 10;
+		view.rot.x = 0;
+		view.rot.y = 1;
+		view.rot.z = 0;
 		break;
 	case 'Z':
-		camera.z -= 0.5;
+		view.rot.degree += 10;
+		view.rot.x = 0;
+		view.rot.y = 0;
+		view.rot.z = 1;
 		break;
-	case 'l':
+	case '+':
+		camera.degree -= 10;
+		camera.x = cos(PI *camera.degree * 10 / 90);
+		camera.z = sin(PI * camera.degree * 10 / 90);
+		break;
+	case '_':
+		camera.degree += 10;
+		camera.x = cos(PI *camera.degree * 10 / 90);
+		camera.z = sin(PI * camera.degree * 10 / 90);
+		break;
+	case 'i':
+		//나중에 망가지면 그때 고치자 오늘은 수고했어 끝!
+		camera.x = 0;
+		{
+			camera.z += 2;
+			camera.y += 2;
+		}
+		break;
+	case 'o':
+		camera.x = 0;
+		{
+			camera.z -= 2;
+			camera.y -= 2;
+		}
+		break;
+	case 'L':
 		ani = TRUE;
 		for (int i = 0; i < 2; i++) {
 			if (i == 0) {
@@ -286,7 +318,7 @@ void Keyboard(unsigned char key, int x, int y) {
 			}
 		}
 		break;
-	case 'r':
+	case 'R':
 		ani = TRUE;
 		for (int i = 0; i < 2; i++) {
 			if (i != 0) {
@@ -300,7 +332,7 @@ void Keyboard(unsigned char key, int x, int y) {
 			}
 		}
 		break;
-	case 'o':
+	case 'O':
 		ani = FALSE;
 		for (int i = 0; i < 2; i++) {
 				shape[i].any = TRUE;
@@ -311,8 +343,12 @@ void Keyboard(unsigned char key, int x, int y) {
 		break;
 	case 'p':
 		camera.x = 0;
-		camera.y = 0;
+		camera.y = 1;
 		camera.z = 1;
+		view.rot.x = 0;
+		view.rot.y = 0;
+		view.rot.z = 0;
+
 		break;
 	case 'c'://도형 바꾸끼
 	case 'C':
