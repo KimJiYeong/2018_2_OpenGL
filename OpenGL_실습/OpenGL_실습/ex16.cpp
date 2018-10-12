@@ -57,10 +57,12 @@ typedef struct Shape
 	int slice;
 	int stacks;
 
+	BOOL any;
+
 };
 
-int click_count;
-int save_count;
+int change_count;
+int select_count;
 int st_help;
 BOOL Save = false;
 BOOL ani = FALSE;
@@ -80,9 +82,8 @@ void SetupRC()
 }
 void main(int argc, char *argv[]) {
 	//초기화
-	click_count = 0;
 	shape[0].pos.x = 100;
-
+	shape[1].pos.x = 100;
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitWindowPosition(100, 100);//윈도우 띄우기 좌표
@@ -107,6 +108,7 @@ GLvoid drawScene(GLvoid)
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glPushMatrix();
+	glTranslated(0, 0, 0);
 	gluLookAt(
 		camera.x, camera.y, camera.z,  //위5 eye
 		0, 0, 0, //방향 center
@@ -117,6 +119,7 @@ GLvoid drawScene(GLvoid)
 	//좌표축 그리기
 	
 	glPushMatrix();
+	glTranslated(0, -15, 0);
 	glScalef(1, 0.001, 1);
 	glutSolidCube(200);//발판 만들기
 		
@@ -144,20 +147,80 @@ GLvoid drawScene(GLvoid)
 		glPopMatrix();
 	}//좌표계 그리기
 	
-	glPushMatrix();//도형 그리기
+	
 	for (int i = 0; i < 2; i++) {
+		glPushMatrix();//도형 그리기
 		glRotatef(Time_count, 0, 1, 0);
-		glTranslated(shape[i].pos.x, 0, 0);
-		if (i == 1) {
-		//	glPushMatrix();
-			glTranslated(-shape[i].pos.x, 0, 0);
-			glTranslated(-shape[i].pos.x - 50, 0, 0);
-		//	glPopMatrix();
+		if (i == 0) {//첫번째 도형
+			glTranslated(shape[i].pos.x, 0, 0);
+			glRotatef(shape[i].rot.degree, shape[i].rot.x, shape[i].rot.y, shape[i].rot.z);
+			if (!Look) {
+				if (shape[i].select == 0) {
+					glutSolidSphere(15, 10, 10);
+				}
+				else if (shape[i].select == 1) {
+					glutSolidCube(30);
+				}
+				else if (shape[i].select == 2) {
+					glutSolidCone(15, 10, 3, 3);
+				}
+				else if (shape[i].select == 3) {
+					glutSolidTeapot(30);
+				}
+			}
+			else {
+				if (shape[i].select == 0) {
+					glutWireSphere(15, 10, 10);
+				}
+				else if (shape[i].select == 1) {
+					glutWireCube(30);
+				}
+				else if (shape[i].select == 2) {
+					glutWireCone(15, 10, 3, 3);
+				}
+				else if (shape[i].select == 3) {
+					glutWireTeapot(30);
+				}
+			}
 		}
-		glRotatef(Time_count, 0, 1, 0);
-		glutSolidCube(30);
+
+		if (i == 1) {//두번째 도형
+			glTranslated(-shape[i].pos.x, 0, 0);
+			glRotatef(shape[i].rot.degree, shape[i].rot.x, shape[i].rot.y, shape[i].rot.z);
+			if (Look) {
+				if (shape[i].select == 0) {
+					glutSolidSphere(15, 10, 10);
+				}
+				else if (shape[i].select == 1) {
+					glutSolidCube(30);
+				}
+				else if (shape[i].select == 2) {
+					glutSolidCone(15, 10, 3, 3);
+				}
+				else if (shape[i].select == 3) {
+					glutSolidTeapot(30);
+				}
+			}
+			else {
+				if (shape[i].select == 0) {
+					glutWireSphere(15, 10, 10);
+				}
+				else if (shape[i].select == 1) {
+					glutWireCube(30);
+				}
+				else if (shape[i].select == 2) {
+					glutWireCone(15, 10, 3, 3);
+				}
+				else if (shape[i].select == 3) {
+					glutWireTeapot(30);
+				}
+			}
+		}
+		//glRotatef(Time_count, 0, 1, 0);
+
+		glPopMatrix();//도형 그리기
 	}
-	glPopMatrix();//도형 그리기
+
 
 
 	glPopMatrix();
@@ -174,8 +237,15 @@ void Mouse(int button, int state, int x, int y) {
 
 }
 void Timerfunction(int value) {
-	
-	Time_count += 1;//타이머 카운트
+	if (!ani) {
+		Time_count += 1;//타이머 카운트
+	}
+	for (int i = 0; i < 2; i++) {
+		if (shape[i].any) {
+			shape[i].rot.degree += 2;
+		}
+	}
+
 	glutPostRedisplay(); //타이머에 넣는다.
 	glutTimerFunc(100, Timerfunction, 1); //타이머 다시 출력
 
@@ -185,28 +255,80 @@ void Keyboard(unsigned char key, int x, int y) {
 	switch (key)
 	{
 	case 'x':
-		camera.x += 1;
+		camera.x += 0.5;
 		break;
 	case 'X':
-		camera.x -= 1;
+		camera.x -= 0.5;
 		break;
 	case 'y':
-		camera.y += 1;
+		camera.y += 0.5;
 		break;
 	case 'Y':
-		camera.y -= 1;
+		camera.y -= 0.5;
 		break;
 	case 'z':
-		camera.z += 1;
+		camera.z += 0.5;
 		break;
 	case 'Z':
-		camera.z -= 1;
+		camera.z -= 0.5;
+		break;
+	case 'l':
+		ani = TRUE;
+		for (int i = 0; i < 2; i++) {
+			if (i == 0) {
+				shape[i].any = TRUE;
+				shape[i].rot.x = 0;
+				shape[i].rot.y = 1;
+				shape[i].rot.z = 0;
+			}
+			else {
+				shape[i].any = FALSE;
+			}
+		}
 		break;
 	case 'r':
+		ani = TRUE;
+		for (int i = 0; i < 2; i++) {
+			if (i != 0) {
+				shape[i].any = TRUE;
+				shape[i].rot.x = 0;
+				shape[i].rot.y = 1;
+				shape[i].rot.z = 0;
+			}
+			else {
+				shape[i].any = FALSE;
+			}
+		}
+		break;
+	case 'o':
+		ani = FALSE;
+		for (int i = 0; i < 2; i++) {
+				shape[i].any = TRUE;
+				shape[i].rot.x = 0;
+				shape[i].rot.y = 1;
+				shape[i].rot.z = 0;
+		}
+		break;
+	case 'p':
 		camera.x = 0;
 		camera.y = 0;
 		camera.z = 1;
 		break;
+	case 'c'://도형 바꾸끼
+	case 'C':
+		change_count++;
+		if (change_count % 2 == 1) {
+			Look = TRUE;
+		}
+		else {
+			Look = FALSE;
+		}
+		break;
+	case '1':
+		select_count++;
+		for (int i = 0; i < 2; i++) {
+			shape[i].select = (select_count%4);
+		}
 	default:
 		;
 		break;
