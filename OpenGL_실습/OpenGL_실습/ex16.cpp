@@ -65,8 +65,8 @@ int st_help;
 BOOL Save = false;
 BOOL ani = FALSE;
 BOOL Look = FALSE;
-Shape sp[PT];
-Shape small[2];
+
+Translate_pos camera;
 Shape tra;
 int rot_count;
 int rot_command;
@@ -78,7 +78,7 @@ void SetupRC()
 }
 void main(int argc, char *argv[]) {
 	//초기화
-
+	click_count = 0;
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitWindowPosition(100, 100);//윈도우 띄우기 좌표
@@ -87,7 +87,6 @@ void main(int argc, char *argv[]) {
 	// - 랜덤으로 시작 도형 설정하기
 	//도형 그리기
 	//SetupRC();
-
 
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
@@ -102,22 +101,27 @@ void main(int argc, char *argv[]) {
 GLvoid drawScene(GLvoid)
 {
 	glEnable(GL_DEPTH_TEST);
-
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glPushMatrix();
+	gluLookAt(
+		camera.x, camera.y, camera.z,  //위5 eye
+		0, 0, 0, //방향 center
+		0, 1, 0); //위쪽방향(건들 ㄴㄴ) up
 
 	glLineWidth(2);
 	glColor3f((float)255 / 255, (float)255 / 255, (float)255 / 255);
 	glMatrixMode(GL_MODELVIEW);
 	//좌표축 그리기
+	
 	glPushMatrix();
 	glScalef(1, 0.001, 1);
-	glutSolidCube(500);
-	
+	glutSolidCube(40);
+		
 	glPopMatrix();
 	//가운데 막대 그리기
 	glColor3f((float)255 / 255, (float)0 / 255, (float)0 / 255);
-	
+
 	for (int i = 0; i < 3; i++) {
 		glPushMatrix();
 		if (i == 0) {
@@ -137,7 +141,7 @@ GLvoid drawScene(GLvoid)
 		glPopMatrix();
 	}
 	
-
+	glPopMatrix();
 
 	glutSwapBuffers();
 }
@@ -160,9 +164,23 @@ void Timerfunction(int value) {
 void Keyboard(unsigned char key, int x, int y) {
 	switch (key)
 	{
-	
+	case 'x':
+		camera.x += 1;
+		break;
+	case 'X':
+		camera.x -= 1;
+		break;
 	case 'y':
-		click_count += 1;
+		camera.y += 1;
+		break;
+	case 'Y':
+		camera.y -= 1;
+		break;
+	case 'z':
+		camera.z += 1;
+		break;
+	case 'Z':
+		camera.z -= 1;
 		break;
 	default:
 		;
@@ -181,10 +199,5 @@ GLvoid Reshape(int w, int h)
 	gluPerspective(45, WideSize / HighSize, 1, Z_Size); //윈도우를 초기화 하는 함수입니다!
 	glTranslatef(0, 0, -300);
 	glMatrixMode(GL_MODELVIEW);
-	glutKeyboardFunc(Keyboard);
 
-	gluLookAt(
-		1, 50 + click_count, 100,  //위5 eye
-		0, 0, 0, //방향 center
-		0, 1, 0); //위쪽방향(건들 ㄴㄴ) up
 }
