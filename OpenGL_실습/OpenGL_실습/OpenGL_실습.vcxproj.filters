@@ -54,7 +54,7 @@
     <ClCompile Include="ex17.cpp">
       <Filter>소스 파일\GL2</Filter>
     </ClCompile>
-    <ClCompile Include="ex17_2.cpp">
+    <ClCompile Include="ex17_save.cpp">
       <Filter>소스 파일\GL2</Filter>
     </ClCompile>
   </ItemGroup>
