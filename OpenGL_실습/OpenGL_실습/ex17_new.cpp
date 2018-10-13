@@ -40,9 +40,9 @@ typedef struct Color
 	int B;
 };
 typedef struct Translate_pos {
-	float x;
-	float y;
-	float z;
+	double x;
+	double y;
+	double z;
 	float degree;
 };
 
@@ -53,7 +53,6 @@ typedef struct Shape
 	Color cl;//색상
 	Translate_pos pos;
 	Translate_pos move;
-	Translate_pos scale;
 	Translate_pos rot;
 	Translate_pos sa;
 	int size;
@@ -75,6 +74,9 @@ int Look_count;
 Shape sh[PT];
 Shape sh2[PT];
 Shape camera;
+Translate_pos EYE;
+Translate_pos AT;
+Translate_pos UP;
 
 //회전 선택 관련 함수
 BOOL Sel_Rot;
@@ -88,81 +90,86 @@ typedef struct Po
 	float y;
 };
 
+int Matrix_O(int sel,int num_0_0,int num_0_1, int num_0_2, int num_1_0, int num_1_1, int num_1_2, int num_2_0, int num_2_1, int num_2_2) {//3X3 행렬 계산
+	int m0[3];//i , j , k행
+	int m1[3];//첫번째 원소 행
+	int m2[3];//2행
+	int result;
+	//0행 대입
+	m0[0] = num_0_0;
+	m0[1] = num_0_1;
+	m0[2] = num_0_2;
+	//1행 대입
+	m1[0] = num_1_0;
+	m1[1] = num_1_1;
+	m1[2] = num_1_2;
+	//2행 대입
+	m2[0] = num_2_0;
+	m2[1] = num_2_1;
+	m2[2] = num_2_2;
 
-void rot_custom(int init_sel, int sel, int degree, int move_x, int move_y, int move_z) {
+	//값 구하기
+	if (sel == 0) {
+		result = (m0[0] * ((m1[1] * m2[2]) - (m1[2] * m2[1])));
+	}
+	else if (sel == 1) {
+		result = (m0[1] * ((m1[0] * m2[2]) - (m1[2] * m2[0])));
+	}
+	else if (sel == 2) {
+		result = (m0[2] * ((m1[0] * m2[1]) - (m1[1] * m2[0])));
+	}
+	if (result < 0) {
+		result = -1;
+	}
+	else if (result > 0) {
+		result = 1;
+	}
+	
+	return result;
+}
+
+void rot_custom(int init_sel, int sel, int degree, int rot_x, int rot_y, int rot_z , int move_x, int move_y , int move_z) {
 	//initialize 초기화
 	//x = 0
 	//y = 1
 	//z = 2
-	int t = 0;
+	int u[3];
+	int v[3];
+	int n[3];
+
+	//n 값 계산
+	n[0] = EYE.x - AT.x;
+	n[1] = EYE.y - AT.y;
+	n[2] = EYE.z - AT.z;
 	
-	GLdouble x_rotate[16] = {
-		1, 0, 0, 0,
-		0, cos(degree * PI * 10 / 180),  -sin(degree * PI * 10 / 180), 0,
-		0, sin(degree * PI * 10 / 180), cos(degree * PI * 10 / 180), 0,
-		0, 0, 0, 1
-	};
-	GLdouble y_rotate[16] = {
-		cos(degree * PI * 10 / 180), 0, sin(degree * PI * 10 / 180), 0,
-		0, 1,  0, 0,
-		-sin(degree * PI * 10 / 180), 0,cos(degree * PI * 10 / 180), 0,
-		0, 0, 0, 1
-	};
-	GLdouble z_rotate[16] = {
-		cos(degree * PI * 10 / 180),  -sin(degree * PI * 10 / 180), 0,0,
-		sin(degree * PI * 10 / 180), cos(degree * PI * 10 / 180), 0,0,
-		0, 0, 1, 0,
-		0, 0, 0, 1
+	//u값 계산
+	u[0] = Matrix_O(0,rot_x , rot_y , rot_z, UP.x, UP.y, UP.z, n[0], n[1], n[2]);
+	u[1] = Matrix_O(1, rot_x, rot_y, rot_z, UP.x, UP.y, UP.z, n[0], n[1], n[2]);
+	u[2] = Matrix_O(2, rot_x, rot_y, rot_z, UP.x, UP.y, UP.z, n[0], n[1], n[2]);
+	
+	//v값 계산
+	v[0] = Matrix_O(0, rot_x, rot_y, rot_z, n[0], n[1], n[2] , u[0] , u[1], u[2]);
+	v[1] = Matrix_O(1, rot_x, rot_y, rot_z, n[0], n[1], n[2], u[0], u[1], u[2]);
+	v[2] = Matrix_O(2, rot_x, rot_y, rot_z, n[0], n[1], n[2], u[0], u[1], u[2]);
+	int init = (PI * 10 / 180);
+	GLdouble identity[16] = {
+		1, 0, 0,0,
+		0,1,0,0,
+		0,0,1,0,
+		0,0,0,1
 	};
 	GLdouble all_rotate[16] = {
-		cos(degree * PI * 10 / 180)  + cos(degree * PI * 10 / 180),  -sin(degree * PI * 10 / 180), 0,0,
-		sin(degree * PI * 10 / 180), cos(degree * PI * 10 / 180), 0,0,
-		0, 0, 1, 0,
-		0, 0, 0, 1
+		u[0] , u[1] , u[2], (-((move_x) * u[0]) + -((move_y)* u[1]) + -((move_z)* u[2]))
+		,v[0] , v[1] , v[2], (-((move_x)* v[0]) + -((move_y)* v[1]) + -((move_z)* v[2]))
+		,n[0] , n[1] , n[2], (-((move_x)* n[0]) + -((move_y)* n[1]) + -((move_z)* n[2]))
+		,0, 0,0,1
 	};
-	GLdouble move[16] = {//x축 이동
-		1,0, 0, 0,
-		0, 1, 0, 0,
-		0, 0, 1, 0,
-		move_x, move_y,move_z, 1
-	};
-	//glLoadMatrixd(x_rotate);
-	//glLoadMatrixd(y_rotate);
-	//glLoadMatrixd(z_rotate);
-	if (sel == 0) {
-		if (init_sel == 1) {
-			glMultMatrixd(y_rotate);
-		}
-		else if (init_sel == 2) {
-			glMultMatrixd(z_rotate);
-		}
-		//glMultMatrixd(move);
-		glMultMatrixd(x_rotate);
-
-	}
-	else if (sel == 1) {
-		if (init_sel == 0) {
-			glMultMatrixd(x_rotate);
-		}
-		else if (init_sel == 2) {
-			glMultMatrixd(z_rotate);
-		}
-		//glMultMatrixd(move);
-
-		glMultMatrixd(y_rotate);
-	}
-	else if (sel == 2) {
-		if (init_sel == 0) {
-			glMultMatrixd(x_rotate);
-		}
-		else if (init_sel == 1) {
-			glMultMatrixd(y_rotate);
-		}
-		//glMultMatrixd(move);
-		glMultMatrixd(z_rotate);
-	}
+	
+	//glLoadIdentity();
+	//glMultMatrixd(identity);
 
 };
+
 void main(int argc, char *argv[]) {
 
 	for (int i = 0; i < PT; i++) {
@@ -175,6 +182,14 @@ void main(int argc, char *argv[]) {
 		sh2[i].pos.z = 100 * sin(PI * i * 10 / 180);
 		sh2[i].pos.y = 1;
 	}
+	camera.rot.x = 0;
+	camera.rot.y = 0;
+	camera.rot.z = 0;
+
+	EYE.x = 0, EYE.y = 0, EYE.z = 0;//EYE백터 초기화
+	AT.x = 0, AT.y = 0, AT.z =-1;//EYE백터 초기화
+	UP.x = 0, UP.y = 1, UP.z = 0;//EYE백터 초기화
+
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
@@ -200,21 +215,45 @@ GLvoid drawScene(GLvoid)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glPointSize(4);
 	glLineWidth(1);
-	
+	GLdouble all_rotate2[16] = {
+		(cos(camera.rot.y) * cos(camera.rot.z)) * camera.move.x,
+		(((-1) * cos(camera.rot.y)) * sin(camera.rot.z)),
+		sin(camera.rot.y),
+		0,
+
+		(sin(camera.rot.x) * sin(camera.rot.y) * cos(camera.rot.z) + sin(camera.rot.z) * cos(camera.rot.x)),
+		(((-1) * sin(camera.rot.x) * sin(camera.rot.y) * sin(camera.rot.z)) + cos(camera.rot.x) * cos(camera.rot.z)) * camera.move.y,
+		(((-1) * sin(camera.rot.x) * cos(camera.rot.y))),
+		0,
+
+		(((-1) * cos(camera.rot.x) * sin(camera.rot.y) * cos(camera.rot.z)) + sin(camera.rot.x) * sin(camera.rot.z)),
+		(cos(camera.rot.x) * sin(camera.rot.y) * sin(camera.rot.z) + sin(camera.rot.x) * sin(camera.rot.z)),
+		(cos(camera.rot.x) * cos(camera.rot.y)) * camera.move.z,
+		0,
+
+		0,
+		0,
+		0,
+		1
+	};
+
 	glMatrixMode(GL_MODELVIEW);
 	//출력 설정
 	glColor3f((float)100 / 255, (float)200 / 255, (float)100 / 255);
 	//좌표축 그리기
-
+	
 	glPushMatrix(); { //상태 저장 열기
+		//rot_custom(old_rot, next_rot, camera.rot.degree, camera.rot.x, camera.rot.y, camera.rot.z , camera.move.x , camera.move.y, camera.move.z);
+		//glLoadMatrixd(all_rotate2);
+		glLoadIdentity();
 
-		rot_custom(old_rot, next_rot, camera.rot.degree, camera.move.x, camera.move.y, camera.move.z);
+		glMultMatrixd(all_rotate2);
 		gluLookAt(
-			camera.move.x, camera.move.y, camera.move.z,  //위5 eye
-			0, 0, 0, //방향 center
-			0, 1, 0); //위쪽방향(건들 ㄴㄴ) up
+			EYE.x + camera.move.x + camera.move.z, EYE.y + camera.move.y, EYE.z + camera.move.z * 2,  //위5 eye
+			AT.x, AT.y, AT.z , //방향 center
+			UP.x, UP.y, UP.z); //위쪽방향(건들 ㄴㄴ) up
 					  //glTranslated(0, 0, 0);
-
+		
 		glPushMatrix();
 		if (Look) {//솔리드 낫 솔리드
 			glutWireSphere(40, 10, 10);
@@ -363,35 +402,37 @@ void Keyboard(unsigned char key, int x, int y) {
 		break;
 	//---------카메라
 	case 'x':
-		camera.rot.degree -= 1;
+		camera.rot.x -= 0.1;
 			old_rot = next_rot;
 			next_rot = 0;
 			Sel_Rot = TRUE;
 		break;
 	case 'X':
-		camera.rot.degree -= 1;
+		camera.rot.x+= 1 ;
 		old_rot = next_rot;
 		next_rot = 0;
 		Sel_Rot = TRUE;
 		break;
 	case 'y':
-		camera.rot.degree += 1;
+		camera.rot.y -= 1 
+			;
 		old_rot = next_rot;
 		next_rot = 1;
 		break;
 	case 'Y':
-		camera.rot.degree += 1;
+		camera.rot.y += 1 
+			;
 		old_rot = next_rot;
 		next_rot = 1;
 		break;
 	case 'z':
-		camera.rot.degree += 1;
+		camera.rot.z -= 1 
+			;
 		old_rot = next_rot;
 		next_rot = 2;
 		break;
 	case 'Z':
-		camera.rot.degree += 1;
-		camera.rot.degree += 1;
+		camera.rot.z += 0.1;
 		old_rot = next_rot;
 		next_rot = 2; 
 		break;
@@ -418,6 +459,10 @@ void Keyboard(unsigned char key, int x, int y) {
 		camera.move.x = 0;
 		camera.move.y = 0;
 		camera.move.z = 0;
+		camera.rot.x = 0;
+		camera.rot.y = 0;
+		camera.rot.z = 0;
+
 		break;
 
 		// z는 그대로 camera.z 
@@ -437,9 +482,11 @@ GLvoid Reshape(int w, int h)
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	if (ani) {
+	if (!ani) {
 		gluPerspective(60.0f, w / h, 1.0, 1000.0);
+		glPushMatrix();
 		glTranslatef(0.0, 0.0, -300.0);     // 투영 공간을 화면 안쪽으로 이동하여 시야를 확보한다.
+		glPushMatrix();
 	}
 	else {
 		glOrtho(0, WideSize, HighSize, 0, -Z_Size / 2, Z_Size / 2); //윈도우를 초기화 하는 함수입니다!
