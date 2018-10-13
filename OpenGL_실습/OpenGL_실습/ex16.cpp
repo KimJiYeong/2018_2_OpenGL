@@ -62,7 +62,7 @@ typedef struct Shape
 };
 
 int change_count;
-int select_count;
+int next_rot;
 int st_help;
 BOOL Save = false;
 BOOL ani = FALSE;
@@ -361,9 +361,9 @@ void Keyboard(unsigned char key, int x, int y) {
 		}
 		break;
 	case '1':
-		select_count++;
+		next_rot++;
 		for (int i = 0; i < 2; i++) {
-			shape[i].select = (select_count%4);
+			shape[i].select = (next_rot%4);
 		}
 		break;
 	default:

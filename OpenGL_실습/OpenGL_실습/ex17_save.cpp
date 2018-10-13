@@ -62,7 +62,7 @@ typedef struct Shape
 };
 
 int change_count;
-int select_count;
+int next_rot;
 int st_help;
 BOOL Save = false;
 BOOL ani = FALSE;
@@ -163,7 +163,7 @@ GLvoid drawScene(GLvoid)
 		glLoadIdentity();
 		glMatrixMode(GL_MODELVIEW);
 		//glRotatef(view.rot.degree, view.rot.x, view.rot.y, view.rot.z);
-		rot_custom(select_count, camera.rot.degree);
+		rot_custom(next_rot, camera.rot.degree);
 		gluLookAt(
 			0, 0, 1,  //위5 eye
 			0, 0, 0, //방향 center
@@ -261,17 +261,17 @@ void Keyboard(unsigned char key, int x, int y) {
 		//------------------카메라------------------------
 	case 'x':
 		camera.rot.degree += 1;
-		select_count = 0;
+		next_rot = 0;
 		// z는 그대로 camera.z 
 		break;
 	case 'y':
 		camera.rot.degree += 1;
-		select_count = 1;
+		next_rot = 1;
 		// z는 그대로 camera.z 
 		break;
 	case 'z':
 		camera.rot.degree += 1;
-		select_count = 2;
+		next_rot = 2;
 
 
 		// z는 그대로 camera.z 
