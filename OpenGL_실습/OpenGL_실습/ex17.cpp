@@ -16,8 +16,8 @@ BOOL draw_Act_On;
 //타이머 제어
 void Timerfunction(int value);
 BOOL Time_Act_On; //타이머 활성화 여부
-int Time_count; //타이머 카운트
-
+int move_count; //타이머 카운트
+int Time_count2;
 				//마우스 제어
 void Mouse(int button, int state, int x, int y);
 POINT ms_click; //마우스 좌표
@@ -75,7 +75,17 @@ BOOL Look = FALSE;
 
 Shape camera;
 Shape sh[36];
+Shape sh_2[36];
 Shape view;
+
+
+GLdouble identity[16] = {
+	1, 0, 0, 0,
+	0, 1, 0, 0,
+	0, 0, 1, 0,
+	0, 0, 0, 1
+};
+
 void SetupRC()
 {
 	//초기화
@@ -84,11 +94,17 @@ void SetupRC()
 void main(int argc, char *argv[]) {
 	//초기화
 	for (int i = 0; i < PT; i++) {
-		sh[i].pos.x = 100 * cos(PI * i * 10 / PT);
-		sh[i].pos.y = 100 * sin(PI * i * 10 / PT);
-		sh[i].pos.z = 1;
+		sh[i].pos.z = 50 * cos(PI * i / 15);
+		sh[i].pos.x = 50 * sin(PI * i/ 15);
+		sh[i].pos.y = 0;
 	}
-
+	for (int i = 0; i < PT; i++) {
+		sh_2[i].pos.z = 30 * cos(PI * i / 15);
+		sh_2[i].pos.x = 30 * sin(PI * i / 15);
+		sh_2[i].pos.y = 0;
+	}
+	old_rot = 3;
+	next_rot = 3;
 
 	camera.pos.x = 0;
 	camera.pos.y = 1;
@@ -171,12 +187,6 @@ void rot_custom(int init_sel ,int sel, int degree) {
 	}
 	
 };
-GLdouble identity[16] = {
-	1 , 0,0,0,
-	0, 1, 0, 0,
-	0, 0, 1, 0,
-	0, 0, 0, 1
-};
 GLvoid drawScene(GLvoid)
 {
 	//오늘의 나에게 내가 지금 너무 피곤해서 죽을것같으니
@@ -185,38 +195,79 @@ GLvoid drawScene(GLvoid)
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
-
+	
+	glLoadIdentity();
+	glPushMatrix();
+	//glRotated(90, 1, 0, 0);
+	rot_custom(old_rot, next_rot, camera.rot.degree);
+	gluLookAt(
+		1, 0, 1,  //위5 eye
+		0, 0, -200, //방향 center
+		0, 1, 0); //위쪽방향(건들 ㄴㄴ) up
+				  //glTranslated(0, 0, 0);
 	glPushMatrix(); {
 		
-		glLoadIdentity();
-		glLoadMatrixd(identity);
-
-		rot_custom(old_rot, next_rot, camera.rot.degree);
-		gluLookAt(
-			0, 0, 0,  //위5 eye
-			0, 0, -1, //방향 center
-			0, 1, 0); //위쪽방향(건들 ㄴㄴ) up
-		//glTranslated(0, 0, 0);
-
 		glLineWidth(2);
 		glPushMatrix();//카메라 제외
 		{
 
-			
-			glPushMatrix();//가운데 원 그리기
-			{
 				glTranslated(0, 0, 0);
 				glColor3f((float)61 / 255, (float)183 / 255, (float)204 / 255);
 				glutWireSphere(20, 15, 15);
-				for (int i = 0; i < PT - 1; i++) {
-					glBegin(GL_LINES);
-					glVertex3d(sh[i].pos.x, sh[i].pos.y, sh[i].pos.z);
-					glVertex3d(sh[i + 1].pos.x, sh[i + 1].pos.y, sh[i + 1].pos.z);
-					glEnd();
+			
+			glPushMatrix();//가운데 궤도 그리기
+			{
+			
+				for (int i = 0; i < 3; i++) {
+					if (i == 0) {
+						glColor3f((float)0 / 255, (float)130 / 255, (float)153 / 255);
+					}
+					else if (i == 1) {
+						glColor3f((float)0 / 255, (float)130 / 255, (float)0/ 255);
+						glRotatef(45, 0, 1, 0);
+					}
+					else if (i == 2) {
+						glRotatef(90, 0, 1, 0);
+					}
+
+
+					
+					for (int i = 0; i < PT - 1; i++) {
+						glBegin(GL_LINES);
+						glVertex3d(sh[i].pos.x, sh[i].pos.y, sh[i].pos.z);
+						glVertex3d(sh[i + 1].pos.x, sh[i + 1].pos.y, sh[i + 1].pos.z);
+						glEnd();
+					}
+
 				}
 
 			}
-			glPopMatrix();//가운데 원 그리기 끝
+			glPopMatrix();//가운데 궤도 그리기 끝
+
+			glPushMatrix();//위성 그리기
+			{
+					
+					glTranslated(sh[move_count].pos.x, sh[move_count].pos.y, sh[move_count].pos.z);
+					glColor3f((float)67 / 255, (float)116 / 255, (float)217 / 255);
+					glutWireSphere(10, 15, 15);
+					glColor3f((float)0 / 255, (float)130 / 255, (float)153 / 255);
+					for (int i = 0; i < PT - 1; i++) {//궤도
+						glBegin(GL_LINES);
+						glVertex3d(sh_2[i].pos.x, sh_2[i].pos.y, sh_2[i].pos.z);
+						glVertex3d(sh_2[i + 1].pos.x, sh_2[i + 1].pos.y, sh_2[i + 1].pos.z);
+						glEnd();
+						
+					}
+					glPushMatrix();
+
+					glTranslated(sh_2[move_count].pos.x, sh_2[move_count].pos.y, sh_2[move_count].pos.z);
+					glColor3f((float)67 / 255, (float)116 / 255, (float)217 / 255);
+					glutWireSphere(5, 10, 10);
+					
+					glPopMatrix();
+
+			}
+			glPopMatrix();//위성 그리기 끝
 
 			//그리기
 			for (int i = 1; i < 4; i++) {
@@ -231,6 +282,7 @@ GLvoid drawScene(GLvoid)
 		}glPopMatrix(); //카메라 제외 끝
 
 	}glPopMatrix();//그리기 끝
+	glPopMatrix();
 
 	glutSwapBuffers();
 }
@@ -244,7 +296,18 @@ void Mouse(int button, int state, int x, int y) {
 
 }
 void Timerfunction(int value) {
-	Time_count++;
+
+	if (Time_count2 == PT) {
+		Time_count2 = 0;
+	}
+	Time_count2++;
+
+	if (move_count == PT) {
+		move_count = 0;
+	}
+	move_count++;
+
+
 	glutPostRedisplay(); //타이머에 넣는다.
 	glutTimerFunc(100, Timerfunction, 1); //타이머 다시 출력
 
@@ -344,5 +407,5 @@ GLvoid Reshape(int w, int h)
 	gluPerspective(45, WideSize / HighSize, Z_Size/2, Z_Size ); //윈도우를 초기화 하는 함수입니다!
 	glTranslated(0, 0, -300);
 	glMatrixMode(GL_MODELVIEW);
-
+	glLoadIdentity();
 }

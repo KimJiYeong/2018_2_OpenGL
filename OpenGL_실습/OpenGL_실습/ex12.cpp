@@ -16,7 +16,7 @@ BOOL draw_Act_On;
 //타이머 제어
 void Timerfunction(int value);
 BOOL Time_Act_On; //타이머 활성화 여부
-int Time_count; //타이머 카운트
+int move_count; //타이머 카운트
 
 				//마우스 제어
 void Mouse(int button, int state, int x, int y);
@@ -131,7 +131,7 @@ GLvoid drawScene(GLvoid)
 
 	//작은 삼각형------------------
 	glPushMatrix();
-	glTranslated(sh[Time_count].pos.x, sh[Time_count].pos.y, sh[Time_count].pos.z);
+	glTranslated(sh[move_count].pos.x, sh[move_count].pos.y, sh[move_count].pos.z);
 	glRotated(small.rot.degree, 0, 1,0);
 	if (small.select) {
 		glBegin(GL_TRIANGLES);
@@ -205,10 +205,10 @@ void Mouse(int button, int state, int x, int y) {
 void Timerfunction(int value) {
 
 	//타이머 내용 입력
-	if (Time_count == PT) {
-		Time_count = 0;
+	if (move_count == PT) {
+		move_count = 0;
 	}
-	Time_count++;
+	move_count++;
 	
 	if (ani) {
 		if (small.size >= 40) {

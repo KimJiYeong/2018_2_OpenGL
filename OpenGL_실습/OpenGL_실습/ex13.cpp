@@ -16,7 +16,7 @@ BOOL draw_Act_On;
 //타이머 제어
 void Timerfunction(int value);
 BOOL Time_Act_On; //타이머 활성화 여부
-int Time_count; //타이머 카운트
+int move_count; //타이머 카운트
 
 				//마우스 제어
 void Mouse(int button, int state, int x, int y);
@@ -201,16 +201,16 @@ void Mouse(int button, int state, int x, int y) {
 	}
 }
 void Timerfunction(int value) {
-	Time_count++;
+	move_count++;
 	//타이머 내용 입력
 	
-	if (Time_count < PT) {
-		if (Time_count == PT - 1) {
-			Time_count = 0;
+	if (move_count < PT) {
+		if (move_count == PT - 1) {
+			move_count = 0;
 	}
-		small[0].pos.x = sp1[Time_count].pos.x;
-		small[0].pos.y = sp1[Time_count].pos.y;
-		small[0].pos.z = sp1[Time_count].pos.z;
+		small[0].pos.x = sp1[move_count].pos.x;
+		small[0].pos.y = sp1[move_count].pos.y;
+		small[0].pos.z = sp1[move_count].pos.z;
 
 	}
 

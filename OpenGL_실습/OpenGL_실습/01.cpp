@@ -17,7 +17,7 @@ BOOL draw_Act_On;
 //타이머 제어
 void Timerfunction(int value);
 BOOL Time_Act_On; //타이머 활성화 여부
-int Time_count; //타이머 카운트
+int move_count; //타이머 카운트
 
 				//마우스 제어
 void Mouse(int button, int state, int x, int y);

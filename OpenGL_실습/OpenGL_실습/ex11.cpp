@@ -16,7 +16,7 @@ BOOL draw_Act_On;
 //타이머 제어
 void Timerfunction(int value);
 BOOL Time_Act_On; //타이머 활성화 여부
-int Time_count; //타이머 카운트
+int move_count; //타이머 카운트
 
 				//마우스 제어
 void Mouse(int button, int state, int x, int y);
@@ -128,7 +128,7 @@ void Timerfunction(int value) {
 	//타이머 내용 입력
 	
 	if (ani) {
-		Time_count++;
+		move_count++;
 		if (!Look) {
 			move.x -= 1;
 		}
@@ -280,12 +280,12 @@ void Keyboard(unsigned char key, int x, int y) {
 		move.x += 10;
 		break;
 	case 'a'://x 축 따라 -
-		Time_count = 0; 
+		move_count = 0; 
 		ani = TRUE;
 		Look = FALSE;
 		break;
 	case 'A':
-		Time_count = 0;
+		move_count = 0;
 		ani = TRUE;
 		Look = TRUE;
 		break;

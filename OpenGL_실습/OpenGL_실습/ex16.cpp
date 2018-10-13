@@ -16,7 +16,7 @@ BOOL draw_Act_On;
 //타이머 제어
 void Timerfunction(int value);
 BOOL Time_Act_On; //타이머 활성화 여부
-int Time_count; //타이머 카운트
+int move_count; //타이머 카운트
 
 				//마우스 제어
 void Mouse(int button, int state, int x, int y);
@@ -157,7 +157,7 @@ GLvoid drawScene(GLvoid)
 	
 	for (int i = 0; i < 2; i++) {
 		glPushMatrix();//도형 그리기
-		glRotatef(Time_count, 0, 1, 0);
+		glRotatef(move_count, 0, 1, 0);
 		if (i == 0) {//첫번째 도형
 			glTranslated(shape[i].pos.x, 0, 0);
 			glRotatef(shape[i].rot.degree, shape[i].rot.x, shape[i].rot.y, shape[i].rot.z);
@@ -245,7 +245,7 @@ void Mouse(int button, int state, int x, int y) {
 }
 void Timerfunction(int value) {
 	if (!ani) {
-		Time_count += 1;//타이머 카운트
+		move_count += 1;//타이머 카운트
 	}
 	for (int i = 0; i < 2; i++) {
 		if (shape[i].any) {
