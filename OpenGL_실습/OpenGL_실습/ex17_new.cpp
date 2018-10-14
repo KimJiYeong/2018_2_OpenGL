@@ -175,18 +175,18 @@ void main(int argc, char *argv[]) {
 	for (int i = 0; i < PT; i++) {
 		sh[i].pos.x = 100 * cos(PI * i * 10 / 180);
 		sh[i].pos.z = 100 * sin(PI * i * 10 / 180);
-		sh[i].pos.y = 1;
+		sh[i].pos.y = 0;
 	}
 	for (int i = 0; i < PT; i++) {
 		sh2[i].pos.x = 100 * cos(PI * i * 10 / 180);
 		sh2[i].pos.z = 100 * sin(PI * i * 10 / 180);
-		sh2[i].pos.y = 1;
+		sh2[i].pos.y = 0;
 	}
 	camera.rot.x = 0;
 	camera.rot.y = 0;
 	camera.rot.z = 0;
 
-	EYE.x = 0, EYE.y = 0, EYE.z = 0;//EYE백터 초기화
+	EYE.x = 0, EYE.y = 0, EYE.z = 1;//EYE백터 초기화
 	AT.x = 0, AT.y = 0, AT.z =-1;//EYE백터 초기화
 	UP.x = 0, UP.y = 1, UP.z = 0;//EYE백터 초기화
 
@@ -216,19 +216,19 @@ GLvoid drawScene(GLvoid)
 	glPointSize(4);
 	glLineWidth(1);
 	GLdouble all_rotate2[16] = {
-		(cos(camera.rot.y) * cos(camera.rot.z)) * camera.move.x,
-		(((-1) * cos(camera.rot.y)) * sin(camera.rot.z)),
+		(cos(camera.rot.y) * cos(camera.rot.z)),
+		((-1) * cos(camera.rot.y) * sin(camera.rot.z)),
 		sin(camera.rot.y),
 		0,
 
 		(sin(camera.rot.x) * sin(camera.rot.y) * cos(camera.rot.z) + sin(camera.rot.z) * cos(camera.rot.x)),
-		(((-1) * sin(camera.rot.x) * sin(camera.rot.y) * sin(camera.rot.z)) + cos(camera.rot.x) * cos(camera.rot.z)) * camera.move.y,
-		(((-1) * sin(camera.rot.x) * cos(camera.rot.y))),
+		((-1) * sin(camera.rot.x) * sin(camera.rot.y) * sin(camera.rot.z) + cos(camera.rot.x) * cos(camera.rot.z)),
+		((-1) * sin(camera.rot.x) * cos(camera.rot.y)),
 		0,
 
-		(((-1) * cos(camera.rot.x) * sin(camera.rot.y) * cos(camera.rot.z)) + sin(camera.rot.x) * sin(camera.rot.z)),
+		((-1) * cos(camera.rot.x) * sin(camera.rot.y) * cos(camera.rot.z) + sin(camera.rot.x) * sin(camera.rot.z)),
 		(cos(camera.rot.x) * sin(camera.rot.y) * sin(camera.rot.z) + sin(camera.rot.x) * sin(camera.rot.z)),
-		(cos(camera.rot.x) * cos(camera.rot.y)) * camera.move.z,
+		(cos(camera.rot.x) * cos(camera.rot.y)) ,
 		0,
 
 		0,
@@ -241,20 +241,23 @@ GLvoid drawScene(GLvoid)
 	//출력 설정
 	glColor3f((float)100 / 255, (float)200 / 255, (float)100 / 255);
 	//좌표축 그리기
+	glPushMatrix();
+	glLoadMatrixd(all_rotate2);
 	
 	glPushMatrix(); { //상태 저장 열기
 		//rot_custom(old_rot, next_rot, camera.rot.degree, camera.rot.x, camera.rot.y, camera.rot.z , camera.move.x , camera.move.y, camera.move.z);
-		//glLoadMatrixd(all_rotate2);
-		glLoadIdentity();
-
+		
 		glMultMatrixd(all_rotate2);
+		glTranslated(camera.move.x * 100, camera.move.y * 100, camera.move.z * 100);
+		glTranslated(0, 0, 0);
 		gluLookAt(
-			EYE.x + camera.move.x + camera.move.z, EYE.y + camera.move.y, EYE.z + camera.move.z * 2,  //위5 eye
-			AT.x, AT.y, AT.z , //방향 center
+			0, 30, 500,  //위5 eye
+			0,0,0, //방향 center
 			UP.x, UP.y, UP.z); //위쪽방향(건들 ㄴㄴ) up
 					  //glTranslated(0, 0, 0);
 		
 		glPushMatrix();
+		glTranslated(0, 0, 0);
 		if (Look) {//솔리드 낫 솔리드
 			glutWireSphere(40, 10, 10);
 		}
@@ -285,6 +288,7 @@ GLvoid drawScene(GLvoid)
 				//-------
 
 				glPushMatrix(); {
+					
 					if (i == 0) {
 						glTranslated(sh[move_count].pos.x, sh[move_count].pos.y, sh[move_count].pos.z);
 					}
@@ -348,7 +352,7 @@ GLvoid drawScene(GLvoid)
 		glPopMatrix(); //상태 저장 닫기
 
 	}glPopMatrix(); //상태 저장 닫기
-
+	glPopMatrix();
 	
 
 	glutSwapBuffers();
@@ -378,7 +382,6 @@ void Timerfunction(int value) {
 	glutTimerFunc(100, Timerfunction, 1); //타이머 다시 출력
 
 }
-
 void Keyboard(unsigned char key, int x, int y) {
 	switch (key)
 	{
@@ -402,20 +405,17 @@ void Keyboard(unsigned char key, int x, int y) {
 		break;
 	//---------카메라
 	case 'x':
-		camera.rot.x -= 0.1;
-			old_rot = next_rot;
-			next_rot = 0;
-			Sel_Rot = TRUE;
+		camera.rot.degree += 1;
+		camera.rot.x = 1;
+		camera.rot.y = 0;
+		camera.rot.z = 0;
 		break;
 	case 'X':
 		camera.rot.x+= 1 ;
-		old_rot = next_rot;
-		next_rot = 0;
-		Sel_Rot = TRUE;
 		break;
 	case 'y':
-		camera.rot.y -= 1 
-			;
+		//camera.rot.degree -= 1;
+		camera.rot.y -= 0;
 		old_rot = next_rot;
 		next_rot = 1;
 		break;
@@ -426,7 +426,8 @@ void Keyboard(unsigned char key, int x, int y) {
 		next_rot = 1;
 		break;
 	case 'z':
-		camera.rot.z -= 1 
+		camera.rot.degree -= 1;
+		camera.rot.z = cos(PI *camera.rot.degree * 10 / 180)
 			;
 		old_rot = next_rot;
 		next_rot = 2;
@@ -437,22 +438,22 @@ void Keyboard(unsigned char key, int x, int y) {
 		next_rot = 2; 
 		break;
 	case 'w':
-		camera.move.y += 2;
+		camera.move.y += 0.1;
 		break;
 	case 'a':
-		camera.move.x -= 2;
+		camera.move.x -= 0.1;
 		break;
 	case 's':
-		camera.move.y -= 2;
+		camera.move.y -= 0.1;
 		break;
 	case 'd':
-		camera.move.x += 2;
+		camera.move.x += 0.1;
 		break;
 	case '+':
-		camera.move.z += 2;
+		camera.move.z += 0.1;
 		break;
 	case '-':
-		camera.move.z -= 2;
+		camera.move.z -= 0.1;
 		break;
 	case 'i':
 		camera.rot.degree = 0;
