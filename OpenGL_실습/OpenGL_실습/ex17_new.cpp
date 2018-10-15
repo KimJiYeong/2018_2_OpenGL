@@ -72,10 +72,12 @@ int ani_count = 0;
 BOOL Look = FALSE;
 int Look_count;
 
+Shape main_shape;
 Shape sh[PT];
 Shape sh2[PT];
-Shape camera;
 
+
+Shape camera;
 Translate_pos EYE;
 Translate_pos AT;
 Translate_pos UP;
@@ -144,7 +146,6 @@ void main(int argc, char *argv[]) {
 		sh2[i].pos.y = 0;
 	}
 
-
 	camera.rot.x = 0;
 	camera.rot.y = 0;
 	camera.rot.z = 0;
@@ -153,7 +154,7 @@ void main(int argc, char *argv[]) {
 	camera.move.y = 0;
 	camera.move.z = 0;
 
-	EYE.x = 0, EYE.y = 0, EYE.z = 300;//EYE백터 초기화
+	EYE.x = 300, EYE.y = 0, EYE.z = 300;//EYE백터 초기화
 	AT.x = 0, AT.y = 0, AT.z =0;//EYE백터 초기화
 	UP.x = 0, UP.y = 1, UP.z = 0;//EYE백터 초기화
 
@@ -199,12 +200,11 @@ const void camera_custom
 		((-1) * sin(rot_x) * cos(rot_y)) + 
 		(cos(rot_x) * cos(rot_y)));//stay
 	*/
-	glTranslated(move_x, move_y, move_z);
-
+	
 	EYE.x =
 		((cos(rot_y) * cos(rot_z)) +
 		(sin(rot_x) * sin(rot_y) * cos(rot_z) + cos(rot_x) * sin(rot_z)) +
-			((-1) * cos(rot_x) * sin(rot_y) * cos(rot_z)) + (sin(rot_x) * sin(rot_z)));
+		((((-1) * cos(rot_x)) * sin(rot_y) * cos(rot_z)) + (sin(rot_x) * sin(rot_z))));
 
 
 	EYE.y =
@@ -214,7 +214,7 @@ const void camera_custom
 
 	EYE.z =
 		(sin(rot_y) +
-		((-1) * sin(rot_x) * cos(rot_y)) +
+		(((-1) * sin(rot_x)) * cos(rot_y)) +
 			(cos(rot_x) * cos(rot_y)));//stay
 
 
@@ -239,16 +239,18 @@ GLvoid drawScene(GLvoid)
 	glLoadIdentity();
 
 	glPushMatrix(); { //상태 저장 열기
+		glTranslated(camera.move.x, camera.move.y, camera.move.z);
+
 		gluLookAt(
 			EYE.x, EYE.y, EYE.z,  //위5 eye
 			AT.x, AT.y, AT.z, //방향 center
 			0, 1, 0 //위쪽방향(건들 ㄴㄴ) up
 		);
-		camera_custom(0,0,0, camera.rot.degree, camera.rot.x, camera.rot.y, camera.rot.z, camera.move.x, camera.move.y, camera.move.z);
+		camera_custom(0,0,0, camera.rot.degree, camera.rot.x, camera.rot.y , camera.rot.z, camera.move.x, camera.move.y, camera.move.z);
 
 		glPushMatrix();{
 		
-			glTranslated(0, 0, 0);
+			glTranslated(0,0,0);
 
 		if (Look) {//솔리드 낫 솔리드
 			glutWireSphere(40, 10, 10);
