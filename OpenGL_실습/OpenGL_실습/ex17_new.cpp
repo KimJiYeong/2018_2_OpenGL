@@ -241,15 +241,13 @@ GLvoid drawScene(GLvoid)
 	//출력 설정
 	glColor3f((float)100 / 255, (float)200 / 255, (float)100 / 255);
 	//좌표축 그리기
-	glPushMatrix();
-	glLoadMatrixd(all_rotate2);
-	
 	glPushMatrix(); { //상태 저장 열기
 		//rot_custom(old_rot, next_rot, camera.rot.degree, camera.rot.x, camera.rot.y, camera.rot.z , camera.move.x , camera.move.y, camera.move.z);
 		
+		glLoadMatrixd(all_rotate2);
+		glTranslated(camera.move.x, camera.move.y, camera.move.z);
 		glMultMatrixd(all_rotate2);
-		glTranslated(camera.move.x * 100, camera.move.y * 100, camera.move.z * 100);
-		glTranslated(0, 0, 0);
+		
 		gluLookAt(
 			0, 30, 500,  //위5 eye
 			0,0,0, //방향 center
@@ -352,7 +350,6 @@ GLvoid drawScene(GLvoid)
 		glPopMatrix(); //상태 저장 닫기
 
 	}glPopMatrix(); //상태 저장 닫기
-	glPopMatrix();
 	
 
 	glutSwapBuffers();
@@ -404,56 +401,43 @@ void Keyboard(unsigned char key, int x, int y) {
 		}
 		break;
 	//---------카메라
+	//rotate
 	case 'x':
-		camera.rot.degree += 1;
-		camera.rot.x = 1;
-		camera.rot.y = 0;
-		camera.rot.z = 0;
+		camera.rot.x -= 0.1;
 		break;
 	case 'X':
-		camera.rot.x+= 1 ;
+		camera.rot.x+= 0.1 ;
 		break;
 	case 'y':
-		//camera.rot.degree -= 1;
-		camera.rot.y -= 0;
-		old_rot = next_rot;
-		next_rot = 1;
+		camera.rot.y -= 0.1;
 		break;
 	case 'Y':
-		camera.rot.y += 1 
-			;
-		old_rot = next_rot;
-		next_rot = 1;
+		camera.rot.y += 0.1 ;
 		break;
 	case 'z':
-		camera.rot.degree -= 1;
-		camera.rot.z = cos(PI *camera.rot.degree * 10 / 180)
-			;
-		old_rot = next_rot;
-		next_rot = 2;
+		camera.rot.z += 0.1;
 		break;
 	case 'Z':
 		camera.rot.z += 0.1;
-		old_rot = next_rot;
-		next_rot = 2; 
 		break;
+	//move
 	case 'w':
-		camera.move.y += 0.1;
+		camera.move.y += 1;
 		break;
 	case 'a':
-		camera.move.x -= 0.1;
+		camera.move.x -= 1;
 		break;
 	case 's':
-		camera.move.y -= 0.1;
+		camera.move.y -= 1;
 		break;
 	case 'd':
-		camera.move.x += 0.1;
+		camera.move.x += 1;
 		break;
 	case '+':
-		camera.move.z += 0.1;
+		camera.move.z += 1;
 		break;
 	case '-':
-		camera.move.z -= 0.1;
+		camera.move.z -= 1;
 		break;
 	case 'i':
 		camera.rot.degree = 0;
