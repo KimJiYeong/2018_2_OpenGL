@@ -200,23 +200,22 @@ const void camera_custom
 		((-1) * sin(rot_x) * cos(rot_y)) + 
 		(cos(rot_x) * cos(rot_y)));//stay
 	*/
-	
 	EYE.x =
 		((cos(rot_y) * cos(rot_z)) +
 		(sin(rot_x) * sin(rot_y) * cos(rot_z) + cos(rot_x) * sin(rot_z)) +
-		((((-1) * cos(rot_x)) * sin(rot_y) * cos(rot_z)) + (sin(rot_x) * sin(rot_z))));
-
+			((((-1) * cos(rot_x)) * sin(rot_y) * cos(rot_z)) + (sin(rot_x) * sin(rot_z))));
 
 	EYE.y =
-		(((-1) * cos(rot_y) * sin(rot_z)) +
-		(((-1) * sin(rot_x) * sin(rot_y) * sin(rot_z)) + (cos(rot_x) * cos(rot_z))) +
-			((cos(rot_x) * sin(rot_y) * sin(rot_z)) + (sin(rot_x) * sin(rot_z))));
-
+			(((-1) * cos(rot_y) * sin(rot_z)) +
+			(((-1) * sin(rot_x) * sin(rot_y) * sin(rot_z)) + (cos(rot_x) * cos(rot_z))) +
+				((cos(rot_x) * sin(rot_y) * sin(rot_z)) + (sin(rot_x) * sin(rot_z))));
+	
 	EYE.z =
-		(sin(rot_y) +
-		(((-1) * sin(rot_x)) * cos(rot_y)) +
-			(cos(rot_x) * cos(rot_y)));//stay
+			(sin(rot_y) +
+			(((-1) * sin(rot_x)) * cos(rot_y)) +
+				(cos(rot_x) * cos(rot_y)));//stay
 
+	
 
 	AT.x = pos_x;
 	AT.y = pos_y;
@@ -246,8 +245,9 @@ GLvoid drawScene(GLvoid)
 			AT.x, AT.y, AT.z, //방향 center
 			0, 1, 0 //위쪽방향(건들 ㄴㄴ) up
 		);
-		camera_custom(0,0,0, camera.rot.degree, camera.rot.x, camera.rot.y , camera.rot.z, camera.move.x, camera.move.y, camera.move.z);
 
+			camera_custom(0, 0, 0, camera.rot.degree, camera.rot.x, camera.rot.y, camera.rot.z, camera.move.x, camera.move.y, camera.move.z);
+		
 		glPushMatrix();{
 		
 			glTranslated(0,0,0);
@@ -400,23 +400,29 @@ void Keyboard(unsigned char key, int x, int y) {
 	//rotate
 	case 'x':
 		camera.rot.x -= 0.1;
+		Sel_Rot = TRUE;
 		break;
 	case 'X':
 		camera.rot.x+= 0.1 ;
+		Sel_Rot = TRUE;
 		break;
 
 	case 'y':
 		camera.rot.y -= 0.1;
+		Sel_Rot = TRUE;
 		break;
 	case 'Y':
 		camera.rot.y += 0.1 ;
+		Sel_Rot = TRUE;
 		break;
 
 	case 'z':
 		camera.rot.z -= 0.1;
+		Sel_Rot = TRUE;
 		break;
 	case 'Z':
 		camera.rot.z += 0.1;
+		Sel_Rot = TRUE;
 		break;
 
 	//move
@@ -449,6 +455,7 @@ void Keyboard(unsigned char key, int x, int y) {
 		camera.rot.y = 0;
 		camera.rot.z = 0;
 
+		Sel_Rot = FALSE;
 		break;
 
 		// z는 그대로 camera.z 
