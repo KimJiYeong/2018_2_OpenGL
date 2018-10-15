@@ -2,6 +2,7 @@
 #include <random>
 #include <time.h>
 #include <math.h>
+
 GLvoid Reshape(int w, int h);
 
 //해상도 설정
@@ -40,10 +41,10 @@ typedef struct Color
 	int B;
 };
 typedef struct Translate_pos {
-	double x;
-	double y;
-	double z;
-	float degree;
+	double x =0;
+	double y =0;
+	double z =0;
+	float degree =0;
 };
 
 #define PT 36//도형 갯수 설정
@@ -129,9 +130,6 @@ int Matrix_O(int sel,int num_0_0,int num_0_1, int num_0_2, int num_1_0, int num_
 	return result;
 }
 
-void rot_custom(int init_sel, int sel, int degree, int rot_x, int rot_y, int rot_z , int move_x, int move_y , int move_z) {
-
-};
 
 void main(int argc, char *argv[]) {
 
@@ -145,12 +143,18 @@ void main(int argc, char *argv[]) {
 		sh2[i].pos.z = 100 * sin(PI * i * 10 / 180);
 		sh2[i].pos.y = 0;
 	}
+
+
 	camera.rot.x = 0;
 	camera.rot.y = 0;
 	camera.rot.z = 0;
 
-	EYE.x = 0, EYE.y = 0, EYE.z = 1;//EYE백터 초기화
-	//AT.x = 0, AT.y = 0, AT.z =-1;//EYE백터 초기화
+	camera.move.x = 0;
+	camera.move.y = 0;
+	camera.move.z = 0;
+
+	EYE.x = 0, EYE.y = 0, EYE.z = 300;//EYE백터 초기화
+	AT.x = 0, AT.y = 0, AT.z =0;//EYE백터 초기화
 	UP.x = 0, UP.y = 1, UP.z = 0;//EYE백터 초기화
 
 
@@ -172,6 +176,53 @@ void main(int argc, char *argv[]) {
 }
 
 
+const void camera_custom
+	(double pos_x, double pos_y , double pos_z,
+	double degree, const double rot_x, const double rot_y, const double rot_z,
+	const double move_x, const double move_y, const double move_z) {
+	
+	/*
+	원 함수
+	EYE.x = 
+		((cos(rot_y) * cos(rot_z)) + 
+		(sin(rot_x) * sin(rot_y) * cos(rot_z) + cos(rot_x) * sin(rot_z)) +
+		((-1) * cos(rot_x) * sin(rot_y) * cos(rot_z)) + (sin(rot_x) * sin(rot_z)));
+
+
+	EYE.y = 
+		(((-1) * cos(rot_y) * sin(rot_z)) + 
+		(((-1) * sin(rot_x) * sin(rot_y) * sin(rot_z)) + (cos(rot_x) * cos(rot_z))) +
+		((cos(rot_x) * sin(rot_y) * sin(rot_z)) + (sin(rot_x) * sin(rot_z))));
+	
+	EYE.z = 
+		(sin(rot_y) + 
+		((-1) * sin(rot_x) * cos(rot_y)) + 
+		(cos(rot_x) * cos(rot_y)));//stay
+	*/
+	glTranslated(move_x, move_y, move_z);
+
+	EYE.x =
+		((cos(rot_y) * cos(rot_z)) +
+		(sin(rot_x) * sin(rot_y) * cos(rot_z) + cos(rot_x) * sin(rot_z)) +
+			((-1) * cos(rot_x) * sin(rot_y) * cos(rot_z)) + (sin(rot_x) * sin(rot_z)));
+
+
+	EYE.y =
+		(((-1) * cos(rot_y) * sin(rot_z)) +
+		(((-1) * sin(rot_x) * sin(rot_y) * sin(rot_z)) + (cos(rot_x) * cos(rot_z))) +
+			((cos(rot_x) * sin(rot_y) * sin(rot_z)) + (sin(rot_x) * sin(rot_z))));
+
+	EYE.z =
+		(sin(rot_y) +
+		((-1) * sin(rot_x) * cos(rot_y)) +
+			(cos(rot_x) * cos(rot_y)));//stay
+
+
+	AT.x = pos_x;
+	AT.y = pos_y;
+	AT.z = pos_z;
+
+};
 
 GLvoid drawScene(GLvoid)
 {
@@ -181,54 +232,23 @@ GLvoid drawScene(GLvoid)
 	glPointSize(4);
 	glLineWidth(1);
 
-
-	GLdouble all_rotate2[16] = {
-		(cos(camera.rot.y) * cos(camera.rot.z)) + 300,
-		((-1) * cos(camera.rot.y) * sin(camera.rot.z)),
-		sin(camera.rot.y),
-		0,
-
-		(sin(camera.rot.x) * sin(camera.rot.y) * cos(camera.rot.z) + sin(camera.rot.z) * cos(camera.rot.x)),
-		((-1) * sin(camera.rot.x) * sin(camera.rot.y) * sin(camera.rot.z) + cos(camera.rot.x) * cos(camera.rot.z)) + 300,
-		((-1) * sin(camera.rot.x) * cos(camera.rot.y)),
-		0,
-
-		((-1) * cos(camera.rot.x) * sin(camera.rot.y) * cos(camera.rot.z) + sin(camera.rot.x) * sin(camera.rot.z)),
-		(cos(camera.rot.x) * sin(camera.rot.y) * sin(camera.rot.z) + sin(camera.rot.x) * sin(camera.rot.z)),
-		(cos(camera.rot.x) * cos(camera.rot.y)) + 300,
-		0,
-
-		0,
-		0,
-		0,
-		1
-	};
-
-	EYE.x = (cos(camera.rot.y) * cos(camera.rot.z)) + ((-1) * cos(camera.rot.x) * sin(camera.rot.y) * cos(camera.rot.z) + sin(camera.rot.x) * sin(camera.rot.z)) + ((-1) * cos(camera.rot.x) * sin(camera.rot.y) * cos(camera.rot.z) + sin(camera.rot.x) * sin(camera.rot.z));
-	EYE.y = ((-1) * cos(camera.rot.y) * sin(camera.rot.z)) + ((-1) * sin(camera.rot.x) * sin(camera.rot.y) * sin(camera.rot.z) + cos(camera.rot.x) * cos(camera.rot.z)) + (cos(camera.rot.x) * sin(camera.rot.y) * sin(camera.rot.z) + sin(camera.rot.x) * sin(camera.rot.z));
-	EYE.z = sin(camera.rot.y) + ((-1) * sin(camera.rot.x) * cos(camera.rot.y)) + (cos(camera.rot.x) * cos(camera.rot.y));
-
-	glMatrixMode(GL_MODELVIEW);
+	//glMatrixMode(GL_MODELVIEW);
 	//출력 설정
 	glColor3f((float)100 / 255, (float)200 / 255, (float)100 / 255);
 	//좌표축 그리기
-	
+	glLoadIdentity();
+
 	glPushMatrix(); { //상태 저장 열기
-		//rot_custom(old_rot, next_rot, camera.rot.degree, camera.rot.x, camera.rot.y, camera.rot.z , camera.move.x , camera.move.y, camera.move.z);
-		
-		glTranslated(camera.move.x, camera.move.y, camera.move.z);
-		//glMultMatrixd(all_rotate2);
-		
-		glPushMatrix(); {
-		
 		gluLookAt(
 			EYE.x, EYE.y, EYE.z,  //위5 eye
 			AT.x, AT.y, AT.z, //방향 center
-			UP.x, UP.y, UP.z); //위쪽방향(건들 ㄴㄴ) up
-					  //glTranslated(0, 0, 0);
-		
+			0, 1, 0 //위쪽방향(건들 ㄴㄴ) up
+		);
+		camera_custom(0,0,0, camera.rot.degree, camera.rot.x, camera.rot.y, camera.rot.z, camera.move.x, camera.move.y, camera.move.z);
+
 		glPushMatrix();{
-		glTranslated(0, 0, 0);
+		
+			glTranslated(0, 0, 0);
 
 		if (Look) {//솔리드 낫 솔리드
 			glutWireSphere(40, 10, 10);
@@ -323,7 +343,6 @@ GLvoid drawScene(GLvoid)
 	
 		}glPopMatrix(); //상태 저장 닫기
 
-		}glPopMatrix();
 	}glPopMatrix(); //상태 저장 닫기
 	
 
@@ -379,23 +398,25 @@ void Keyboard(unsigned char key, int x, int y) {
 	//rotate
 	case 'x':
 		camera.rot.x -= 0.1;
-
 		break;
 	case 'X':
 		camera.rot.x+= 0.1 ;
 		break;
+
 	case 'y':
 		camera.rot.y -= 0.1;
 		break;
 	case 'Y':
 		camera.rot.y += 0.1 ;
 		break;
+
 	case 'z':
-		camera.rot.z += 0.1;
+		camera.rot.z -= 0.1;
 		break;
 	case 'Z':
 		camera.rot.z += 0.1;
 		break;
+
 	//move
 	case 'w':
 		camera.move.y += 1;
@@ -403,9 +424,11 @@ void Keyboard(unsigned char key, int x, int y) {
 	case 'a':
 		camera.move.x -= 1;
 		break;
+
 	case 's':
 		camera.move.y -= 1;
 		break;
+
 	case 'd':
 		camera.move.x += 1;
 		break;
@@ -427,7 +450,6 @@ void Keyboard(unsigned char key, int x, int y) {
 		break;
 
 		// z는 그대로 camera.z 
-		break;
 
 		//-----------카메라 끝 --------
 	default:
@@ -444,13 +466,15 @@ GLvoid Reshape(int w, int h)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	if (!ani) {
-		gluPerspective(60.0f, w / h, 1.0, 1000.0);
-		glTranslated(0.0, 0.0, -300.0);     // 투영 공간을 화면 안쪽으로 이동하여 시야를 확보한다.
+		//glRotatef(30, 0, 1, 0);
+			gluPerspective(60.0f, w / h, 1.0, 1000.0);
+
+			glTranslated(0.0, 0.0, -300.0);     // 투영 공간을 화면 안쪽으로 이동하여 시야를 확보한다.
 	}
 	else {
 		glOrtho(0, WideSize, HighSize, 0, -Z_Size / 2, Z_Size / 2); //윈도우를 초기화 하는 함수입니다!
 		glTranslated(WideSize / 2, HighSize / 2, 0);
-		glRotatef(30, 1, 0, 0);
+		//glRotatef(-60, 1, 0, 0);
 
 	}
 	glMatrixMode(GL_MODELVIEW);
