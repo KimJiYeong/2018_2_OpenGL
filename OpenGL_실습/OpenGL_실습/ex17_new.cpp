@@ -178,28 +178,11 @@ void main(int argc, char *argv[]) {
 
 
 const void camera_custom
-	(double pos_x, double pos_y , double pos_z,
-	double degree, const double rot_x, const double rot_y, const double rot_z,
-	const double move_x, const double move_y, const double move_z) {
+	(double pos_x, double pos_y , double pos_z, //위치
+	double degree, const double rot_x, const double rot_y, const double rot_z, //회전
+	const double move_x, const double move_y, const double move_z //움직임
+	) {
 	
-	/*
-	원 함수
-	EYE.x = 
-		((cos(rot_y) * cos(rot_z)) + 
-		(sin(rot_x) * sin(rot_y) * cos(rot_z) + cos(rot_x) * sin(rot_z)) +
-		((-1) * cos(rot_x) * sin(rot_y) * cos(rot_z)) + (sin(rot_x) * sin(rot_z)));
-
-
-	EYE.y = 
-		(((-1) * cos(rot_y) * sin(rot_z)) + 
-		(((-1) * sin(rot_x) * sin(rot_y) * sin(rot_z)) + (cos(rot_x) * cos(rot_z))) +
-		((cos(rot_x) * sin(rot_y) * sin(rot_z)) + (sin(rot_x) * sin(rot_z))));
-	
-	EYE.z = 
-		(sin(rot_y) + 
-		((-1) * sin(rot_x) * cos(rot_y)) + 
-		(cos(rot_x) * cos(rot_y)));//stay
-	*/
 	EYE.x =
 		((cos(rot_y) * cos(rot_z)) +
 		(sin(rot_x) * sin(rot_y) * cos(rot_z) + cos(rot_x) * sin(rot_z)) +
