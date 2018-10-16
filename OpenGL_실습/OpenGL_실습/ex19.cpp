@@ -24,7 +24,7 @@ int move_count2; //타이머 카운트
 int move_count3; //타이머 카운트
 int move_count4; //타이머 카운트
 
-				//마우스 제어
+				 //마우스 제어
 void Mouse(int button, int state, int x, int y);
 POINT ms_click; //마우스 좌표
 BOOL Mouse_Act_On; //마우스 활성화 여부
@@ -41,10 +41,10 @@ typedef struct Color
 	int B;
 };
 typedef struct Translate_pos {
-	double x =0;
-	double y =0;
-	double z =0;
-	float degree =0;
+	double x = 0;
+	double y = 0;
+	double z = 0;
+	float degree = 0;
 };
 
 #define PT 36//도형 갯수 설정
@@ -94,7 +94,7 @@ typedef struct Po
 	float y;
 };
 
-int Matrix_O(int sel,int num_0_0,int num_0_1, int num_0_2, int num_1_0, int num_1_1, int num_1_2, int num_2_0, int num_2_1, int num_2_2) {//3X3 행렬 계산
+int Matrix_O(int sel, int num_0_0, int num_0_1, int num_0_2, int num_1_0, int num_1_1, int num_1_2, int num_2_0, int num_2_1, int num_2_2) {//3X3 행렬 계산
 	int m0[3];//i , j , k행
 	int m1[3];//첫번째 원소 행
 	int m2[3];//2행
@@ -128,7 +128,7 @@ int Matrix_O(int sel,int num_0_0,int num_0_1, int num_0_2, int num_1_0, int num_
 	else if (result > 0) {
 		result = 1;
 	}
-	
+
 	return result;
 }
 
@@ -155,7 +155,7 @@ void main(int argc, char *argv[]) {
 	camera.move.z = 0;
 
 	EYE.x = 300, EYE.y = 0, EYE.z = 300;//EYE백터 초기화
-	AT.x = 0, AT.y = 0, AT.z =0;//EYE백터 초기화
+	AT.x = 0, AT.y = 0, AT.z = 0;//EYE백터 초기화
 	UP.x = 0, UP.y = 1, UP.z = 0;//EYE백터 초기화
 
 
@@ -178,27 +178,27 @@ void main(int argc, char *argv[]) {
 
 
 const void camera_custom
-	(double pos_x, double pos_y , double pos_z,
+(double pos_x, double pos_y, double pos_z,
 	double degree, const double rot_x, const double rot_y, const double rot_z,
 	const double move_x, const double move_y, const double move_z) {
-	
+
 	/*
 	원 함수
-	EYE.x = 
-		((cos(rot_y) * cos(rot_z)) + 
-		(sin(rot_x) * sin(rot_y) * cos(rot_z) + cos(rot_x) * sin(rot_z)) +
-		((-1) * cos(rot_x) * sin(rot_y) * cos(rot_z)) + (sin(rot_x) * sin(rot_z)));
+	EYE.x =
+	((cos(rot_y) * cos(rot_z)) +
+	(sin(rot_x) * sin(rot_y) * cos(rot_z) + cos(rot_x) * sin(rot_z)) +
+	((-1) * cos(rot_x) * sin(rot_y) * cos(rot_z)) + (sin(rot_x) * sin(rot_z)));
 
 
-	EYE.y = 
-		(((-1) * cos(rot_y) * sin(rot_z)) + 
-		(((-1) * sin(rot_x) * sin(rot_y) * sin(rot_z)) + (cos(rot_x) * cos(rot_z))) +
-		((cos(rot_x) * sin(rot_y) * sin(rot_z)) + (sin(rot_x) * sin(rot_z))));
-	
-	EYE.z = 
-		(sin(rot_y) + 
-		((-1) * sin(rot_x) * cos(rot_y)) + 
-		(cos(rot_x) * cos(rot_y)));//stay
+	EYE.y =
+	(((-1) * cos(rot_y) * sin(rot_z)) +
+	(((-1) * sin(rot_x) * sin(rot_y) * sin(rot_z)) + (cos(rot_x) * cos(rot_z))) +
+	((cos(rot_x) * sin(rot_y) * sin(rot_z)) + (sin(rot_x) * sin(rot_z))));
+
+	EYE.z =
+	(sin(rot_y) +
+	((-1) * sin(rot_x) * cos(rot_y)) +
+	(cos(rot_x) * cos(rot_y)));//stay
 	*/
 	EYE.x =
 		((cos(rot_y) * cos(rot_z)) +
@@ -206,16 +206,16 @@ const void camera_custom
 			((((-1) * cos(rot_x)) * sin(rot_y) * cos(rot_z)) + (sin(rot_x) * sin(rot_z))));
 
 	EYE.y =
-			(((-1) * cos(rot_y) * sin(rot_z)) +
-			(((-1) * sin(rot_x) * sin(rot_y) * sin(rot_z)) + (cos(rot_x) * cos(rot_z))) +
-				((cos(rot_x) * sin(rot_y) * sin(rot_z)) + (sin(rot_x) * sin(rot_z))));
-	
-	EYE.z =
-			(sin(rot_y) +
-			(((-1) * sin(rot_x)) * cos(rot_y)) +
-				(cos(rot_x) * cos(rot_y)));//stay
+		(((-1) * cos(rot_y) * sin(rot_z)) +
+		(((-1) * sin(rot_x) * sin(rot_y) * sin(rot_z)) + (cos(rot_x) * cos(rot_z))) +
+			((cos(rot_x) * sin(rot_y) * sin(rot_z)) + (sin(rot_x) * sin(rot_z))));
 
-	
+	EYE.z =
+		(sin(rot_y) +
+		(((-1) * sin(rot_x)) * cos(rot_y)) +
+			(cos(rot_x) * cos(rot_y)));//stay
+
+
 
 	AT.x = pos_x;
 	AT.y = pos_y;
@@ -246,107 +246,107 @@ GLvoid drawScene(GLvoid)
 			0, 1, 0 //위쪽방향(건들 ㄴㄴ) up
 		);
 
-			camera_custom(0, 0, 0, camera.rot.degree, camera.rot.x, camera.rot.y, camera.rot.z, camera.move.x, camera.move.y, camera.move.z);
-		
-		glPushMatrix();{
-		
-			glTranslated(0,0,0);
+		camera_custom(0, 0, 0, camera.rot.degree, camera.rot.x, camera.rot.y, camera.rot.z, camera.move.x, camera.move.y, camera.move.z);
 
-		if (Look) {//솔리드 낫 솔리드
-			glutWireSphere(40, 10, 10);
-		}
-		else {
-			glutSolidSphere(40, 10, 10);
-		}
 		glPushMatrix(); {
-			glScalef(2, 2, 2);
-			glColor3f((float)67 / 255, (float)116 / 255, (float)217 / 255);
-			for (int i = 0; i < 3; i++) {
-				if (i == 0) {
-					;
-				}
-				else if (i == 1) {
-					glRotatef(45, 0, 0, 1);
-				}
-				else if (i == 2) {
-					glRotatef(-90, 0, 0, 1);
-				}
-				for (int i = 0; i < PT - 1; i++) {
 
-					glBegin(GL_LINES);
-					glVertex3d(sh[i].pos.x, sh[i].pos.y, sh[i].pos.z);
-					glVertex3d(sh[i + 1].pos.x, sh[i + 1].pos.y, sh[i + 1].pos.z);
-					glEnd();
-				}
+			glTranslated(0, 0, 0);
 
-				//-------
-
-				glPushMatrix(); {
-
+			if (Look) {//솔리드 낫 솔리드
+				glutWireSphere(40, 10, 10);
+			}
+			else {
+				glutSolidSphere(40, 10, 10);
+			}
+			glPushMatrix(); {
+				glScalef(2, 2, 2);
+				glColor3f((float)67 / 255, (float)116 / 255, (float)217 / 255);
+				for (int i = 0; i < 3; i++) {
 					if (i == 0) {
-						glTranslated(sh[move_count].pos.x, sh[move_count].pos.y, sh[move_count].pos.z);
+						;
 					}
 					else if (i == 1) {
-						glTranslated(sh[move_count3].pos.x, sh[move_count3].pos.y, sh[move_count3].pos.z);
+						glRotatef(45, 0, 0, 1);
 					}
 					else if (i == 2) {
-						glTranslated(sh[move_count4].pos.x, sh[move_count4].pos.y, sh[move_count4].pos.z);
-
+						glRotatef(-90, 0, 0, 1);
 					}
-					glPushMatrix();
-					if (Look) {//솔리드 낫 솔리드
-						glutWireSphere(10, 10, 10);
-					}
-					else {
-						glutSolidSphere(10, 10, 10);
-					}
-					glScalef(0.5, 0.5, 0.5);
-
-					glColor3f((float)67 / 255, (float)116 / 255, (float)217 / 255);
-
 					for (int i = 0; i < PT - 1; i++) {
 
 						glBegin(GL_LINES);
-						glVertex3d(sh2[i].pos.x, sh2[i].pos.y, sh2[i].pos.z);
-						glVertex3d(sh2[i + 1].pos.x, sh2[i + 1].pos.y, sh2[i + 1].pos.z);
+						glVertex3d(sh[i].pos.x, sh[i].pos.y, sh[i].pos.z);
+						glVertex3d(sh[i + 1].pos.x, sh[i + 1].pos.y, sh[i + 1].pos.z);
 						glEnd();
-
 					}
-					glPopMatrix();
 
-					//------
+					//-------
+
 					glPushMatrix(); {
-						glScalef(0.5, 0.5, 0.5);
-						glTranslated(sh2[move_count2].pos.x, sh2[move_count2].pos.y, sh2[move_count2].pos.z);
 
-						glColor3f((float)267 / 255, (float)116 / 255, (float)100 / 255);
-						glScalef(0.5, 0.5, 0.5);
+						if (i == 0) {
+							glTranslated(sh[move_count].pos.x, sh[move_count].pos.y, sh[move_count].pos.z);
+						}
+						else if (i == 1) {
+							glTranslated(sh[move_count3].pos.x, sh[move_count3].pos.y, sh[move_count3].pos.z);
+						}
+						else if (i == 2) {
+							glTranslated(sh[move_count4].pos.x, sh[move_count4].pos.y, sh[move_count4].pos.z);
+
+						}
+						glPushMatrix();
 						if (Look) {//솔리드 낫 솔리드
 							glutWireSphere(10, 10, 10);
 						}
 						else {
 							glutSolidSphere(10, 10, 10);
 						}
+						glScalef(0.5, 0.5, 0.5);
+
+						glColor3f((float)67 / 255, (float)116 / 255, (float)217 / 255);
+
+						for (int i = 0; i < PT - 1; i++) {
+
+							glBegin(GL_LINES);
+							glVertex3d(sh2[i].pos.x, sh2[i].pos.y, sh2[i].pos.z);
+							glVertex3d(sh2[i + 1].pos.x, sh2[i + 1].pos.y, sh2[i + 1].pos.z);
+							glEnd();
+
+						}
+						glPopMatrix();
+
+						//------
+						glPushMatrix(); {
+							glScalef(0.5, 0.5, 0.5);
+							glTranslated(sh2[move_count2].pos.x, sh2[move_count2].pos.y, sh2[move_count2].pos.z);
+
+							glColor3f((float)267 / 255, (float)116 / 255, (float)100 / 255);
+							glScalef(0.5, 0.5, 0.5);
+							if (Look) {//솔리드 낫 솔리드
+								glutWireSphere(10, 10, 10);
+							}
+							else {
+								glutSolidSphere(10, 10, 10);
+							}
+
+
+						}glPopMatrix(); //상태 저장 닫기
+
+										//-----
 
 
 					}glPopMatrix(); //상태 저장 닫기
 
-					//-----
+									//------
+					glColor3f((float)67 / 255, (float)116 / 255, (float)217 / 255);
 
+				}
 
-				}glPopMatrix(); //상태 저장 닫기
+			}glPopMatrix();
 
-				//------
-				glColor3f((float)67 / 255, (float)116 / 255, (float)217 / 255);
-
-			}
-
-		}glPopMatrix();
-	
 		}glPopMatrix(); //상태 저장 닫기
 
 	}glPopMatrix(); //상태 저장 닫기
-	
+
 
 	glutSwapBuffers();
 }
@@ -357,7 +357,7 @@ void Mouse(int button, int state, int x, int y) {
 		if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
 		{
 		}
-	
+
 	}
 
 }
@@ -367,7 +367,7 @@ void Timerfunction(int value) {
 	TIme_count++;
 
 	move_count = TIme_count % PT;
-	move_count2 = (TIme_count*2) % PT;
+	move_count2 = (TIme_count * 2) % PT;
 	move_count3 = (TIme_count * 3) % PT;
 	move_count4 = (TIme_count * 2) % PT;
 
@@ -396,14 +396,14 @@ void Keyboard(unsigned char key, int x, int y) {
 			ani = FALSE;//회전하는거 트루로
 		}
 		break;
-	//---------카메라
-	//rotate
+		//---------카메라
+		//rotate
 	case 'x':
 		camera.rot.x -= 0.1;
 		Sel_Rot = TRUE;
 		break;
 	case 'X':
-		camera.rot.x+= 0.1 ;
+		camera.rot.x += 0.1;
 		Sel_Rot = TRUE;
 		break;
 
@@ -412,7 +412,7 @@ void Keyboard(unsigned char key, int x, int y) {
 		Sel_Rot = TRUE;
 		break;
 	case 'Y':
-		camera.rot.y += 0.1 ;
+		camera.rot.y += 0.1;
 		Sel_Rot = TRUE;
 		break;
 
@@ -425,7 +425,7 @@ void Keyboard(unsigned char key, int x, int y) {
 		Sel_Rot = TRUE;
 		break;
 
-	//move
+		//move
 	case 'w':
 		camera.move.y += 1;
 		break;
@@ -476,9 +476,9 @@ GLvoid Reshape(int w, int h)
 	glLoadIdentity();
 	if (!ani) {
 		//glRotatef(30, 0, 1, 0);
-			gluPerspective(60.0f, w / h, 1.0, 1000.0);
+		gluPerspective(60.0f, w / h, 1.0, 1000.0);
 
-			glTranslated(0.0, 0.0, -300.0);     // 투영 공간을 화면 안쪽으로 이동하여 시야를 확보한다.
+		glTranslated(0.0, 0.0, -300.0);     // 투영 공간을 화면 안쪽으로 이동하여 시야를 확보한다.
 	}
 	else {
 		glOrtho(0, WideSize, HighSize, 0, -Z_Size / 2, Z_Size / 2); //윈도우를 초기화 하는 함수입니다!
@@ -488,5 +488,5 @@ GLvoid Reshape(int w, int h)
 	}
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	
+
 }
