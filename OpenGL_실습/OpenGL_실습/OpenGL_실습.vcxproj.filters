@@ -60,9 +60,6 @@
     <ClCompile Include="카메라연구.cpp">
       <Filter>소스 파일\practice</Filter>
     </ClCompile>
-    <ClCompile Include="17_pc2.cpp">
-      <Filter>소스 파일\GL2</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
