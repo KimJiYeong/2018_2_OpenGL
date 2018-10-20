@@ -68,13 +68,56 @@ BOOL Save = false;
 BOOL ani = FALSE;
 BOOL Look = FALSE;
 
-Translate_pos camera;
 Shape tra;
 int rot_count;
 int rot_command;
 
 Shape shape[2];
 Shape view;
+
+
+//카메라-----------------
+
+Shape camera;
+Translate_pos EYE;
+Translate_pos AT;
+Translate_pos UP;
+
+static int __x;
+static int __y;
+static int __z;
+
+
+const void camera_custom
+(double pos_x, double pos_y, double pos_z, //위치
+	double degree, const double rot_x, const double rot_y, const double rot_z, //회전
+	const double move_x, const double move_y, const double move_z //움직임
+) {
+
+
+	EYE.x =
+		((cos(rot_y) * cos(rot_z)) +
+		(sin(rot_x) * sin(rot_y) * cos(rot_z) + cos(rot_x) * sin(rot_z)) +
+			((((-1) * cos(rot_x)) * sin(rot_y) * cos(rot_z)) + (sin(rot_x) * sin(rot_z))));
+
+	EYE.y =
+		(((-1) * cos(rot_y) * sin(rot_z)) +
+		(((-1) * sin(rot_x) * sin(rot_y) * sin(rot_z)) + (cos(rot_x) * cos(rot_z))) +
+			((cos(rot_x) * sin(rot_y) * sin(rot_z)) + (sin(rot_x) * sin(rot_z))));
+
+	EYE.z =
+		(sin(rot_y) +
+		(((-1) * sin(rot_x)) * cos(rot_y)) +
+			(cos(rot_x) * cos(rot_y)));//stay
+
+	AT.x = pos_x;
+	AT.y = pos_y;
+	AT.z = pos_z;
+
+};
+
+
+
 void SetupRC()
 {
 	//초기화
@@ -82,10 +125,17 @@ void SetupRC()
 }
 void main(int argc, char *argv[]) {
 	//초기화
+	camera.rot.x = 0;
+	camera.rot.y = 0;
+	camera.rot.z = 0;
 
-	camera.x = 0;
-	camera.y = 1;
-	camera.z = 1;
+	camera.move.x = 0;
+	camera.move.y = 0;
+	camera.move.z = 0;
+
+	EYE.x = 0, EYE.y = 0, EYE.z = 300;//EYE백터 초기화
+	AT.x = 0, AT.y = 0, AT.z = 0;//EYE백터 초기화
+	UP.x = 0, UP.y = 1, UP.z = 0;//EYE백터 초기화
 
 	shape[0].pos.x = 100;
 	shape[1].pos.x = 100;
@@ -107,19 +157,28 @@ void main(int argc, char *argv[]) {
 	glutMainLoop();
 }
 
+
+
 GLvoid drawScene(GLvoid)
 {
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glPushMatrix();
-	glRotatef(view.rot.degree, view.rot.x, view.rot.y, view.rot.z);
-		glTranslated(0, 0, 0);
+	
+	glPushMatrix();//-----------------------------------
+	//glRotated(-45, 0, 0, 1);
+	glTranslated(camera.move.x, camera.move.y, camera.move.z);
+	camera_custom(0, 0, 0, camera.rot.degree, camera.rot.x, camera.rot.y, camera.rot.z, camera.move.x, camera.move.y, camera.move.z);
+
 	gluLookAt(
-		camera.x, camera.y, camera.z,  //위5 eye
-		0, 0, 0, //방향 center
-		0, 1, 0); //위쪽방향(건들 ㄴㄴ) up
-	//glTranslated(0, 0, 0);
+		EYE.x, EYE.y, EYE.z,  //위5 eye
+		AT.x, AT.y, AT.z, //방향 center
+		0, 1, 0 //위쪽방향(건들 ㄴㄴ) up
+	);
+
+	glPushMatrix();//---------------------------------------
+				  
+				  //glTranslated(0, 0, 0);
 	glLineWidth(2);
 	glColor3f((float)255 / 255, (float)255 / 255, (float)255 / 255);
 	glMatrixMode(GL_MODELVIEW);
@@ -231,7 +290,7 @@ GLvoid drawScene(GLvoid)
 
 
 	glPopMatrix();
-
+	glPopMatrix();
 	glutSwapBuffers();
 }
 
@@ -257,53 +316,79 @@ void Timerfunction(int value) {
 	glutTimerFunc(100, Timerfunction, 1); //타이머 다시 출력
 
 }
-
+int ttt;
+int ani_count;
 void Keyboard(unsigned char key, int x, int y) {
 	switch (key)
 	{
+		//---------카메라
+		//rotate
+	case 'x':
+		__x = 1;
+		camera.rot.x -= 0.1;
+		break;
 	case 'X':
-		view.rot.degree += 10;
-		view.rot.x = 1;
-		view.rot.y = 0;
-		view.rot.z = 0;
+		camera.rot.x += 0.1;
+		break;
+
+	case 'y':
+		__y = 1;
+		camera.rot.y -= 0.1;
 		break;
 	case 'Y':
-		view.rot.degree += 10;
-		view.rot.x = 0;
-		view.rot.y = 1;
-		view.rot.z = 0;
+		camera.rot.y += 0.1;
+		break;
+
+	case 'z':
+		__z = 1;
+		camera.rot.z -= 0.1;
 		break;
 	case 'Z':
-		view.rot.degree += 10;
-		view.rot.x = 0;
-		view.rot.y = 0;
-		view.rot.z = 1;
+		camera.rot.z += 0.1;
+		break;
+
+		//move
+	case 'w':
+		camera.move.y += 1;
+		break;
+	case 'a':
+		camera.move.x -= 1;
+		break;
+
+	case 's':
+		camera.move.y -= 1;
+		break;
+
+	case 'd':
+		camera.move.x += 1;
 		break;
 	case '+':
-		camera.degree -= 10;
-		camera.x = cos(PI *camera.degree * 10 / 90);
-		camera.z = sin(PI * camera.degree * 10 / 90);
+		camera.move.z += 1;
 		break;
-	case '_':
-		camera.degree += 10;
-		camera.x = cos(PI *camera.degree * 10 / 90);
-		camera.z = sin(PI * camera.degree * 10 / 90);
+	case '-':
+		camera.move.z -= 1;
 		break;
 	case 'i':
-		//나중에 망가지면 그때 고치자 오늘은 수고했어 끝!
-		camera.x = 0;
-		{
-			camera.z += 2;
-			camera.y += 2;
-		}
+		camera.rot.degree = 0;
+		camera.move.x = 0;
+		camera.move.y = 0;
+		camera.move.z = 0;
+		camera.rot.x = 0;
+		camera.rot.y = 0;
+		camera.rot.z = 0;
+
+		__x = 0;
+		__y = 0;
+		__z = 0;
+
 		break;
-	case 'o':
-		camera.x = 0;
-		{
-			camera.z -= 2;
-			camera.y -= 2;
-		}
-		break;
+
+		// z는 그대로 camera.z 
+
+		//-----------카메라 끝 --------
+
+
+
 	case 'L':
 		ani = TRUE;
 		for (int i = 0; i < 2; i++) {
@@ -333,23 +418,22 @@ void Keyboard(unsigned char key, int x, int y) {
 		}
 		break;
 	case 'O':
-		ani = FALSE;
-		for (int i = 0; i < 2; i++) {
+		ani = TRUE;
+		ttt++;
+		if (ttt % 2 == 0) {
+			for (int i = 0; i < 2; i++) {
 				shape[i].any = TRUE;
 				shape[i].rot.x = 0;
 				shape[i].rot.y = 1;
 				shape[i].rot.z = 0;
+			}
 		}
+		else {
+			ani = FALSE;
+		}
+		
 		break;
-	case 'p':
-		camera.x = 0;
-		camera.y = 1;
-		camera.z = 1;
-		view.rot.x = 0;
-		view.rot.y = 0;
-		view.rot.z = 0;
-
-		break;
+	
 	case 'c'://도형 바꾸끼
 	case 'C':
 		change_count++;
@@ -366,6 +450,18 @@ void Keyboard(unsigned char key, int x, int y) {
 			shape[i].select = (next_rot%4);
 		}
 		break;
+	case '2'://직각투영 유무
+		ani_count++;
+		if (ani_count % 2 == 1) {
+			ani = TRUE;//회전하는거 트루로
+			Reshape(WideSize, HighSize);
+		}
+		else {
+			ani = FALSE;//회전하는거 트루로
+			Reshape(WideSize, HighSize);
+		}
+		break;
+
 	default:
 		;
 		break;
@@ -380,8 +476,22 @@ GLvoid Reshape(int w, int h)
 	
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(45, WideSize / HighSize, 1, Z_Size); //윈도우를 초기화 하는 함수입니다!
-	glTranslatef(0, 0, -300);
-	glMatrixMode(GL_MODELVIEW);
+	//gluPerspective(45, WideSize / HighSize, 1, Z_Size); //윈도우를 초기화 하는 함수입니다!
+	//glTranslatef(0, 0, -300);
 
+
+	if (!ani) {
+		//glRotatef(30, 0, 1, 0);
+		gluPerspective(60.0f, w / h, 1.0, 1000.0);
+
+		glTranslated(0.0, 0.0, -300.0);     // 투영 공간을 화면 안쪽으로 이동하여 시야를 확보한다.
+	}
+	else {
+		glOrtho(0, WideSize, HighSize, 0, -Z_Size / 2, Z_Size / 2); //윈도우를 초기화 하는 함수입니다!
+		glTranslated(WideSize / 2, HighSize / 2, 0);
+		//glRotatef(-60, 1, 0, 0);
+
+	}
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 }

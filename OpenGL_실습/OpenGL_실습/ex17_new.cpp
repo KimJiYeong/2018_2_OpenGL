@@ -154,7 +154,7 @@ void main(int argc, char *argv[]) {
 	camera.move.y = 0;
 	camera.move.z = 0;
 
-	EYE.x = 300, EYE.y = 0, EYE.z = 300;//EYE백터 초기화
+	EYE.x = 0, EYE.y = 0, EYE.z = 300;//EYE백터 초기화
 	AT.x = 0, AT.y = 0, AT.z =0;//EYE백터 초기화
 	UP.x = 0, UP.y = 1, UP.z = 0;//EYE백터 초기화
 
@@ -232,9 +232,9 @@ GLvoid drawScene(GLvoid)
 			camera_custom(0, 0, 0, camera.rot.degree, camera.rot.x, camera.rot.y, camera.rot.z, camera.move.x, camera.move.y, camera.move.z);
 		
 		glPushMatrix();{
-		
+			
 			glTranslated(0,0,0);
-
+			
 		if (Look) {//솔리드 낫 솔리드
 			glutWireSphere(40, 10, 10);
 		}
@@ -378,6 +378,8 @@ void Keyboard(unsigned char key, int x, int y) {
 		else {
 			ani = FALSE;//회전하는거 트루로
 		}
+		Reshape(WideSize, HighSize);
+
 		break;
 	//---------카메라
 	//rotate
