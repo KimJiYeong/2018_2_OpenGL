@@ -146,8 +146,10 @@ void main(int argc, char *argv[]) {
 
 	shape.size = 15;
 
-	shape.pos.x = 100;
-	shape.pos.x = 100;
+	shape.pos.x = 0;
+	shape.pos.y = 0;
+	shape.pos.z = 0;
+
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitWindowPosition(100, 100);//윈도우 띄우기 좌표
@@ -175,66 +177,79 @@ GLvoid drawScene(GLvoid)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glPushMatrix();//-----------------------------------
-				   //glRotated(-45, 0, 0, 1);
-	glTranslated(camera.move.x, camera.move.y, camera.move.z);
-	camera_custom(0, 0, 0, camera.rot.degree, camera.rot.x, camera.rot.y, camera.rot.z, camera.move.x, camera.move.y, camera.move.z);
+	{
+		//glRotated(-45, 0, 0, 1);
+		glTranslated(camera.move.x, camera.move.y, camera.move.z);
+		camera_custom(0, 0, 0, camera.rot.degree, camera.rot.x, camera.rot.y, camera.rot.z, camera.move.x, camera.move.y, camera.move.z);
 
-	gluLookAt(
-		EYE.x, EYE.y, EYE.z,  //위5 eye
-		AT.x, AT.y, AT.z, //방향 center
-		0, 1, 0 //위쪽방향(건들 ㄴㄴ) up
-	);
+		gluLookAt(
+			EYE.x, EYE.y, EYE.z,  //위5 eye
+			AT.x, AT.y, AT.z, //방향 center
+			0, 1, 0 //위쪽방향(건들 ㄴㄴ) up
+		);
 
-	glPushMatrix();//---------------------------------------
+		glPushMatrix();//---------------------------------------
+		{
 
-				   //glTranslated(0, 0, 0);
-	glLineWidth(2);
-	glColor3f((float)255 / 255, (float)255 / 255, (float)255 / 255);
-	glMatrixMode(GL_MODELVIEW);
-	//좌표축 그리기
-	glPushMatrix();
+			//glTranslated(0, 0, 0);
+			glLineWidth(2);
+			glColor3f((float)255 / 255, (float)255 / 255, (float)255 / 255);
+			glMatrixMode(GL_MODELVIEW);
+			//좌표축 그리기
+			glPushMatrix(); {
 
-	glTranslated(0, -15, 0);
-	glScalef(1, 0.001, 1);
-	glutSolidCube(200);//발판 만들기
 
-	glPopMatrix();//좌표계 그리기
+				glTranslated(0, -shape.size, 0);
+				glScalef(1, 0.001, 1);
+				glutSolidCube(200);//발판 만들기
 
-				  //가운데 막대 그리기
-	glColor3f((float)255 / 255, (float)0 / 255, (float)0 / 255);
+			}
+			glPopMatrix();//좌표계 그리기
 
-	for (int i = 0; i < 3; i++) {
-		glPushMatrix();
-		if (i == 0) {
+						  //가운데 막대 그리기
 			glColor3f((float)255 / 255, (float)0 / 255, (float)0 / 255);
-			glRotated(90, 1, 0, 0);
+
+			for (int i = 0; i < 3; i++) {
+				glPushMatrix();
+				if (i == 0) {
+					glColor3f((float)255 / 255, (float)0 / 255, (float)0 / 255);
+					glRotated(90, 1, 0, 0);
+				}
+				else if (i == 1) {
+					glColor3f((float)0 / 255, (float)255 / 255, (float)0 / 255);
+					glRotated(90, 0, 1, 0);
+				}
+				else if (i == 2) {
+					glColor3f((float)0 / 255, (float)0 / 255, (float)255 / 255);
+					glRotated(90, 0, 0, 1);
+				}
+				glScalef(1, 0.1, 0.1);
+				glutSolidCube(40);
+				glPopMatrix();
+
+
+			}//좌표계 그리기
+			glPushMatrix();//도형 그리기
+			{
+				glTranslatef(shape.pos.x + shape.move.x, shape.pos.y + shape.move.y, shape.pos.z + shape.move.z);
+
+				glPushMatrix();
+				{
+
+					glRotatef(shape.rot.degree, shape.rot.x, shape.rot.y, shape.rot.z);
+
+					glutWireSphere(shape.size, 10, 10);
+					//glRotatef(Time_count, 0, 1, 0);
+
+				}
+				glPopMatrix();
+			}
+			glPopMatrix();//도형 그리기
+
+
 		}
-		else if (i == 1) {
-			glColor3f((float)0 / 255, (float)255 / 255, (float)0 / 255);
-			glRotated(90, 0, 1, 0);
-		}
-		else if (i == 2) {
-			glColor3f((float)0 / 255, (float)0 / 255, (float)255 / 255);
-			glRotated(90, 0, 0, 1);
-		}
-		glScalef(1, 0.1, 0.1);
-		glutSolidCube(40);
 		glPopMatrix();
-	
-	
-	}//좌표계 그리기
-	glPushMatrix();//도형 그리기
-	glTranslatef(shape.pos.x + shape.move.x, shape.pos.y + shape.move.y, shape.pos.z + shape.move.z);
-
-	glPushMatrix();
-	glRotatef(shape.rot.degree, shape.rot.x, shape.rot.y, shape.rot.z);
-
-	glutWireSphere(shape.size, 10, 10);
-	//glRotatef(Time_count, 0, 1, 0);
-	glPopMatrix();
-	glPopMatrix();//도형 그리기
-
-	glPopMatrix();
+	}
 	glPopMatrix();
 	glutSwapBuffers();
 }
@@ -251,19 +266,28 @@ void Timerfunction(int value) {
 	if (!ani) {
 		move_count += 1;//타이머 카운트
 	}
-	shape.rot.degree += 2;
+	shape.rot.degree += PI * 2;
 	if (shape.any) {
-		if(shape.size * PI * 2 >= shape.move.x && shape.b.b_x)
-			shape.move.x + 1;
-
-		else if (shape.size * PI * 2 >= shape.move.y && shape.b.b_y)
-			shape.move.y + 1;
-
-		else if (shape.size * PI * 2 >= shape.move.z && shape.b.b_z)
-			shape.move.z + 1;
-
+		if ((shape.size * PI * 2 >= shape.move.x ) && shape.b.b_x )
+		{
+			if ((shape.pos.x + shape.move.x  < 100)) {
+				shape.move.x += 1;
+			}
+		}
+		else if ((shape.size * PI * 2 >= shape.move.y) && shape.b.b_y)
+		{
+		//	shape.move.y += 1;
+		}
+		else if ((shape.size * PI * 2 >= shape.move.z) && shape.b.b_z)
+		{
+			if ((shape.pos.z + shape.move.z < 100)) {
+				shape.move.z += 1;
+			}
+		}
 	}
-	
+
+
+
 	glutPostRedisplay(); //타이머에 넣는다.
 	glutTimerFunc(100, Timerfunction, 1); //타이머 다시 출력
 
@@ -342,23 +366,26 @@ void Keyboard(unsigned char key, int x, int y) {
 	case 'L':
 		ani = TRUE;
 		ttt++;
-		if (ttt% 2 == 0) {
+		if (ttt % 2 == 0) {
 			shape.any = TRUE;
 			shape.move.x = 0;
 			shape.b.b_x = TRUE;
 			shape.b.b_y = FALSE;
 			shape.b.b_z = FALSE;
 
-			shape.rot.x = 0;
-			shape.rot.y = 0;
+		//	shape.rot.x = 0;
+		//	shape.rot.y = 0;
 			shape.rot.z = 1;
 		}
 		else {
+			shape.pos.x += shape.move.x;
 
 			shape.b.b_x = FALSE;
 			shape.b.b_y = FALSE;
 			shape.b.b_z = FALSE;
-
+		//	shape.rot.x = 0;
+		//	shape.rot.y = 0;
+		//	shape.rot.z = 0;
 			shape.any = FALSE;
 		}
 		break;
@@ -374,16 +401,18 @@ void Keyboard(unsigned char key, int x, int y) {
 			shape.b.b_y = TRUE;
 			shape.b.b_z = FALSE;
 
-			shape.rot.x = 0;
+		//	shape.rot.x = 0;
 			shape.rot.y = 1;
-			shape.rot.z = 0;
+		//	shape.rot.z = 0;
 		}
 		else {
-
+			shape.pos.y += shape.move.y;
 			shape.b.b_x = FALSE;
 			shape.b.b_y = FALSE;
 			shape.b.b_z = FALSE;
-
+		//	shape.rot.x = 0;
+		//	shape.rot.y = 0;
+		//	shape.rot.z = 0;
 			shape.any = FALSE;
 		}
 		break;
@@ -398,16 +427,18 @@ void Keyboard(unsigned char key, int x, int y) {
 			shape.b.b_y = FALSE;
 			shape.b.b_z = TRUE;
 
-			shape.rot.x = 0;
-			shape.rot.y = 0;
-			shape.rot.z = 1;
+			shape.rot.x = 1;
+		//	shape.rot.y = 0;
+		//	shape.rot.z = 0;
 		}
 		else {
-
+			shape.pos.z += shape.move.z;
 			shape.b.b_x = FALSE;
 			shape.b.b_y = FALSE;
 			shape.b.b_z = FALSE;
-
+		//	shape.rot.x = 0;
+		//	shape.rot.y = 0;
+		//	shape.rot.z = 0;
 			shape.any = FALSE;
 		}
 		break;
