@@ -80,8 +80,7 @@ int rot_count;
 int rot_command;
 
 Shape shape;
-Shape view;
-
+Shape sub[2];
 
 //카메라-----------------
 
@@ -144,11 +143,21 @@ void main(int argc, char *argv[]) {
 	AT.x = 0, AT.y = 0, AT.z = 0;//EYE백터 초기화
 	UP.x = 0, UP.y = 1, UP.z = 0;//EYE백터 초기화
 
-	shape.size = 15;
+	shape.size = 30;
 
 	shape.pos.x = 0;
 	shape.pos.y = 0;
 	shape.pos.z = 0;
+
+	//shape.rot.degree = 0;
+	shape.rot.x = 0;
+	shape.rot.y = 0;
+	shape.rot.z = 0;
+	shape.stacks = 1;
+
+	for (int i = 0; i < 2; i++) {
+		sub[i].size = 30;
+	}
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
@@ -178,6 +187,7 @@ GLvoid drawScene(GLvoid)
 
 	glPushMatrix();//-----------------------------------
 	{
+		
 		//glRotated(-45, 0, 0, 1);
 		glTranslated(camera.move.x, camera.move.y, camera.move.z);
 		camera_custom(0, 0, 0, camera.rot.degree, camera.rot.x, camera.rot.y, camera.rot.z, camera.move.x, camera.move.y, camera.move.z);
@@ -231,18 +241,43 @@ GLvoid drawScene(GLvoid)
 			}//좌표계 그리기
 			glPushMatrix();//도형 그리기
 			{
-				glTranslatef(shape.pos.x + shape.move.x, shape.pos.y + shape.move.y, shape.pos.z + shape.move.z);
+				glTranslatef(shape.move.x, shape.move.y, shape.move.z);
 
 				glPushMatrix();
 				{
-
-					glRotatef(shape.rot.degree, shape.rot.x, shape.rot.y, shape.rot.z);
-
-					glutWireSphere(shape.size, 10, 10);
+					if (shape.any) {
+						glRotatef(shape.rot.degree, shape.rot.x, shape.rot.y, shape.rot.z);
+					}
+					
+					glutSolidCube(shape.size);
 					//glRotatef(Time_count, 0, 1, 0);
+				}
+				glPopMatrix();
+				glPushMatrix();
+				{
+					glRotatef(sub[0].rot.degree, sub[0].rot.x, 0, 0);
+					glRotatef(sub[0].rot.z, 0, sub[0].rot.y,0 );
+					glTranslatef(0, sub[0].size, 0);
+					glScalef(0.7, 1, 0.7);
+					glColor3f((float)0 / 255, (float)100 / 255, (float)0 / 255);
+					glutSolidCube(sub[0].size);
+
+					glPushMatrix();
+					{
+						glRotatef(sub[1].rot.degree, sub[1].rot.x, 0, 0);
+						glRotatef(sub[1].rot.y, 0, 0, sub[1].rot.z);
+						glTranslatef(0, sub[1].size, 0);
+						glScalef(0.5, 1, 0.5);
+						glColor3f((float)100 / 255, (float)0 / 255, (float)0 / 255);
+						glutSolidCube(sub[1].size);
+
+					}
+					glPopMatrix();
 
 				}
 				glPopMatrix();
+		
+			
 			}
 			glPopMatrix();//도형 그리기
 
@@ -266,28 +301,20 @@ void Timerfunction(int value) {
 	if (!ani) {
 		move_count += 1;//타이머 카운트
 	}
-	shape.rot.degree += PI * 2;
-	if (shape.any) {
-		if ((shape.size * PI * 2 >= shape.move.x) && shape.b.b_x)
-		{
-			if ((shape.pos.x + shape.move.x  < 100)) {
-				shape.move.x += 1;
-			}
-		}
-		else if ((shape.size * PI * 2 >= shape.move.y) && shape.b.b_y)
-		{
-			//	shape.move.y += 1;
-		}
-		else if ((shape.size * PI * 2 >= shape.move.z) && shape.b.b_z)
-		{
-			if ((shape.pos.z + shape.move.z < 100)) {
-				shape.move.z += 1;
-			}
-		}
+	
+	//이동하는 코드
+	if ((shape.move.x == 50 )||( shape.move.x == -50)) {
+		shape.stacks *= -1;
 	}
-
-
-
+	shape.move.x +=( 1 * shape.stacks);
+	//y 축 회전
+	if (shape.any) {
+		shape.rot.degree += 2;
+		shape.rot.x = 0;
+		shape.rot.y = 1;
+		shape.rot.z = 0;
+	}
+	
 	glutPostRedisplay(); //타이머에 넣는다.
 	glutTimerFunc(100, Timerfunction, 1); //타이머 다시 출력
 
@@ -364,83 +391,76 @@ void Keyboard(unsigned char key, int x, int y) {
 		//-----------카메라 끝 --------
 	case 'l':
 	case 'L':
-		ani = TRUE;
 		ttt++;
-		if (ttt % 2 == 0) {
-			shape.any = TRUE;
-			shape.move.x = 0;
-			shape.b.b_x = TRUE;
-			shape.b.b_y = FALSE;
-			shape.b.b_z = FALSE;
-
-			//	shape.rot.x = 0;
-			//	shape.rot.y = 0;
-			shape.rot.z = 1;
-		}
-		else {
-			shape.pos.x += shape.move.x;
-
-			shape.b.b_x = FALSE;
-			shape.b.b_y = FALSE;
-			shape.b.b_z = FALSE;
-			//	shape.rot.x = 0;
-			//	shape.rot.y = 0;
-			//	shape.rot.z = 0;
-			shape.any = FALSE;
-		}
+	
 		break;
-
+		//y
 	case 'm':
 	case 'M':
 		ani = TRUE;
 		ttt++;
 		if (ttt % 2 == 0) {
 			shape.any = TRUE;
-			shape.move.y = 0;
-			shape.b.b_x = FALSE;
-			shape.b.b_y = TRUE;
-			shape.b.b_z = FALSE;
-
-			//	shape.rot.x = 0;
-			shape.rot.y = 1;
-			//	shape.rot.z = 0;
 		}
 		else {
-			shape.pos.y += shape.move.y;
-			shape.b.b_x = FALSE;
-			shape.b.b_y = FALSE;
-			shape.b.b_z = FALSE;
-			//	shape.rot.x = 0;
-			//	shape.rot.y = 0;
-			//	shape.rot.z = 0;
 			shape.any = FALSE;
 		}
 		break;
-	case 'n':
-	case 'N':
-		ani = TRUE;
-		ttt++;
-		if (ttt % 2 == 0) {
-			shape.any = TRUE;
-			shape.move.z = 0;
-			shape.b.b_x = FALSE;
-			shape.b.b_y = FALSE;
-			shape.b.b_z = TRUE;
+	//----------첫번째 서브 x 축 이동
+	case 'f':
+		sub[0].any = TRUE;
+		sub[0].rot.degree--;
+		sub[0].rot.x = 1;
+		//sub[0].rot.y = 0;
+		//sub[0].rot.z = 0;
 
-			shape.rot.x = 1;
-			//	shape.rot.y = 0;
-			//	shape.rot.z = 0;
-		}
-		else {
-			shape.pos.z += shape.move.z;
-			shape.b.b_x = FALSE;
-			shape.b.b_y = FALSE;
-			shape.b.b_z = FALSE;
-			//	shape.rot.x = 0;
-			//	shape.rot.y = 0;
-			//	shape.rot.z = 0;
-			shape.any = FALSE;
-		}
+		break;
+	
+	case 'F':
+		sub[0].any = TRUE;
+		sub[0].rot.degree++;
+		break;
+		//----------첫번째 서브 y 축 이동
+	case 'g':
+		sub[0].any = TRUE;
+		sub[0].rot.z--;
+		sub[0].rot.y = 1;
+		//sub[0].rot.y = 0;
+		//sub[0].rot.z = 0;
+		break;
+
+	case 'G':
+		sub[0].any = TRUE;
+		sub[0].rot.z++;
+		break;
+
+		//----------두번째 서브 x 축 이동
+	case 'c':
+		sub[1].any = TRUE;
+		sub[1].rot.degree--;
+		sub[1].rot.x = 1;
+		//sub[0].rot.y = 0;
+		//sub[0].rot.z = 0;
+
+		break;
+
+	case 'C':
+		sub[1].any = TRUE;
+		sub[1].rot.degree++;
+		break;
+		//----------두번째 서브 z 축 이동
+	case 'v':
+		sub[1].any = TRUE;
+		sub[1].rot.y--;
+		sub[1].rot.z = 1;
+		//sub[0].rot.y = 0;
+		//sub[0].rot.z = 0;
+
+		break;
+
+	case 'V':
+		sub[1].any = TRUE;
+		sub[1].rot.y++;
 		break;
 
 	case '2'://직각투영 유무
