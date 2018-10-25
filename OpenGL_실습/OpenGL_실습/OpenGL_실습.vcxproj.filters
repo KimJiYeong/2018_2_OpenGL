@@ -63,6 +63,9 @@
     <ClCompile Include="ex20.cpp">
       <Filter>소스 파일\GL2</Filter>
     </ClCompile>
+    <ClCompile Include="ex21.cpp">
+      <Filter>소스 파일\GL2</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">

@@ -252,7 +252,6 @@ GLvoid drawScene(GLvoid)
 					glutSolidCube(shape.size);
 					//glRotatef(Time_count, 0, 1, 0);
 				}
-				glPopMatrix();
 				glPushMatrix();
 				{
 					glRotatef(sub[0].rot.degree, sub[0].rot.x, 0, 0);
@@ -282,6 +281,7 @@ GLvoid drawScene(GLvoid)
 			glPopMatrix();//도형 그리기
 
 
+			glPopMatrix();
 		}
 		glPopMatrix();
 	}

@@ -270,8 +270,15 @@ void Timerfunction(int value) {
 	if (shape.any) {
 		if ((shape.size * PI * 2 >= shape.move.x ) && shape.b.b_x )
 		{
-			if ((shape.pos.x + shape.move.x  < 100)) {
-				shape.move.x += 1;
+			if (shape.cl.R) {
+				if ((shape.pos.x + shape.move.x  < 100)) {
+					shape.move.x += 1;
+				}
+			}
+			else {
+				if ((shape.pos.x + shape.move.x  > 0)) {
+					shape.move.x -= 1;
+				}
 			}
 		}
 		else if ((shape.size * PI * 2 >= shape.move.y) && shape.b.b_y)
@@ -280,6 +287,7 @@ void Timerfunction(int value) {
 		}
 		else if ((shape.size * PI * 2 >= shape.move.z) && shape.b.b_z)
 		{
+			
 			if ((shape.pos.z + shape.move.z < 100)) {
 				shape.move.z += 1;
 			}
@@ -363,6 +371,35 @@ void Keyboard(unsigned char key, int x, int y) {
 
 		//-----------카메라 끝 --------
 	case 'l':
+		ani = TRUE;
+		ttt++;
+		if (ttt % 2 == 0) {
+			shape.any = TRUE;
+			shape.move.x = 0;
+			shape.b.b_x = TRUE;
+			shape.b.b_y = FALSE;
+			shape.b.b_z = FALSE;
+
+			//	shape.rot.x = 0;
+			//	shape.rot.y = 0;
+			shape.rot.z = 1;
+			shape.cl.R = 0;
+		}
+		else {
+			shape.pos.x += shape.move.x;
+
+			shape.b.b_x = FALSE;
+			shape.b.b_y = FALSE;
+			shape.b.b_z = FALSE;
+			//	shape.rot.x = 0;
+			//	shape.rot.y = 0;
+			//	shape.rot.z = 0;
+			shape.any = FALSE;
+		
+
+		}
+		break;
+
 	case 'L':
 		ani = TRUE;
 		ttt++;
@@ -376,6 +413,7 @@ void Keyboard(unsigned char key, int x, int y) {
 		//	shape.rot.x = 0;
 		//	shape.rot.y = 0;
 			shape.rot.z = 1;
+			shape.cl.R = 1;
 		}
 		else {
 			shape.pos.x += shape.move.x;
@@ -391,6 +429,31 @@ void Keyboard(unsigned char key, int x, int y) {
 		break;
 
 	case 'm':
+		ani = TRUE;
+		ttt++;
+		if (ttt % 2 == 0) {
+			shape.any = TRUE;
+			shape.move.y = 0;
+			shape.b.b_x = FALSE;
+			shape.b.b_y = TRUE;
+			shape.b.b_z = FALSE;
+
+			//	shape.rot.x = 0;
+			shape.rot.y = 1;
+			//	shape.rot.z = 0;
+			shape.cl.G = 0;
+		}
+		else {
+			shape.pos.y += shape.move.y;
+			shape.b.b_x = FALSE;
+			shape.b.b_y = FALSE;
+			shape.b.b_z = FALSE;
+			//	shape.rot.x = 0;
+			//	shape.rot.y = 0;
+			//	shape.rot.z = 0;
+			shape.any = FALSE;
+		}
+		break;
 	case 'M':
 		ani = TRUE;
 		ttt++;
@@ -404,6 +467,7 @@ void Keyboard(unsigned char key, int x, int y) {
 		//	shape.rot.x = 0;
 			shape.rot.y = 1;
 		//	shape.rot.z = 0;
+			shape.cl.G = 1;
 		}
 		else {
 			shape.pos.y += shape.move.y;
@@ -417,6 +481,31 @@ void Keyboard(unsigned char key, int x, int y) {
 		}
 		break;
 	case 'n':
+		ani = TRUE;
+		ttt++;
+		if (ttt % 2 == 0) {
+			shape.any = TRUE;
+			shape.move.z = 0;
+			shape.b.b_x = FALSE;
+			shape.b.b_y = FALSE;
+			shape.b.b_z = TRUE;
+
+			shape.rot.x = 1;
+			//	shape.rot.y = 0;
+			//	shape.rot.z = 0;
+		}
+		else {
+			shape.pos.z += shape.move.z;
+			shape.b.b_x = FALSE;
+			shape.b.b_y = FALSE;
+			shape.b.b_z = FALSE;
+			//	shape.rot.x = 0;
+			//	shape.rot.y = 0;
+			//	shape.rot.z = 0;
+			shape.any = FALSE;
+		}
+		break;
+
 	case 'N':
 		ani = TRUE;
 		ttt++;
