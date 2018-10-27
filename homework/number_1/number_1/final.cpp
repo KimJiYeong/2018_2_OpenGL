@@ -68,11 +68,11 @@ typedef struct Shape
 	Color cl;//색상
 	vector2 pos;
 	vector2 pos2[4];
-
+	vector2 save_pos;
 	Translate_pos move;
 	Translate_pos scale;
 	Translate_pos rot;
-
+	float t;
 	int size;
 	int select;
 	BoOL b;
@@ -80,6 +80,13 @@ typedef struct Shape
 
 };
 
+typedef struct Block
+{
+	int init;
+	vector2 pos;
+	BOOL full_L;
+	BOOL full_R;
+};
 
 BOOL Activation;//Activation 트루 : 충돌 / 폴 :충돌 x 
 #define Sub_t_num 10
@@ -92,14 +99,29 @@ Shape sub_t[Sub_t_num];//위쪽에 있는 삼각형
 
 vector2 Drag[3];
 Shape Rect;
-int temp_x, temp_y;
+static int temp_x, temp_y;
 int move_start_count;//왼쪽에서 나타날 도형들
 
 Shape throw_t[Main_t_num];
+Block blcok_L[4][8];
+Block blcok_R[4][8];
 
 void main(int argc, char *argv[]) {
 	
 	//초기화
+	//격자칸 초기화
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 8; j++) {
+			blcok_L[i][j].pos.x = Sub_t_size * (j + 1) - 20;
+			blcok_L[i][j].pos.y = Sub_t_size * (i + 1) + 25;
+		}
+	}
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 8; j++) {
+			blcok_R[i][j].pos.x = WideSize - Sub_t_size * (j + 1) + 20;
+			blcok_R[i][j].pos.y = Sub_t_size * (i + 1) + 25;
+		}
+	}
 
 	Rect.pos2[0].x = 0, Rect.pos2[0].y = Sub_t_size / 2;
 	Rect.pos2[1].x = -Sub_t_size / 2, Rect.pos2[1].y = 0;
@@ -154,26 +176,35 @@ GLvoid drawScene(GLvoid)
 	glEnd();
 
 	//테두리 그리기
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < 4; i++) {
 		glBegin(GL_LINES);
 		glVertex2i(0, Sub_t_size * (i + 1));
-		glVertex2i(WideSize, Sub_t_size * (i + 1));
+		glVertex2i(Sub_t_size * (8), Sub_t_size * (i + 1));
 		glEnd();
 	}
-	//아래 테두리
-	for (int i = 0; i < 10; i++) {
+	//테두리 그리기
+	for (int i = 0; i < 4; i++) {
 		glBegin(GL_LINES);
-		glVertex2i(Sub_t_size * (i + 1), Sub_t_size * (4 + 1));
-		glVertex2i(Sub_t_size * (i + 1), 0);
-		glEnd();
-	}
-	for (int i = 0; i < 10; i++) {
-		glBegin(GL_LINES);
-		glVertex2i(WideSize - Sub_t_size * (i + 1), Sub_t_size * (4 + 1));
-		glVertex2i(WideSize - Sub_t_size * (i + 1), 0);
+		glVertex2i(WideSize , Sub_t_size * (i + 1));
+		glVertex2i(WideSize - Sub_t_size * (8), Sub_t_size * (i + 1));
 		glEnd();
 	}
 
+
+	//아래 테두리
+	for (int i = 0; i < 8; i++) {
+		glBegin(GL_LINES);
+		glVertex2i(Sub_t_size * (i + 1), Sub_t_size * (4));
+		glVertex2i(Sub_t_size * (i + 1), 0);
+		glEnd();
+	}
+	for (int i = 0; i < 8; i++) {
+		glBegin(GL_LINES);
+		glVertex2i(WideSize - Sub_t_size * (i + 1), Sub_t_size * (4));
+		glVertex2i(WideSize - Sub_t_size * (i + 1), 0);
+		glEnd();
+	}
+	//8 * 4
 	glColor3f((float)80 / 255, (float)1 / 255, (float)20 / 255);
 
 	glBegin(GL_LINES);
@@ -220,7 +251,8 @@ GLvoid drawScene(GLvoid)
 				glPushMatrix();
 				{
 					if (throw_t[i].any) {
-						glTranslated(throw_t[i].move.x, throw_t[i].move.y, 0);
+						glTranslated((int)throw_t[i].move.x, (int)throw_t[i].move.y, 0);
+						glRotatef(throw_t[i].rot.degree, 0, 0, 1);
 						glBegin(GL_TRIANGLES);
 						glVertex2i(throw_t[i].pos2[0].x, throw_t[i].pos2[0].y);
 						glVertex2i(throw_t[i].pos2[1].x, throw_t[i].pos2[1].y);
@@ -253,15 +285,12 @@ void Mouse(int button, int state, int x, int y) {
 		Drag[0].y = HighSize - y;
 	
 		Motion_Act_On = true;
-	
 	}
 	else if (button == GLUT_LEFT_BUTTON && state == GLUT_UP)
 	{
-
 		Mouse_Act_On = true;
 		Motion_Act_On = false;
 	}
-
 
 	glutPostRedisplay();
 
@@ -291,6 +320,8 @@ BOOL InCircle(int x, int y, int mx, int my, int size) {
 
 void Timerfunction(int value) {
 	//타이머 내용
+	
+
 	Time_count++;
 	if (Time_count % 20 == 0) {
 		if (move_start_count < Sub_t_num) {
@@ -317,7 +348,10 @@ void Timerfunction(int value) {
 	Gradient = 0;
 	if (Mouse_Act_On) {
 		//충돌체크
-		if ((WideSize / 2 - 100 < Drag[0].x) && (Drag[0].x < WideSize / 2 + 100))
+		if ( //충돌체크 조심하길
+			((WideSize / 2 - Sub_t_size< Drag[0].x) && (Drag[0].x < WideSize / 2 + Sub_t_size)) 
+			|| (( Rect.pos2[1].y < Drag[0].y) && (Drag[1].x < Rect.pos2[2].x) && (Drag[0].x > Rect.pos2[1].x)) 
+			)
 		{
 			Gradient = 1;//충돌!
 			throw_t[Grand_j].any = TRUE;//보여준다.
@@ -326,9 +360,28 @@ void Timerfunction(int value) {
 			throw_t[Grand_j].pos2[1].x = Rect.pos2[1].x, throw_t[Grand_j].pos2[1].y = Rect.pos2[1].y;
 			throw_t[Grand_j].pos2[2].x = Rect.pos2[3].x, throw_t[Grand_j].pos2[2].y = Rect.pos2[3].y;
 
-			throw_t[Grand_j].move.x = Rect.move.x;
-			throw_t[Grand_j].move.y = Rect.move.y;
+			throw_t[Grand_j].save_pos.x = Rect.move.x;
+			throw_t[Grand_j].save_pos.y = Rect.move.y;
+			
+
 			printf("삼각형 생성 %d \n" , Grand_j);
+
+			if (Grand_j < Main_t_num) {
+				Grand_j++;
+			}
+			throw_t[Grand_j].any = TRUE;//보여준다.
+										//충돌했으니 삼각형을 바꿔주자.
+			throw_t[Grand_j].pos2[0].x = Rect.pos2[0].x, throw_t[Grand_j].pos2[0].y = Rect.pos2[0].y;
+			throw_t[Grand_j].pos2[1].x = Rect.pos2[3].x, throw_t[Grand_j].pos2[1].y = Rect.pos2[3].y;
+			throw_t[Grand_j].pos2[2].x = Rect.pos2[2].x, throw_t[Grand_j].pos2[2].y = Rect.pos2[2].y;
+
+			throw_t[Grand_j].save_pos.x = Rect.move.x;
+			throw_t[Grand_j].save_pos.y = Rect.move.y;
+
+			temp_y = rand() % 4 + 1;
+			temp_x = rand() % 7 + 1;
+
+			printf("삼각형 생성 %d \n", Grand_j);
 
 			if (Grand_j < Main_t_num) {
 				Grand_j++;
@@ -336,13 +389,65 @@ void Timerfunction(int value) {
 		}
 
 	}
+	//삼각형 이동
 	for (int i = 0; i < Main_t_num; i++) {
+		
+		//번스타인 다항식
 		if (throw_t[i].any) {
-			throw_t[i].move.x += 10;
-			throw_t[i].move.y -= 10;
+			
+			if (i % 2 == 0) {
+
+				
+				if (throw_t[i].t <= 1) {
+					throw_t[i].t += 0.01;
+					throw_t[i].move.x =
+						(
+						((1 - throw_t[i].t)*(1 - throw_t[i].t)*(throw_t[i].save_pos.x))//원좌표
+							+ (2 * (throw_t[i].t) * (1 - throw_t[i].t) * (blcok_L[temp_y - 1][temp_x - 1].pos.x))//컨트롤 포인트
+							+ ((throw_t[i].t) * (throw_t[i].t) * blcok_L[temp_y - 1][temp_x - 1].pos.x)//떨어져야 하는 좌표
+							);
+
+					throw_t[i].move.y =
+						(
+						((1 - throw_t[i].t)*(1 - throw_t[i].t)*(throw_t[i].save_pos.y))
+							+ (2 * (throw_t[i].t) * (1 - throw_t[i].t) * (throw_t[i].save_pos.y))
+							+ ((throw_t[i].t) * (throw_t[i].t) * blcok_L[temp_y - 1][temp_x - 1].pos.y)
+							);
+
+					throw_t[i].rot.degree = 45 / throw_t[i].t;
+				}
+			}
+			else {
+
+				temp_y = rand() % 4 + 0;
+				temp_x = rand() % 8 + 0;
+
+				if (throw_t[i].t <= 1) {
+					throw_t[i].t += 0.01;
+					throw_t[i].move.x =
+						(
+						((1 - throw_t[i].t)*(1 - throw_t[i].t)*(throw_t[i].save_pos.x))//원좌표
+							+ (2 * (throw_t[i].t) * (1 - throw_t[i].t) * (blcok_R[1][1].pos.x))//컨트롤 포인트
+							+ ((throw_t[i].t) * (throw_t[i].t) * blcok_R[1][1].pos.x)//떨어져야 하는 좌표
+							);
+
+					throw_t[i].move.y =
+						(
+						((1 - throw_t[i].t)*(1 - throw_t[i].t)*(throw_t[i].save_pos.y))
+							+ (2 * (throw_t[i].t) * (1 - throw_t[i].t) * (throw_t[i].save_pos.y))
+							+ ((throw_t[i].t) * (throw_t[i].t) * blcok_R[1][1].pos.y)
+							);
+
+					throw_t[i].rot.degree = (45 / throw_t[i].t);
+				}
+			}
+			
 		}
+		
+		
 	}
 	
+
 
 	Mouse_Act_On = false;
 	printf("%d \n", Gradient);
