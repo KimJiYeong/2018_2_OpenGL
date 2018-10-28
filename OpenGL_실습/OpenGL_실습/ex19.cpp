@@ -79,7 +79,7 @@ Shape tra;
 int rot_count;
 int rot_command;
 
-Shape shape;
+Shape ball;
 Shape view;
 
 
@@ -144,11 +144,11 @@ void main(int argc, char *argv[]) {
 	AT.x = 0, AT.y = 0, AT.z = 0;//EYE백터 초기화
 	UP.x = 0, UP.y = 1, UP.z = 0;//EYE백터 초기화
 
-	shape.size = 15;
+	ball.size = 15;
 
-	shape.pos.x = 0;
-	shape.pos.y = 0;
-	shape.pos.z = 0;
+	ball.pos.x = 0;
+	ball.pos.y = 0;
+	ball.pos.z = 0;
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
@@ -199,7 +199,7 @@ GLvoid drawScene(GLvoid)
 			glPushMatrix(); {
 
 
-				glTranslated(0, -shape.size, 0);
+				glTranslated(0, -ball.size, 0);
 				glScalef(1, 0.001, 1);
 				glutSolidCube(200);//발판 만들기
 
@@ -231,14 +231,14 @@ GLvoid drawScene(GLvoid)
 			}//좌표계 그리기
 			glPushMatrix();//도형 그리기
 			{
-				glTranslatef(shape.pos.x + shape.move.x, shape.pos.y + shape.move.y, shape.pos.z + shape.move.z);
+				glTranslatef(ball.pos.x + ball.move.x, ball.pos.y + ball.move.y, ball.pos.z + ball.move.z);
 
 				glPushMatrix();
 				{
 
-					glRotatef(shape.rot.degree, shape.rot.x, shape.rot.y, shape.rot.z);
+					glRotatef(ball.rot.degree, ball.rot.x, ball.rot.y, ball.rot.z);
 
-					glutWireSphere(shape.size, 10, 10);
+					glutWireSphere(ball.size, 10, 10);
 					//glRotatef(Time_count, 0, 1, 0);
 
 				}
@@ -266,30 +266,30 @@ void Timerfunction(int value) {
 	if (!ani) {
 		move_count += 1;//타이머 카운트
 	}
-	shape.rot.degree += PI * 2;
-	if (shape.any) {
-		if ((shape.size * PI * 2 >= shape.move.x ) && shape.b.b_x )
+	ball.rot.degree += PI * 2;
+	if (ball.any) {
+		if ((ball.size * PI * 2 >= ball.move.x ) && ball.b.b_x )
 		{
-			if (shape.cl.R) {
-				if ((shape.pos.x + shape.move.x  < 100)) {
-					shape.move.x += 1;
+			if (ball.cl.R) {
+				if ((ball.pos.x + ball.move.x  < 100)) {
+					ball.move.x += 1;
 				}
 			}
 			else {
-				if ((shape.pos.x + shape.move.x  > 0)) {
-					shape.move.x -= 1;
+				if ((ball.pos.x + ball.move.x  > 0)) {
+					ball.move.x -= 1;
 				}
 			}
 		}
-		else if ((shape.size * PI * 2 >= shape.move.y) && shape.b.b_y)
+		else if ((ball.size * PI * 2 >= ball.move.y) && ball.b.b_y)
 		{
 		//	shape.move.y += 1;
 		}
-		else if ((shape.size * PI * 2 >= shape.move.z) && shape.b.b_z)
+		else if ((ball.size * PI * 2 >= ball.move.z) && ball.b.b_z)
 		{
 			
-			if ((shape.pos.z + shape.move.z < 100)) {
-				shape.move.z += 1;
+			if ((ball.pos.z + ball.move.z < 100)) {
+				ball.move.z += 1;
 			}
 		}
 	}
@@ -374,27 +374,27 @@ void Keyboard(unsigned char key, int x, int y) {
 		ani = TRUE;
 		ttt++;
 		if (ttt % 2 == 0) {
-			shape.any = TRUE;
-			shape.move.x = 0;
-			shape.b.b_x = TRUE;
-			shape.b.b_y = FALSE;
-			shape.b.b_z = FALSE;
+			ball.any = TRUE;
+			ball.move.x = 0;
+			ball.b.b_x = TRUE;
+			ball.b.b_y = FALSE;
+			ball.b.b_z = FALSE;
 
 			//	shape.rot.x = 0;
 			//	shape.rot.y = 0;
-			shape.rot.z = 1;
-			shape.cl.R = 0;
+			ball.rot.z = 1;
+			ball.cl.R = 0;
 		}
 		else {
-			shape.pos.x += shape.move.x;
+			ball.pos.x += ball.move.x;
 
-			shape.b.b_x = FALSE;
-			shape.b.b_y = FALSE;
-			shape.b.b_z = FALSE;
+			ball.b.b_x = FALSE;
+			ball.b.b_y = FALSE;
+			ball.b.b_z = FALSE;
 			//	shape.rot.x = 0;
 			//	shape.rot.y = 0;
 			//	shape.rot.z = 0;
-			shape.any = FALSE;
+			ball.any = FALSE;
 		
 
 		}
@@ -404,27 +404,27 @@ void Keyboard(unsigned char key, int x, int y) {
 		ani = TRUE;
 		ttt++;
 		if (ttt % 2 == 0) {
-			shape.any = TRUE;
-			shape.move.x = 0;
-			shape.b.b_x = TRUE;
-			shape.b.b_y = FALSE;
-			shape.b.b_z = FALSE;
+			ball.any = TRUE;
+			ball.move.x = 0;
+			ball.b.b_x = TRUE;
+			ball.b.b_y = FALSE;
+			ball.b.b_z = FALSE;
 
 		//	shape.rot.x = 0;
 		//	shape.rot.y = 0;
-			shape.rot.z = 1;
-			shape.cl.R = 1;
+			ball.rot.z = 1;
+			ball.cl.R = 1;
 		}
 		else {
-			shape.pos.x += shape.move.x;
+			ball.pos.x += ball.move.x;
 
-			shape.b.b_x = FALSE;
-			shape.b.b_y = FALSE;
-			shape.b.b_z = FALSE;
+			ball.b.b_x = FALSE;
+			ball.b.b_y = FALSE;
+			ball.b.b_z = FALSE;
 		//	shape.rot.x = 0;
 		//	shape.rot.y = 0;
 		//	shape.rot.z = 0;
-			shape.any = FALSE;
+			ball.any = FALSE;
 		}
 		break;
 
@@ -432,77 +432,77 @@ void Keyboard(unsigned char key, int x, int y) {
 		ani = TRUE;
 		ttt++;
 		if (ttt % 2 == 0) {
-			shape.any = TRUE;
-			shape.move.y = 0;
-			shape.b.b_x = FALSE;
-			shape.b.b_y = TRUE;
-			shape.b.b_z = FALSE;
+			ball.any = TRUE;
+			ball.move.y = 0;
+			ball.b.b_x = FALSE;
+			ball.b.b_y = TRUE;
+			ball.b.b_z = FALSE;
 
 			//	shape.rot.x = 0;
-			shape.rot.y = 1;
+			ball.rot.y = 1;
 			//	shape.rot.z = 0;
-			shape.cl.G = 0;
+			ball.cl.G = 0;
 		}
 		else {
-			shape.pos.y += shape.move.y;
-			shape.b.b_x = FALSE;
-			shape.b.b_y = FALSE;
-			shape.b.b_z = FALSE;
+			ball.pos.y += ball.move.y;
+			ball.b.b_x = FALSE;
+			ball.b.b_y = FALSE;
+			ball.b.b_z = FALSE;
 			//	shape.rot.x = 0;
 			//	shape.rot.y = 0;
 			//	shape.rot.z = 0;
-			shape.any = FALSE;
+			ball.any = FALSE;
 		}
 		break;
 	case 'M':
 		ani = TRUE;
 		ttt++;
 		if (ttt % 2 == 0) {
-			shape.any = TRUE;
-			shape.move.y = 0;
-			shape.b.b_x = FALSE;
-			shape.b.b_y = TRUE;
-			shape.b.b_z = FALSE;
+			ball.any = TRUE;
+			ball.move.y = 0;
+			ball.b.b_x = FALSE;
+			ball.b.b_y = TRUE;
+			ball.b.b_z = FALSE;
 
 		//	shape.rot.x = 0;
-			shape.rot.y = 1;
+			ball.rot.y = 1;
 		//	shape.rot.z = 0;
-			shape.cl.G = 1;
+			ball.cl.G = 1;
 		}
 		else {
-			shape.pos.y += shape.move.y;
-			shape.b.b_x = FALSE;
-			shape.b.b_y = FALSE;
-			shape.b.b_z = FALSE;
+			ball.pos.y += ball.move.y;
+			ball.b.b_x = FALSE;
+			ball.b.b_y = FALSE;
+			ball.b.b_z = FALSE;
 		//	shape.rot.x = 0;
 		//	shape.rot.y = 0;
 		//	shape.rot.z = 0;
-			shape.any = FALSE;
+			ball.any = FALSE;
 		}
 		break;
 	case 'n':
 		ani = TRUE;
 		ttt++;
 		if (ttt % 2 == 0) {
-			shape.any = TRUE;
-			shape.move.z = 0;
-			shape.b.b_x = FALSE;
-			shape.b.b_y = FALSE;
-			shape.b.b_z = TRUE;
+			ball.any = TRUE;
+			ball.move.z = 0;
+			ball.b.b_x = FALSE;
+			ball.b.b_y = FALSE;
+			ball.b.b_z = TRUE;
 
-			shape.rot.x = 1;
+			ball.rot.x = 1;
 			//	shape.rot.y = 0;
 			//	shape.rot.z = 0;
 		}
 		else {
-			shape.pos.z += shape.move.z;
-			shape.b.b_x = FALSE;
-			shape.b.b_y = FALSE;
-			shape.b.b_z = FALSE;
+			ball.pos.z += ball.move.z;
+			ball.b.b_x = FALSE;
+			ball.b.b_y = FALSE;
+			ball.b.b_z = FALSE;
 			//	shape.rot.x = 0;
 			//	shape.rot.y = 0;
 			//	shape.rot.z = 0;
-			shape.any = FALSE;
+			ball.any = FALSE;
 		}
 		break;
 
@@ -510,25 +510,25 @@ void Keyboard(unsigned char key, int x, int y) {
 		ani = TRUE;
 		ttt++;
 		if (ttt % 2 == 0) {
-			shape.any = TRUE;
-			shape.move.z = 0;
-			shape.b.b_x = FALSE;
-			shape.b.b_y = FALSE;
-			shape.b.b_z = TRUE;
+			ball.any = TRUE;
+			ball.move.z = 0;
+			ball.b.b_x = FALSE;
+			ball.b.b_y = FALSE;
+			ball.b.b_z = TRUE;
 
-			shape.rot.x = 1;
+			ball.rot.x = 1;
 		//	shape.rot.y = 0;
 		//	shape.rot.z = 0;
 		}
 		else {
-			shape.pos.z += shape.move.z;
-			shape.b.b_x = FALSE;
-			shape.b.b_y = FALSE;
-			shape.b.b_z = FALSE;
+			ball.pos.z += ball.move.z;
+			ball.b.b_x = FALSE;
+			ball.b.b_y = FALSE;
+			ball.b.b_z = FALSE;
 		//	shape.rot.x = 0;
 		//	shape.rot.y = 0;
 		//	shape.rot.z = 0;
-			shape.any = FALSE;
+			ball.any = FALSE;
 		}
 		break;
 

@@ -72,7 +72,7 @@ Shape tra;
 int rot_count;
 int rot_command;
 
-Shape shape[2];
+Shape ball[2];
 Shape view;
 
 
@@ -137,8 +137,8 @@ void main(int argc, char *argv[]) {
 	AT.x = 0, AT.y = 0, AT.z = 0;//EYE백터 초기화
 	UP.x = 0, UP.y = 1, UP.z = 0;//EYE백터 초기화
 
-	shape[0].pos.x = 100;
-	shape[1].pos.x = 100;
+	ball[0].pos.x = 100;
+	ball[1].pos.x = 100;
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 	glutInitWindowPosition(100, 100);//윈도우 띄우기 좌표
@@ -218,66 +218,66 @@ GLvoid drawScene(GLvoid)
 		glPushMatrix();//도형 그리기
 		glRotatef(move_count, 0, 1, 0);
 		if (i == 0) {//첫번째 도형
-			glTranslated(shape[i].pos.x, 0, 0);
-			glRotatef(shape[i].rot.degree, shape[i].rot.x, shape[i].rot.y, shape[i].rot.z);
+			glTranslated(ball[i].pos.x, 0, 0);
+			glRotatef(ball[i].rot.degree, ball[i].rot.x, ball[i].rot.y, ball[i].rot.z);
 			if (!Look) {
-				if (shape[i].select == 0) {
+				if (ball[i].select == 0) {
 					glutSolidSphere(15, 10, 10);
 				}
-				else if (shape[i].select == 1) {
+				else if (ball[i].select == 1) {
 					glutSolidCube(30);
 				}
-				else if (shape[i].select == 2) {
+				else if (ball[i].select == 2) {
 					glutSolidCone(15, 10, 3, 3);
 				}
-				else if (shape[i].select == 3) {
+				else if (ball[i].select == 3) {
 					glutSolidTeapot(30);
 				}
 			}
 			else {
-				if (shape[i].select == 0) {
+				if (ball[i].select == 0) {
 					glutWireSphere(15, 10, 10);
 				}
-				else if (shape[i].select == 1) {
+				else if (ball[i].select == 1) {
 					glutWireCube(30);
 				}
-				else if (shape[i].select == 2) {
+				else if (ball[i].select == 2) {
 					glutWireCone(15, 10, 3, 3);
 				}
-				else if (shape[i].select == 3) {
+				else if (ball[i].select == 3) {
 					glutWireTeapot(30);
 				}
 			}
 		}
 
 		if (i == 1) {//두번째 도형
-			glTranslated(-shape[i].pos.x, 0, 0);
-			glRotatef(shape[i].rot.degree, shape[i].rot.x, shape[i].rot.y, shape[i].rot.z);
+			glTranslated(-ball[i].pos.x, 0, 0);
+			glRotatef(ball[i].rot.degree, ball[i].rot.x, ball[i].rot.y, ball[i].rot.z);
 			if (Look) {
-				if (shape[i].select == 0) {
+				if (ball[i].select == 0) {
 					glutSolidSphere(15, 10, 10);
 				}
-				else if (shape[i].select == 1) {
+				else if (ball[i].select == 1) {
 					glutSolidCube(30);
 				}
-				else if (shape[i].select == 2) {
+				else if (ball[i].select == 2) {
 					glutSolidCone(15, 10, 3, 3);
 				}
-				else if (shape[i].select == 3) {
+				else if (ball[i].select == 3) {
 					glutSolidTeapot(30);
 				}
 			}
 			else {
-				if (shape[i].select == 0) {
+				if (ball[i].select == 0) {
 					glutWireSphere(15, 10, 10);
 				}
-				else if (shape[i].select == 1) {
+				else if (ball[i].select == 1) {
 					glutWireCube(30);
 				}
-				else if (shape[i].select == 2) {
+				else if (ball[i].select == 2) {
 					glutWireCone(15, 10, 3, 3);
 				}
-				else if (shape[i].select == 3) {
+				else if (ball[i].select == 3) {
 					glutWireTeapot(30);
 				}
 			}
@@ -307,8 +307,8 @@ void Timerfunction(int value) {
 		move_count += 1;//타이머 카운트
 	}
 	for (int i = 0; i < 2; i++) {
-		if (shape[i].any) {
-			shape[i].rot.degree += 2;
+		if (ball[i].any) {
+			ball[i].rot.degree += 2;
 		}
 	}
 
@@ -393,13 +393,13 @@ void Keyboard(unsigned char key, int x, int y) {
 		ani = TRUE;
 		for (int i = 0; i < 2; i++) {
 			if (i == 0) {
-				shape[i].any = TRUE;
-				shape[i].rot.x = 0;
-				shape[i].rot.y = 1;
-				shape[i].rot.z = 0;
+				ball[i].any = TRUE;
+				ball[i].rot.x = 0;
+				ball[i].rot.y = 1;
+				ball[i].rot.z = 0;
 			}
 			else {
-				shape[i].any = FALSE;
+				ball[i].any = FALSE;
 			}
 		}
 		break;
@@ -407,13 +407,13 @@ void Keyboard(unsigned char key, int x, int y) {
 		ani = TRUE;
 		for (int i = 0; i < 2; i++) {
 			if (i != 0) {
-				shape[i].any = TRUE;
-				shape[i].rot.x = 0;
-				shape[i].rot.y = 1;
-				shape[i].rot.z = 0;
+				ball[i].any = TRUE;
+				ball[i].rot.x = 0;
+				ball[i].rot.y = 1;
+				ball[i].rot.z = 0;
 			}
 			else {
-				shape[i].any = FALSE;
+				ball[i].any = FALSE;
 			}
 		}
 		break;
@@ -422,10 +422,10 @@ void Keyboard(unsigned char key, int x, int y) {
 		ttt++;
 		if (ttt % 2 == 0) {
 			for (int i = 0; i < 2; i++) {
-				shape[i].any = TRUE;
-				shape[i].rot.x = 0;
-				shape[i].rot.y = 1;
-				shape[i].rot.z = 0;
+				ball[i].any = TRUE;
+				ball[i].rot.x = 0;
+				ball[i].rot.y = 1;
+				ball[i].rot.z = 0;
 			}
 		}
 		else {
@@ -447,7 +447,7 @@ void Keyboard(unsigned char key, int x, int y) {
 	case '1':
 		next_rot++;
 		for (int i = 0; i < 2; i++) {
-			shape[i].select = (next_rot%4);
+			ball[i].select = (next_rot%4);
 		}
 		break;
 	case '2'://직각투영 유무

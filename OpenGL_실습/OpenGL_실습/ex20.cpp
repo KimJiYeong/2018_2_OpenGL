@@ -79,7 +79,7 @@ Shape tra;
 int rot_count;
 int rot_command;
 
-Shape shape;
+Shape clain;
 Shape sub[2];
 
 //카메라-----------------
@@ -143,17 +143,17 @@ void main(int argc, char *argv[]) {
 	AT.x = 0, AT.y = 0, AT.z = 0;//EYE백터 초기화
 	UP.x = 0, UP.y = 1, UP.z = 0;//EYE백터 초기화
 
-	shape.size = 30;
+	clain.size = 30;
 
-	shape.pos.x = 0;
-	shape.pos.y = 0;
-	shape.pos.z = 0;
+	clain.pos.x = 0;
+	clain.pos.y = 0;
+	clain.pos.z = 0;
 
 	//shape.rot.degree = 0;
-	shape.rot.x = 0;
-	shape.rot.y = 0;
-	shape.rot.z = 0;
-	shape.stacks = 1;
+	clain.rot.x = 0;
+	clain.rot.y = 0;
+	clain.rot.z = 0;
+	clain.stacks = 1;
 
 	for (int i = 0; i < 2; i++) {
 		sub[i].size = 30;
@@ -209,7 +209,7 @@ GLvoid drawScene(GLvoid)
 			glPushMatrix(); {
 
 
-				glTranslated(0, -shape.size, 0);
+				glTranslated(0, -clain.size, 0);
 				glScalef(1, 0.001, 1);
 				glutSolidCube(200);//발판 만들기
 
@@ -241,15 +241,15 @@ GLvoid drawScene(GLvoid)
 			}//좌표계 그리기
 			glPushMatrix();//도형 그리기
 			{
-				glTranslatef(shape.move.x, shape.move.y, shape.move.z);
+				glTranslatef(clain.move.x, clain.move.y, clain.move.z);
 
 				glPushMatrix();
 				{
-					if (shape.any) {
-						glRotatef(shape.rot.degree, shape.rot.x, shape.rot.y, shape.rot.z);
+					if (clain.any) {
+						glRotatef(clain.rot.degree, clain.rot.x, clain.rot.y, clain.rot.z);
 					}
 					
-					glutSolidCube(shape.size);
+					glutSolidCube(clain.size);
 					//glRotatef(Time_count, 0, 1, 0);
 				}
 				glPushMatrix();
@@ -303,16 +303,16 @@ void Timerfunction(int value) {
 	}
 	
 	//이동하는 코드
-	if ((shape.move.x == 50 )||( shape.move.x == -50)) {
-		shape.stacks *= -1;
+	if ((clain.move.x == 50 )||( clain.move.x == -50)) {
+		clain.stacks *= -1;
 	}
-	shape.move.x +=( 1 * shape.stacks);
+	clain.move.x +=( 1 * clain.stacks);
 	//y 축 회전
-	if (shape.any) {
-		shape.rot.degree += 2;
-		shape.rot.x = 0;
-		shape.rot.y = 1;
-		shape.rot.z = 0;
+	if (clain.any) {
+		clain.rot.degree += 2;
+		clain.rot.x = 0;
+		clain.rot.y = 1;
+		clain.rot.z = 0;
 	}
 	
 	glutPostRedisplay(); //타이머에 넣는다.
@@ -400,10 +400,10 @@ void Keyboard(unsigned char key, int x, int y) {
 		ani = TRUE;
 		ttt++;
 		if (ttt % 2 == 0) {
-			shape.any = TRUE;
+			clain.any = TRUE;
 		}
 		else {
-			shape.any = FALSE;
+			clain.any = FALSE;
 		}
 		break;
 	//----------첫번째 서브 x 축 이동

@@ -51,11 +51,11 @@ Color cl;
 void main(int argc, char *argv[]) {
 	//초기화
 	for (int i = 0; i < Point_num; i++) {
-			shape[i].x = 0;
-			shape[i].y = 0;
-			shape[i].z = 0;
+			ball[i].x = 0;
+			ball[i].y = 0;
+			ball[i].z = 0;
 
-			shape[i].choose_shape = 1;
+			ball[i].choose_shape = 1;
 
 	}
 	cl.R = 100;
@@ -100,7 +100,7 @@ GLvoid drawScene(GLvoid)
 	glBegin(GL_LINE_STRIP);
 	
 	for (int i = 0; i < Point_num; i++) {
-		glVertex3i(shape[i].x , shape[i].y, shape[i].z);
+		glVertex3i(ball[i].x , ball[i].y, ball[i].z);
 	}
 	glEnd();
 
@@ -128,26 +128,26 @@ void Keyboard(unsigned char key, int x, int y) {
 	{
 	case '1'://사인곡선
 		for (int i = 0; i < Point_num; i++) {
-				shape[i].x = i * WideSize / 50;
-				shape[i].y = 100 *  sin(PI * i * 10/90) + HighSize/2;
+				ball[i].x = i * WideSize / 50;
+				ball[i].y = 100 *  sin(PI * i * 10/90) + HighSize/2;
 		/*
 					cir[i].pt2[j].x = -cos(PI * j * 24 / 180) * cir[i].rad[j] + cir[i].pt[60].x * 2;
 							cir[i].pt2[j].y = sin(PI * j * 24 / 180) * cir[i].rad[j];
 */
 				
-				shape[i].z = 100;
+				ball[i].z = 100;
 				//우빈이 도움: z는 cos으로 해야한다.
-				shape[i].choose_shape = 1;
+				ball[i].choose_shape = 1;
 
 		}
 		break;
 	case '2'://스프링
 		for (int i = 0; i < Point_num; i++) {
-			shape[i].x = 100 * cos(PI * i * 10 / 90) + WideSize / 50 + i * 10 ;
-			shape[i].y = 100 * sin(PI * i * 10 / 90) + HighSize / 2;
-			shape[i].z = cos(PI * i * 10 / 90);
+			ball[i].x = 100 * cos(PI * i * 10 / 90) + WideSize / 50 + i * 10 ;
+			ball[i].y = 100 * sin(PI * i * 10 / 90) + HighSize / 2;
+			ball[i].z = cos(PI * i * 10 / 90);
 			//우빈이 도움: z는 cos으로 해야한다.
-			shape[i].choose_shape = 1;
+			ball[i].choose_shape = 1;
 
 		}
 		break;

@@ -79,7 +79,6 @@ Shape tra;
 int rot_count;
 int rot_command;
 
-Shape shape;
 Shape sub[2];
 
 //카메라-----------------
@@ -98,11 +97,11 @@ Shape tree;//나무
 Shape chin_man;//철봉사람
 Shape run_man;//철봉사람
 Shape run;//철봉사람
-
+Shape plan;
 Shape press_man;
 			  //Shape tree;
-
-
+Shape ball;
+Shape clain;
 const void camera_custom
 (double pos_x, double pos_y, double pos_z, //위치
 	double degree, const double rot_x, const double rot_y, const double rot_z, //회전
@@ -131,7 +130,7 @@ const void camera_custom
 
 };
 
-
+Shape sh[100];
 
 void SetupRC()
 {
@@ -152,21 +151,47 @@ void main(int argc, char *argv[]) {
 	AT.x = 0, AT.y = 0, AT.z = 0;//EYE백터 초기화
 	UP.x = 0, UP.y = 1, UP.z = 0;//EYE백터 초기화
 
-	shape.size = 30;
+	ball.size = 20;
 
-	shape.pos.x = 0;
-	shape.pos.y = 0;
-	shape.pos.z = 0;
+	ball.pos.x = 0;
+	ball.pos.y = 0;
+	ball.pos.z = 0;
 
 	//shape.rot.degree = 0;
-	shape.rot.x = 0;
-	shape.rot.y = 0;
-	shape.rot.z = 0;
-	shape.stacks = 1;
+	ball.rot.x = 0;
+	ball.rot.y = 0;
+	ball.rot.z = 0;
+	ball.stacks = 1;
 
+	plan.scale.x = 1;
+	plan.scale.y = 0.5;
+	plan.scale.z = 0.3;
+	plan.pos.degree = 1;
 	run_man.move.degree = 1;
 	for (int i = 0; i < 2; i++) {
 		sub[i].size = 30;
+	}
+	for (int i = 0; i < 100; i++) {
+		sh[i].pos.y = 50 * sin(PI * i * 10 / 180);
+		sh[i].pos.x = 50 * cos(PI * i * 10 / 180);
+
+	}
+	
+
+	clain.size = 20;
+
+	clain.pos.x = 0;
+	clain.pos.y = 0;
+	clain.pos.z = 0;
+
+	//shape.rot.degree = 0;
+	clain.rot.x = 0;
+	clain.rot.y = 0;
+	clain.rot.z = 0;
+	clain.stacks = 1;
+
+	for (int i = 0; i < 2; i++) {
+		sub[i].size = 10;
 	}
 
 	glutInit(&argc, argv);
@@ -251,13 +276,14 @@ GLvoid drawScene(GLvoid)
 				glColor3d((float)67 / 255, (float)116 / 255, (float)217 / 255);
 
 				glPushMatrix();
-				glTranslated(-10, 10, 30);
+				glTranslated(-10, 10, 0);
 				glRotated(90, 0, 1, 0);
 				glPushMatrix();
-
+				glTranslated(0, press_man.move.y, 0);
 				glPushMatrix();
 				//glRotated(-run_man.rot.degree + 90 + 30, 1, 0, 0);
-				glutSolidCylinder(2 / 2, 10, 6, 6);//나무 몸통
+				
+				glutSolidCylinder(4 / 2, 20, 6, 6);//나무 몸통
 				glPopMatrix();
 				glPopMatrix();
 				glPopMatrix();
@@ -265,7 +291,7 @@ GLvoid drawScene(GLvoid)
 				glColor3d((float)76 / 255, (float)76 / 255, (float)76 / 255);
 				glPushMatrix();//사람
 				{
-					glTranslated(0, 10, 30);
+					glTranslated(0, 5, 20);
 					glRotated(-90, 1, 0, 0);
 					glRotated(180, 0, 1, 0);
 					for (int i = 0; i < 4; i++) {
@@ -281,24 +307,52 @@ GLvoid drawScene(GLvoid)
 								glTranslated(2, 10, 0);
 								glRotated(-90, 1, 0, 0);
 							}
+
+							glutSolidCylinder(2 / 2, 10, 6, 6);//나무 몸통
+							glPopMatrix();
+							glPopMatrix();//사람 끝
 						}
 						else {
 							glTranslated(0, 10, 0);
 							//glRotated(90, 1, 0, 0);
-							glPushMatrix();
-							if (i % 2 == 0) {
-								glTranslated(-2, 10, 0);
-								glRotated(-run_man.rot.degree + 90 + 30, 1, 0, 0);
+							
+							for (int k = 0; k < 2; k++) {
+								glPushMatrix();
+								if (k == 0) {
+									if (i % 2 == 0) {
+										glTranslated(-2, 10, 0);
+										glRotated(-run_man.rot.degree + 90 + 30, 0, -1, 0);
+									}
+									else {
+										glTranslated(2, 10, 0);
+										glRotated(-run_man.rot.degree + 90 + 30, 0, 1, 0);
+									}
+									glutSolidCylinder(2 / 2, 5, 6, 6);//나무 몸통
+								}
+								else {
+									
+									if (i % 2 == 0) {
+										glTranslated(-5, 10, -15);
+										glRotated(10, 0, 0, 1);
+										glTranslated( 0,0,-press_man.move.y + 10);
+										
+									}
+									else {
+										glTranslated(5, 10, -15);
+										glRotated(10, 0, 0, 1);
+										glTranslated(0,0,-press_man.move.y + 10);
+									
+									}
+									glutSolidCylinder(2 / 2, press_man.move.y + 2, 6, 6);//나무 몸통
+								}
+								glPopMatrix();
 							}
-							else {
-								glTranslated(2, 10, 0);
-								glRotated(-run_man.rot.degree + 90 + 30, 1, 0, 0);
-							}
+						
+							
+						
+							glPopMatrix();//사람 끝
 						}
 
-						glutSolidCylinder(2 / 2, 10, 6, 6);//나무 몸통
-						glPopMatrix();
-						glPopMatrix();//사람 끝
 					}
 					//몸
 					glPushMatrix();
@@ -525,6 +579,160 @@ GLvoid drawScene(GLvoid)
 
 			}glPopMatrix();//러닝머신 끝
 
+			glPushMatrix();//비행기
+			{
+				glColor3d((float)204 / 255, (float)61 / 255, (float)61 / 255);
+				glTranslated(plan.move.x * plan.pos.degree, plan.move.y, plan.move.z);//위치 변경
+				glScaled(0.5, 0.5, 0.5);
+				glPushMatrix();
+				glRotated(-plan.rot.degree * plan.pos.degree, 0, 1, 0);
+				
+				//비행기 몸체 머리
+				glPushMatrix();
+				glColor3d((float)255 / 255, (float)187 / 255, (float)0 / 255);
+				glScaled(0.5, 0.5, 1.5);
+				glutSolidSphere(10, 10, 10);
+				glPopMatrix();
+
+				glPushMatrix();
+				glColor3d((float)204 / 255, (float)61 / 255, (float)61 / 255);
+				glScaled(2, 0.5, 0.5);
+				glutSolidSphere(10, 10, 10);
+				glPopMatrix();
+
+
+				for (int i = 0; i < 2; i++) {
+					glPushMatrix();
+					glColor3d((float)92 / 255, (float)209 / 255, (float)229 / 255);
+					if (i == 0) {
+						glTranslated(10, -2, 0);
+					}
+					else {
+						glTranslated(-10, -2, 0);
+					}
+					glScaled(plan.scale.x, plan.scale.x, plan.scale.x);
+					glutSolidSphere(5, 10, 10);
+					glPopMatrix();
+				}
+				for (int i = 0; i < 2; i++) {
+					glPushMatrix();
+					glColor3d((float)92 / 255, (float)209 / 255, (float)229 / 255);
+					if (i == 0) {
+						glTranslated(10, -2, -10);
+					}
+					else {
+						glTranslated(-10, -2, -10);
+					}
+					glScaled(plan.scale.y, plan.scale.y, plan.scale.y);
+					glutSolidSphere(5, 10, 10);
+					glPopMatrix();
+				}
+				for (int i = 0; i < 2; i++) {
+					glPushMatrix();
+					glColor3d((float)92 / 255, (float)209 / 255, (float)229 / 255);
+					if (i == 0) {
+						glTranslated(10, -2, -20);
+					}
+					else {
+						glTranslated(-10, -2, -20);
+					}
+					glScaled(plan.scale.z, plan.scale.z, plan.scale.z);
+					glutSolidSphere(5, 10, 10);
+					glPopMatrix();
+				}
+
+
+				glPushMatrix();
+				glColor3d((float)152 / 255, (float)0 / 255, (float)0 / 255);
+				glTranslated(0,0, - 10);
+				glScaled(1, 1, 1);
+				glutSolidSphere(5, 10, 10);
+				glPopMatrix();
+
+				//프로펠러
+					glPushMatrix();
+					glColor3d((float)67 / 255, (float)116 / 255, (float)217 / 255);
+					glTranslated(0, 0, 15);
+					glRotated(plan.rot.degree + 90, 0, 0, 1);
+					glScaled(1, 0.4, 0.2);
+						glPushMatrix();
+						glutSolidSphere(5, 10, 10);
+						glPopMatrix();
+					
+					glPopMatrix();
+				
+					glPushMatrix();
+					glColor3d((float)67 / 255, (float)116 / 255, (float)217 / 255);
+					glTranslated(0, 0, 15);
+					glRotated(plan.rot.degree + 0, 0, 0, 1);
+					glScaled(1, 0.4, 0.2);
+					glPushMatrix();
+					glutSolidSphere(5, 10, 10);
+					glPopMatrix();
+
+					glPopMatrix();
+
+			}glPopMatrix();//비행기 끝
+			glPopMatrix();
+
+			glPushMatrix();//래킹볼
+			{
+				glTranslatef(ball.pos.x + ball.move.x, ball.pos.y + ball.move.y, ball.pos.z + ball.move.z);
+
+				glPushMatrix();
+				{
+
+					glRotatef(ball.rot.degree, ball.rot.x, ball.rot.y, ball.rot.z);
+
+					glutWireSphere(ball.size, 10, 10);
+					//glRotatef(Time_count, 0, 1, 0);
+
+				}
+				glPopMatrix();
+			}
+			glPopMatrix();
+
+			glPushMatrix();//크레인
+			{
+				glTranslatef(clain.move.x, clain.move.y, clain.move.z);
+				
+				glPushMatrix();
+				{
+					if (clain.any) {
+						glRotatef(clain.rot.degree, clain.rot.x, clain.rot.y, clain.rot.z);
+					}
+
+					glutSolidCube(clain.size);
+					//glRotatef(Time_count, 0, 1, 0);
+				}
+				glPushMatrix();
+				{
+					glRotatef(sub[0].rot.degree, sub[0].rot.x, 0, 0);
+					glRotatef(sub[0].rot.z, 0, sub[0].rot.y, 0);
+					glTranslatef(0, sub[0].size, 0);
+					glScalef(0.7, 1, 0.7);
+					glColor3f((float)0 / 255, (float)100 / 255, (float)0 / 255);
+					glutSolidCube(sub[0].size);
+
+					glPushMatrix();
+					{
+						glRotatef(sub[1].rot.degree, sub[1].rot.x, 0, 0);
+						glRotatef(sub[1].rot.y, 0, 0, sub[1].rot.z);
+						glTranslatef(0, sub[1].size, 0);
+						glScalef(0.5, 1, 0.5);
+						glColor3f((float)100 / 255, (float)0 / 255, (float)0 / 255);
+						glutSolidCube(sub[1].size);
+
+					}
+					glPopMatrix();
+
+				}
+				glPopMatrix();
+
+				glPopMatrix();
+			}
+			glPopMatrix();
+
 		}
 		glPopMatrix();
 	}
@@ -574,14 +782,92 @@ void Timerfunction(int value) {
 
 	if (!run_man.any) {
 		run_man.rot.degree += 2;
+		press_man.move.x -= 0.5;
+		press_man.move.y -= 0.5;
 	}
 	else {
 		run_man.rot.degree -= 2;
+		press_man.move.x += 0.5;
+		press_man.move.y += 0.5;
 	}
 	chin_man.rot.degree += 1;
 
 	run.rot.degree += 10;
 	
+	plan.rot.degree += 10;
+	if (Time_count % 100 == 0) {
+		plan.move.degree = 0;
+
+	}
+	plan.move.degree += 10;
+
+	plan.move.y = 100;
+	plan.move.z = sh[Time_count % 100].pos.y;
+	plan.move.x = sh[Time_count % 100].pos.x;
+
+		if (plan.scale.x == 0.1) 
+			plan.scale.x = 1;
+		else 
+			plan.scale.x -= 0.1;
+
+		if (plan.scale.y == 0.1) 
+			plan.scale.y = 1;
+		else
+			plan.scale.y -= 0.1;
+	
+		if (plan.scale.z == 0.1) 
+			plan.scale.z = 1;
+		else
+			plan.scale.z -= 0.1;
+	
+		//---------볼
+
+		if (!ani) {
+			move_count += 1;//타이머 카운트
+		}
+		ball.rot.degree += PI * 2;
+		if (ball.any) {
+			if ((ball.size * PI * 2 >= ball.move.x) && ball.b.b_x)
+			{
+				if (ball.cl.R) {
+					if ((ball.pos.x + ball.move.x  < 100)) {
+						ball.move.x += 1;
+					}
+				}
+				else {
+					if ((ball.pos.x + ball.move.x  > 0)) {
+						ball.move.x -= 1;
+					}
+				}
+			}
+			else if ((ball.size * PI * 2 >= ball.move.y) && ball.b.b_y)
+			{
+				//	shape.move.y += 1;
+			}
+			else if ((ball.size * PI * 2 >= ball.move.z) && ball.b.b_z)
+			{
+
+				if ((ball.pos.z + ball.move.z < 100)) {
+					ball.move.z += 1;
+				}
+			}
+		}
+
+
+		//크레인
+		//이동하는 코드
+		if ((clain.move.x == 50) || (clain.move.x == -50)) {
+			clain.stacks *= -1;
+		}
+		clain.move.x += (1 * clain.stacks);
+		//y 축 회전
+		if (clain.any) {
+			clain.rot.degree += 2;
+			clain.rot.x = 0;
+			clain.rot.y = 1;
+			clain.rot.z = 0;
+		}
+
 	Time_count++;
 	glutPostRedisplay(); //타이머에 넣는다.
 	glutTimerFunc(100, Timerfunction, 1); //타이머 다시 출력
@@ -589,6 +875,7 @@ void Timerfunction(int value) {
 }
 int ttt;
 int ani_count;
+
 void Keyboard(unsigned char key, int x, int y) {
 	switch (key)
 	{
@@ -670,6 +957,246 @@ void Keyboard(unsigned char key, int x, int y) {
 		}
 		break;
 
+	//비행기 방향 바꾸기
+	case '/':
+		plan.pos.degree *= -1;
+		break;
+
+
+	//래킹볼
+	case 'l':
+		ani = TRUE;
+		ttt++;
+		if (ttt % 2 == 0) {
+			ball.any = TRUE;
+			ball.move.x = 0;
+			ball.b.b_x = TRUE;
+			ball.b.b_y = FALSE;
+			ball.b.b_z = FALSE;
+
+			//	shape.rot.x = 0;
+			//	shape.rot.y = 0;
+			ball.rot.z = 1;
+			ball.cl.R = 0;
+		}
+		else {
+			ball.pos.x += ball.move.x;
+
+			ball.b.b_x = FALSE;
+			ball.b.b_y = FALSE;
+			ball.b.b_z = FALSE;
+			//	shape.rot.x = 0;
+			//	shape.rot.y = 0;
+			//	shape.rot.z = 0;
+			ball.any = FALSE;
+
+
+		}
+		break;
+
+	case 'L':
+		ani = TRUE;
+		ttt++;
+		if (ttt % 2 == 0) {
+			ball.any = TRUE;
+			ball.move.x = 0;
+			ball.b.b_x = TRUE;
+			ball.b.b_y = FALSE;
+			ball.b.b_z = FALSE;
+
+			//	shape.rot.x = 0;
+			//	shape.rot.y = 0;
+			ball.rot.z = 1;
+			ball.cl.R = 1;
+		}
+		else {
+			ball.pos.x += ball.move.x;
+
+			ball.b.b_x = FALSE;
+			ball.b.b_y = FALSE;
+			ball.b.b_z = FALSE;
+			//	shape.rot.x = 0;
+			//	shape.rot.y = 0;
+			//	shape.rot.z = 0;
+			ball.any = FALSE;
+		}
+		break;
+
+	case 'm':
+		ani = TRUE;
+		ttt++;
+		if (ttt % 2 == 0) {
+			ball.any = TRUE;
+			ball.move.y = 0;
+			ball.b.b_x = FALSE;
+			ball.b.b_y = TRUE;
+			ball.b.b_z = FALSE;
+
+			//	shape.rot.x = 0;
+			ball.rot.y = 1;
+			//	shape.rot.z = 0;
+			ball.cl.G = 0;
+		}
+		else {
+			ball.pos.y += ball.move.y;
+			ball.b.b_x = FALSE;
+			ball.b.b_y = FALSE;
+			ball.b.b_z = FALSE;
+			//	shape.rot.x = 0;
+			//	shape.rot.y = 0;
+			//	shape.rot.z = 0;
+			ball.any = FALSE;
+		}
+		break;
+	case 'M':
+		ani = TRUE;
+		ttt++;
+		if (ttt % 2 == 0) {
+			ball.any = TRUE;
+			ball.move.y = 0;
+			ball.b.b_x = FALSE;
+			ball.b.b_y = TRUE;
+			ball.b.b_z = FALSE;
+
+			//	shape.rot.x = 0;
+			ball.rot.y = 1;
+			//	shape.rot.z = 0;
+			ball.cl.G = 1;
+		}
+		else {
+			ball.pos.y += ball.move.y;
+			ball.b.b_x = FALSE;
+			ball.b.b_y = FALSE;
+			ball.b.b_z = FALSE;
+			//	shape.rot.x = 0;
+			//	shape.rot.y = 0;
+			//	shape.rot.z = 0;
+			ball.any = FALSE;
+		}
+		break;
+	case 'n':
+		ani = TRUE;
+		ttt++;
+		if (ttt % 2 == 0) {
+			ball.any = TRUE;
+			ball.move.z = 0;
+			ball.b.b_x = FALSE;
+			ball.b.b_y = FALSE;
+			ball.b.b_z = TRUE;
+
+			ball.rot.x = 1;
+			//	shape.rot.y = 0;
+			//	shape.rot.z = 0;
+		}
+		else {
+			ball.pos.z += ball.move.z;
+			ball.b.b_x = FALSE;
+			ball.b.b_y = FALSE;
+			ball.b.b_z = FALSE;
+			//	shape.rot.x = 0;
+			//	shape.rot.y = 0;
+			//	shape.rot.z = 0;
+			ball.any = FALSE;
+		}
+		break;
+
+	case 'N':
+		ani = TRUE;
+		ttt++;
+		if (ttt % 2 == 0) {
+			ball.any = TRUE;
+			ball.move.z = 0;
+			ball.b.b_x = FALSE;
+			ball.b.b_y = FALSE;
+			ball.b.b_z = TRUE;
+
+			ball.rot.x = 1;
+			//	shape.rot.y = 0;
+			//	shape.rot.z = 0;
+		}
+		else {
+			ball.pos.z += ball.move.z;
+			ball.b.b_x = FALSE;
+			ball.b.b_y = FALSE;
+			ball.b.b_z = FALSE;
+			//	shape.rot.x = 0;
+			//	shape.rot.y = 0;
+			//	shape.rot.z = 0;
+			ball.any = FALSE;
+		}
+		break;
+	//크레인
+	case '7':
+		ttt++;
+
+		break;
+		//y
+	case '8':
+		ani = TRUE;
+		ttt++;
+		if (ttt % 2 == 0) {
+			clain.any = TRUE;
+		}
+		else {
+			clain.any = FALSE;
+		}
+		break;
+		//----------첫번째 서브 x 축 이동
+	case 'f':
+		sub[0].any = TRUE;
+		sub[0].rot.degree--;
+		sub[0].rot.x = 1;
+		//sub[0].rot.y = 0;
+		//sub[0].rot.z = 0;
+
+		break;
+
+	case 'F':
+		sub[0].any = TRUE;
+		sub[0].rot.degree++;
+		break;
+		//----------첫번째 서브 y 축 이동
+	case 'g':
+		sub[0].any = TRUE;
+		sub[0].rot.z--;
+		sub[0].rot.y = 1;
+		//sub[0].rot.y = 0;
+		//sub[0].rot.z = 0;
+		break;
+
+	case 'G':
+		sub[0].any = TRUE;
+		sub[0].rot.z++;
+		break;
+
+		//----------두번째 서브 x 축 이동
+	case 'c':
+		sub[1].any = TRUE;
+		sub[1].rot.degree--;
+		sub[1].rot.x = 1;
+		//sub[0].rot.y = 0;
+		//sub[0].rot.z = 0;
+
+		break;
+
+	case 'C':
+		sub[1].any = TRUE;
+		sub[1].rot.degree++;
+		break;
+		//----------두번째 서브 z 축 이동
+	case 'v':
+		sub[1].any = TRUE;
+		sub[1].rot.y--;
+		sub[1].rot.z = 1;
+		//sub[0].rot.y = 0;
+		//sub[0].rot.z = 0;
+
+		break;
+
+	case 'V':
+		sub[1].any = TRUE;
+		sub[1].rot.y++;
+		break;
 	default:
 		;
 		break;
