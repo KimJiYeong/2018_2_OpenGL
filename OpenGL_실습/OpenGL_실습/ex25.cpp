@@ -601,7 +601,7 @@ void Keyboard(unsigned char key, int x, int y) {
 	case 'Z':
 		camera.rot.z += 0.1;
 		break;
-
+		
 		//move
 	case 'w':
 		camera.move.y += 1;
