@@ -22,6 +22,9 @@
     <Filter Include="소스 파일\GL2">
       <UniqueIdentifier>{4e052821-d96e-4fef-a6a1-c0ae9d2e960d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\GL3">
+      <UniqueIdentifier>{670fd465-4ccc-41be-8206-693524dfe4a7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="기본.cpp">
@@ -63,8 +66,14 @@
     <ClCompile Include="ex20.cpp">
       <Filter>소스 파일\GL2</Filter>
     </ClCompile>
-    <ClCompile Include="ex21.cpp">
+    <ClCompile Include="ex25.cpp">
+      <Filter>소스 파일\GL3</Filter>
+    </ClCompile>
+    <ClCompile Include="ex21,22.cpp">
       <Filter>소스 파일\GL2</Filter>
+    </ClCompile>
+    <ClCompile Include="카메라_기본.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
