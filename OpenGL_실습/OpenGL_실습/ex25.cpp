@@ -174,10 +174,11 @@ void main(int argc, char *argv[]) {
 	//√ ±‚»≠
 	ball.size = 25;
 	ball.rot.degree = 1;
+	spring.size = 40;
 
 	for (int i = 0; i < 36; i++) {
-		spring.sp_pos[i].x =40 * cos(i * PI * 10 / 36);
-		spring.sp_pos[i].z =40 * sin(i * PI * 10 / 36);
+		spring.sp_pos[i].x =spring.size * cos(i * PI * 10 / 36);
+		spring.sp_pos[i].z =spring.size * sin(i * PI * 10 / 36);
 		spring.sp_pos[i].y = i;
 
 	}
@@ -442,14 +443,14 @@ GLvoid drawScene(GLvoid)
 				glTranslated(0, ball.move.y, 0);
 				glRotated(ball.rot.degree *  ball.move.y * PI,1,0, 0);
 				glColor3f(0.5, 0, 0.5);
-				glutWireSphere(ball.size, 8, 8);
+				glutSolidSphere(ball.size, 8, 8);
 				glPopMatrix();
 				
 				glPushMatrix();
 				glTranslated(0, 0, ball.move.z);
 				glRotated(ball.rot.degree *  ball.move.z * PI, 1, 0, 0);
 				glColor3f(0, 0, 0);
-				glutWireSphere(ball.size, 8, 8);
+				glutSolidSphere(ball.size, 8, 8);
 				glPopMatrix();
 
 			}
