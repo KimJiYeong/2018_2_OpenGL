@@ -92,6 +92,9 @@ static int __x;
 static int __y;
 static int __z;
 
+
+#define Size 36
+
 Shape tree;//나무
 //Shape tree;
 Shape chin_man;//철봉사람
@@ -163,15 +166,17 @@ void main(int argc, char *argv[]) {
 	ball.rot.z = 0;
 	ball.stacks = 1;
 
-	plan.scale.x = 1;
-	plan.scale.y = 0.5;
-	plan.scale.z = 0.3;
+	plan.scale.x = 1.0f;
+	plan.scale.y = 0.5f;
+	plan.scale.z = 0.3f;
+
+
 	plan.pos.degree = 1;
 	run_man.move.degree = 1;
 	for (int i = 0; i < 2; i++) {
 		sub[i].size = 30;
 	}
-	for (int i = 0; i < 100; i++) {
+	for (int i = 0; i < Size; i++) {
 		sh[i].pos.y = 50 * sin(PI * i * 10 / 180);
 		sh[i].pos.x = 50 * cos(PI * i * 10 / 180);
 
@@ -193,6 +198,7 @@ void main(int argc, char *argv[]) {
 	for (int i = 0; i < 2; i++) {
 		sub[i].size = 10;
 	}
+	
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
@@ -600,7 +606,7 @@ GLvoid drawScene(GLvoid)
 				glutSolidSphere(10, 10, 10);
 				glPopMatrix();
 
-
+				//비행기 꼬리
 				for (int i = 0; i < 2; i++) {
 					glPushMatrix();
 					glColor3d((float)92 / 255, (float)209 / 255, (float)229 / 255);
@@ -677,7 +683,7 @@ GLvoid drawScene(GLvoid)
 
 			glPushMatrix();//래킹볼
 			{
-				glTranslatef(ball.pos.x + ball.move.x, ball.pos.y + ball.move.y, ball.pos.z + ball.move.z);
+				glTranslatef(ball.pos.x + ball.move.x, ball.pos.y + ball.move.y + ball.size, ball.pos.z + ball.move.z);
 
 				glPushMatrix();
 				{
@@ -802,61 +808,50 @@ void Timerfunction(int value) {
 	plan.move.degree += 10;
 
 	plan.move.y = 100;
-	plan.move.z = sh[Time_count % 100].pos.y;
-	plan.move.x = sh[Time_count % 100].pos.x;
+	plan.move.z = sh[Time_count % Size].pos.y;
+	plan.move.x = sh[Time_count % Size].pos.x;
 
-		if (plan.scale.x == 0.1) 
-			plan.scale.x = 1;
-		else 
-			plan.scale.x -= 0.1;
+		if (plan.scale.x <= 0.1f)
+			plan.scale.x = 1.f;
 
-		if (plan.scale.y == 0.1) 
-			plan.scale.y = 1;
-		else
-			plan.scale.y -= 0.1;
+		plan.scale.x -= 0.1f;
+
+		if (plan.scale.y <= 0.1f) 
+			plan.scale.y = 1.f;
+		
+		plan.scale.y -= 0.1f;
 	
-		if (plan.scale.z == 0.1) 
-			plan.scale.z = 1;
-		else
-			plan.scale.z -= 0.1;
+		if (plan.scale.z = 0.1f) 
+			plan.scale.z = 1.f;
+		
+		plan.scale.z -= 0.1f;
 	
 		//---------볼
 
 		if (!ani) {
 			move_count += 1;//타이머 카운트
 		}
-		ball.rot.degree += PI * 2;
-		if (ball.any) {
-			if ((ball.size * PI * 2 >= ball.move.x) && ball.b.b_x)
-			{
-				if (ball.cl.R) {
-					if ((ball.pos.x + ball.move.x  < 100)) {
-						ball.move.x += 1;
-					}
-				}
-				else {
-					if ((ball.pos.x + ball.move.x  > 0)) {
-						ball.move.x -= 1;
-					}
-				}
-			}
-			else if ((ball.size * PI * 2 >= ball.move.y) && ball.b.b_y)
-			{
-				//	shape.move.y += 1;
-			}
-			else if ((ball.size * PI * 2 >= ball.move.z) && ball.b.b_z)
-			{
 
-				if ((ball.pos.z + ball.move.z < 100)) {
-					ball.move.z += 1;
+		ball.rot.degree += PI * 2;
+		if (ball.b.b_x)
+		{
+				if ((ball.pos.x + ball.move.x  < 100)) {
+					ball.move.x += 1;
 				}
+			
+		}
+		else{
+			if ((ball.pos.x + ball.move.x  > 0)) {
+				ball.move.x -= 1;
 			}
 		}
 
 
+
+
 		//크레인
 		//이동하는 코드
-		if ((clain.move.x == 50) || (clain.move.x == -50)) {
+		if ((clain.move.x == 100) || (clain.move.x == -100)) {
 			clain.stacks *= -1;
 		}
 		clain.move.x += (1 * clain.stacks);
@@ -867,6 +862,46 @@ void Timerfunction(int value) {
 			clain.rot.y = 1;
 			clain.rot.z = 0;
 		}
+
+		//크레인과 레킹볼 
+		if ((clain.move.x - clain.size < ball.move.x + ball.pos.x) && ( ball.move.x + ball.pos.x < clain.move.x + clain.size)) {// z 축
+			if((clain.move.z - clain.size < ball.move.z + ball.pos.z) && (ball.move.z + ball.pos.z < clain.move.z + clain.size)) {// z 축
+				printf("clain");
+				if (ball.b.b_z) {
+					ball.b.b_z = false;
+				}
+				else {
+					ball.b.b_z = true;
+				}
+			}
+		
+		}
+		
+
+		if ((ball.pos.z + ball.move.z > 100)) {
+				ball.b.b_z = true;
+				printf("a");
+
+		}			
+		if ((ball.pos.z + ball.move.z < -100)) {
+			ball.b.b_z = false;
+			printf("b");
+		}
+
+		if (ball.b.b_z)
+		{
+			ball.move.z -= 2;
+		}
+		else {
+			ball.move.z += 2;
+		}
+
+			ball.rot.x = 1;
+			ball.cl.R = false;
+		
+
+		//키 입력 안받기
+
 
 	Time_count++;
 	glutPostRedisplay(); //타이머에 넣는다.
