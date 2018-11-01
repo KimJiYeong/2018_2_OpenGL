@@ -261,6 +261,28 @@ GLvoid drawScene(GLvoid)
 
 			}glPopMatrix();//땅 끝
 
+						   //삼각형 판
+			glPushMatrix();
+			{
+				for (int i = 0; i < 4; i++) {
+				glTranslated(0, 0, 0);//위치 이동
+				glRotated(i * 90, 0, 1, 0);
+				glPushMatrix();//
+				{
+					glColor3d((float)((71 * i)% 255 )/ 255, (float)((10 * i) % 255) / 255, (float)((200 * i) % 255) / 255);
+					glBegin(GL_TRIANGLES);
+					glVertex3d(BOX_SIZE / 2, 0, 0);
+					glVertex3d(0, 0, BOX_SIZE / 2);
+					glVertex3d(BOX_SIZE / 2, 0, BOX_SIZE / 2);
+					glEnd();
+				}
+				glPopMatrix();
+				}
+			}
+			glPopMatrix();
+
+
+
 			glPushMatrix();//벤치 프레스 
 			{
 				glColor3d((float)204 / 255, (float)61 / 255, (float)61 / 255);
@@ -739,6 +761,7 @@ GLvoid drawScene(GLvoid)
 			}
 			glPopMatrix();
 
+		
 		}
 		glPopMatrix();
 	}
