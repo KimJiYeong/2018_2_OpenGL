@@ -3,6 +3,7 @@
 #include <time.h>
 #include <math.h>
 #include "other_draw.h"
+#include "camera.h"
 GLvoid Reshape(int w, int h);
 
 //해상도 설정
@@ -63,7 +64,6 @@ BOOL Look = FALSE;
 
 //카메라-----------------
 
-Shape camera;
 Translate_pos EYE;
 Translate_pos AT;
 Translate_pos UP;
@@ -72,35 +72,8 @@ static int __x;
 static int __y;
 static int __z;
 
-
-const void camera_custom
-(double pos_x, double pos_y, double pos_z, //위치
-	double degree, const double rot_x, const double rot_y, const double rot_z, //회전
-	const double move_x, const double move_y, const double move_z //움직임
-) {
-
-
-	EYE.x =
-		((cos(rot_y) * cos(rot_z)) +
-		(sin(rot_x) * sin(rot_y) * cos(rot_z) + cos(rot_x) * sin(rot_z)) +
-			((((-1) * cos(rot_x)) * sin(rot_y) * cos(rot_z)) + (sin(rot_x) * sin(rot_z))));
-
-	EYE.y =
-		(((-1) * cos(rot_y) * sin(rot_z)) +
-		(((-1) * sin(rot_x) * sin(rot_y) * sin(rot_z)) + (cos(rot_x) * cos(rot_z))) +
-			((cos(rot_x) * sin(rot_y) * sin(rot_z)) + (sin(rot_x) * sin(rot_z))));
-
-	EYE.z =
-		(sin(rot_y) +
-		(((-1) * sin(rot_x)) * cos(rot_y)) +
-			(cos(rot_x) * cos(rot_y)));//stay
-
-	AT.x = pos_x;
-	AT.y = pos_y;
-	AT.z = pos_z;
-
-};
-
+//카메라
+Cam camera;
 
 //은면제거
 BOOL depth;
@@ -112,43 +85,48 @@ int culling_count;
 BOOL shade;
 int shade_count;
 //볼
-Shape ball;
-
+Shape ball[10];
 //스프링
-Shape spring;
 
 int index_box_size;
+#define BALL_NUM 5
+
 void SetupRC()
 {
 	index_box_size = 50;
-	
-	//초기화
-	camera.rot.x = 0;
-	camera.rot.y = 0;
-	camera.rot.z = 0;
-
-	camera.move.x = 0;
-	camera.move.y = 0;
-	camera.move.z = 0;
-
-	EYE.x = 0, EYE.y = 0, EYE.z = 300;//EYE백터 초기화
-	AT.x = 0, AT.y = 0, AT.z = 0;//EYE백터 초기화
-	UP.x = 0, UP.y = 1, UP.z = 0;//EYE백터 초기화
-
 								 //초기화
-	ball.size = 25;
-	ball.rot.degree = 1;
-	spring.size = 40;
+	for (int i = 0; i < BALL_NUM; i++) {
+		ball[i].size = 5;
 
-	for (int i = 0; i < 36; i++) {
-		spring.sp_pos[i].x = spring.size * cos(i * PI * 10 / 36);
-		spring.sp_pos[i].z = spring.size * sin(i * PI * 10 / 36);
-		spring.sp_pos[i].y = i;
+		ball[i].move.x = 0;
+		ball[i].move.y = 0;
+		ball[i].move.z = 0;
+		
+		ball[i].rot.degree = 1;
+	
+		if (rand() % 2 == 0) {
+			ball[i].rot.x = 1;
+		}
+		else {
+			ball[i].rot.x = -1;
+		}
+
+		if (rand() % 2 == 0) {
+			ball[i].rot.y = 1;
+		}
+		else {
+			ball[i].rot.y = -1;
+		}
+
+		if (rand() % 2 == 0) {
+			ball[i].rot.z = 1;
+		}
+		else {
+			ball[i].rot.z = -1;
+		}
 
 	}
-
 	//-------------
-
 }
 void main(int argc, char *argv[]) {
 
@@ -198,16 +176,8 @@ GLvoid drawScene(GLvoid)
 
 	glPushMatrix();//-----------------------------------
 	{
-
-		//glRotated(-45, 0, 0, 1);
-		glTranslated(camera.move.x, camera.move.y, camera.move.z);
-		camera_custom(0, 0, 0, camera.rot.degree, camera.rot.x, camera.rot.y, camera.rot.z, camera.move.x, camera.move.y, camera.move.z);
-
-		gluLookAt(
-			EYE.x, EYE.y, EYE.z,  //위5 eye
-			AT.x, AT.y, AT.z, //방향 center
-			0, 1, 0 //위쪽방향(건들 ㄴㄴ) up
-		);
+		camera.drawCamera();
+		
 
 		glPushMatrix();//-------------그리기 입력--------------------------
 		{
@@ -227,40 +197,21 @@ GLvoid drawScene(GLvoid)
 						  //공그리기
 			glPushMatrix();
 			{
-				glTranslated(0, 0, 0);
+				glTranslated(0, 0, 0);//축 초기화
+				glColor3f(1, 1, 1);
 
-				glPushMatrix();
-				glTranslated(0, ball.move.y, 0);
-				glRotated(ball.rot.degree *  ball.move.y * PI, 1, 0, 0);
-				glColor3f(0.5, 0, 0.5);
-				glutSolidSphere(ball.size, 8, 8);
-				glPopMatrix();
-
-				glPushMatrix();
-				glTranslated(0, 0, ball.move.z);
-				glRotated(ball.rot.degree *  ball.move.z * PI, 1, 0, 0);
-				glColor3f(0, 0, 0);
-				glutSolidSphere(ball.size, 8, 8);
-				glPopMatrix();
-
+				for (int i = 0; i < BALL_NUM; i++) {
+					glPushMatrix();
+					glTranslated(ball[i].move.x, ball[i].move.y, ball[i].move.z);
+					glutSolidSphere(ball[i].size, 8, 8);
+					glPopMatrix();
+				
+				}
 			}
 			glPopMatrix();//공그리기 끝
 
 			glPushMatrix();//스프링 그리기
 			{
-				glTranslated(0, 0, 0);
-				glLineWidth(2);
-
-				glColor3f(1, 1, 1);
-
-				glBegin(GL_LINES);
-				for (int i = 0; i < 35; i++) {
-					glVertex3f(spring.sp_pos[i].x, spring.sp_pos[i].y, spring.sp_pos[i].z);
-					glVertex3f(spring.sp_pos[i + 1].x, spring.sp_pos[i + 1].y, spring.sp_pos[i + 1].z);
-				}
-				glEnd();
-
-				//glutWireSphere(100, 8, 8);
 			}
 			glPopMatrix();
 		}
@@ -278,83 +229,44 @@ void Mouse(int button, int state, int x, int y) {
 	glutPostRedisplay();
 
 }
+void Motion(int x, int y , BOOL state) {
+
+}
+
 void Timerfunction(int value) {
 
-	if (index.b.b_x) {
-		if (index.move.x < 9) {
-			if (index.move.x == 8) {
-				ball.b.b_x = true;
-			}
-			index.move.x += 1;
-		}
-	}
-	else {
-		if (index.move.x > 0) {
-
-			index.move.x -= 1;
-		}
-	}
-
-	//공이 열리면
-	if (ball.b.b_x) {
-		if (ball.size * 2 * PI > ball.move.y) {
-			ball.rot.degree = -1;
-			ball.move.y += 2;
-		}
-		if (spring.sp_pos[35].y <= ball.size * 2 * PI) {
-			for (int i = 0; i < 36; i++) {
-				spring.sp_pos[i].y += 0.1 + i;
-			}
-		}
-
-	}
-	else {
-		if (0 < ball.move.y) {
-			if (ball.move.y == 2) {
-				index.b.b_x = false;
-			}
-			ball.rot.degree = -1;
-			ball.move.y -= 2;
-		}
-		if (spring.sp_pos[35].y > 36) {
-			for (int i = 0; i < 36; i++) {
-				spring.sp_pos[i].y -= 0.1 + i;
-			}
-		}
-
-	}
-
-	if (index.b.b_y) {
-		if (index.move.y < 9) {
-			if (index.move.y == 8) {
-				ball.b.b_y = true;
-			}
-			index.move.y += 1;
-		}
-	}
-	else {
-		if (index.move.y > 0) {
-
-			index.move.y -= 1;
-		}
+	for (int i = 0; i < BALL_NUM; i++) {
+		//충돌체크
+		ball[i].move.x += 5 * ball[i].rot.x;
+		ball[i].move.y += 5 * ball[i].rot.y;
+		ball[i].move.z += 5 * ball[i].rot.z;
 
 
-	}
-
-	//공이 열리면
-	if (ball.b.b_y) {
-		if (ball.size * 2 * PI > ball.move.z) {
-			ball.rot.degree = 1;
-			ball.move.z += 2;
+		if ((-index_box_size / 2 >= ball[i].move.x))
+		{
+			ball[i].rot.x *= -1;
 		}
-	}
-	else {
-		if (0 < ball.move.z) {
-			if (ball.move.z == 2) {
-				index.b.b_y = false;
-			}
-			ball.rot.degree = 1;
-			ball.move.z -= 2;
+		else if ((index_box_size / 2<= ball[i].move.x))
+		{
+			ball[i].rot.x *= -1;
+		}
+
+		if ((-index_box_size + 10 >= ball[i].move.y))
+		{
+			ball[i].rot.y *= -1;
+		}
+		else if ((index_box_size + 10 <= ball[i].move.y))
+		{
+			ball[i].rot.y *= -1;
+		}
+
+		if ((-index_box_size - 10 >=  ball[i].move.z))
+		{
+			ball[i].rot.z *= -1;
+		}
+		else if ((index_box_size  <= ball[i].move.z))
+		{
+			ball[i].rot.z *= -1;
 		}
 	}
 	glutPostRedisplay(); //타이머에 넣는다.
@@ -369,63 +281,50 @@ void Keyboard(unsigned char key, int x, int y) {
 		//---------카메라
 		//rotate
 	case 'x':
-		__x = 1;
-		camera.rot.x -= 0.1;
+		camera.rotateEye(1, 0, 0);
 		break;
 	case 'X':
-		camera.rot.x += 0.1;
+		camera.rotateEye(-1, 0, 0);
 		break;
 
 	case 'y':
-		__y = 1;
-		camera.rot.y -= 0.1;
+		camera.rotateEye(0, 1, 0);
 		break;
 	case 'Y':
-		camera.rot.y += 0.1;
+		camera.rotateEye(0, -1, 0);
 		break;
 
 	case 'z':
-		__z = 1;
-		camera.rot.z -= 0.1;
+		camera.rotateEye(0, 0, 1);
 		break;
 	case 'Z':
-		camera.rot.z += 0.1;
+		camera.rotateEye(0, 0, -1);
 		break;
 
 		//move
 	case 'w':
-		camera.move.y += 1;
+		camera.moveEye(0, 1, 0);
 		break;
 	case 'a':
-		camera.move.x -= 1;
+		camera.moveEye(-1, 0, 0);
 		break;
 
 	case 's':
-		camera.move.y -= 1;
+		camera.moveEye(0, -1, 0);
 		break;
 
 	case 'd':
-		camera.move.x += 1;
+		camera.moveEye(1, 0, 0);
 		break;
 	case '+':
-		camera.move.z += 1;
+		camera.moveEye(0, 0, 1);
+
 		break;
 	case '-':
-		camera.move.z -= 1;
+		camera.moveEye(0, 0, -1);
 		break;
 	case 'i':
-		camera.rot.degree = 0;
-		camera.move.x = 0;
-		camera.move.y = 0;
-		camera.move.z = 0;
-		camera.rot.x = 0;
-		camera.rot.y = 0;
-		camera.rot.z = 0;
-
-		__x = 0;
-		__y = 0;
-		__z = 0;
-
+		camera.Init();
 		break;
 
 		// z는 그대로 camera.z 
@@ -483,21 +382,6 @@ void Keyboard(unsigned char key, int x, int y) {
 
 		break;
 
-		//뚜껑 닫기
-	case 'k':
-		index.b.b_x = true;
-		break;
-	case 'K':
-		ball.b.b_x = false;
-		break;
-
-		//앞면 닫기
-	case 'j':
-		index.b.b_y = true;
-		break;
-	case 'J':
-		ball.b.b_y = false;
-		break;
 
 	default:
 		;

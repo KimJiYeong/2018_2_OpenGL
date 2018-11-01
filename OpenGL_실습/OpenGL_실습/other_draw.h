@@ -112,10 +112,9 @@ void Inde_Box(int pos_x, int pos_y, int pos_z, int size) {
 	index.cl[7].B = 0;
 
 	glPushMatrix(); {
-		glScaled(size, size, size);
-
+		
 		glTranslated(pos_x, pos_y, pos_z);
-
+		glScaled(size, size, size);
 
 		glBegin(GL_POLYGON); {//¾Æ·¡
 
