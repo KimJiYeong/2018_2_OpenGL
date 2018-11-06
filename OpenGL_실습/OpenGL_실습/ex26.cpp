@@ -23,6 +23,7 @@ int move_count; //타이머 카운트
 				//마우스 제어
 void Mouse(int button, int state, int x, int y);
 POINT ms_click; //마우스 좌표
+void Motion(int x, int y);
 BOOL Mouse_Act_On; //마우스 활성화 여부
 
 				   //키보드 제어
@@ -88,6 +89,9 @@ int shade_count;
 Shape ball[10];
 //스프링
 
+//마우스
+Shape mouse;
+
 int index_box_size;
 #define BALL_NUM 5
 
@@ -142,6 +146,7 @@ void main(int argc, char *argv[]) {
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
 	glutMouseFunc(Mouse);
+	glutMotionFunc(Motion);
 	glutKeyboardFunc(Keyboard);
 	glutTimerFunc(100, Timerfunction, 1);
 	srand(time(NULL));
@@ -181,6 +186,9 @@ GLvoid drawScene(GLvoid)
 
 		glPushMatrix();//-------------그리기 입력--------------------------
 		{
+			glRotated(mouse.rot.degree, 0, 0, 1);
+			//마우스 움직임
+
 			glPushMatrix();
 			{
 				if (shade) {
@@ -222,15 +230,19 @@ GLvoid drawScene(GLvoid)
 }
 
 void Mouse(int button, int state, int x, int y) {
-	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+	if (button == GLUT_LEFT_BUTTON)
 	{
-
+		mouse.any = TRUE;
+		mouse.move.x = x;
+		mouse.move.z = y;
 	}
 	glutPostRedisplay();
 
 }
-void Motion(int x, int y , BOOL state) {
-
+void Motion(int x, int y) {
+	if (mouse.any) {
+		mouse.rot.degree += -((mouse.move.x - x) + (mouse.move.z - y) )/100;
+	}
 }
 
 void Timerfunction(int value) {
@@ -382,7 +394,43 @@ void Keyboard(unsigned char key, int x, int y) {
 
 		break;
 
+	case 'B':
+	case 'b':
+		index_box_size = 50;
+		//초기화
+		for (int i = 0; i < BALL_NUM; i++) {
+			ball[i].size = 5;
 
+			ball[i].move.x = 0;
+			ball[i].move.y = 0;
+			ball[i].move.z = 0;
+
+			ball[i].rot.degree = 1;
+
+			if (rand() % 2 == 0) {
+				ball[i].rot.x = 1;
+			}
+			else {
+				ball[i].rot.x = -1;
+			}
+
+			if (rand() % 2 == 0) {
+				ball[i].rot.y = 1;
+			}
+			else {
+				ball[i].rot.y = -1;
+			}
+
+			if (rand() % 2 == 0) {
+				ball[i].rot.z = 1;
+			}
+			else {
+				ball[i].rot.z = -1;
+			}
+
+		}
+		break;
+	
 	default:
 		;
 		break;
