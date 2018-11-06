@@ -11,7 +11,7 @@ typedef struct Translate_pos {
 	float x;
 	float y;
 	float z;
-	float degree;
+	int degree;
 };
 
 

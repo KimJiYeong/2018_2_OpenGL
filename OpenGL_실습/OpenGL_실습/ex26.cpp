@@ -91,6 +91,8 @@ Shape ball[10];
 
 //마우스
 Shape mouse;
+//박스
+Shape box;
 
 int index_box_size;
 #define BALL_NUM 5
@@ -98,6 +100,9 @@ int index_box_size;
 void SetupRC()
 {
 	index_box_size = 50;
+	box.size = 10;
+	box.rot.degree = 0;
+	mouse.rot.degree = 0;
 								 //초기화
 	for (int i = 0; i < BALL_NUM; i++) {
 		ball[i].size = 5;
@@ -106,7 +111,7 @@ void SetupRC()
 		ball[i].move.y = 0;
 		ball[i].move.z = 0;
 		
-		ball[i].rot.degree = 1;
+		ball[i].rot.degree = 180;
 	
 		if (rand() % 2 == 0) {
 			ball[i].rot.x = 1;
@@ -218,10 +223,20 @@ GLvoid drawScene(GLvoid)
 			}
 			glPopMatrix();//공그리기 끝
 
-			glPushMatrix();//스프링 그리기
+			glPushMatrix();//상자 그리기
 			{
+				glTranslated(box.move.x, box.move.y, box.move.z);
+				glutSolidCube(box.size);
 			}
 			glPopMatrix();
+
+			glPushMatrix();//상자 그리기
+			{
+				glTranslated(box.move.x, box.move.y, box.move.z - 10);
+				glutSolidCube(box.size - 5);
+			}
+			glPopMatrix();
+
 		}
 		glPopMatrix();
 	}
@@ -241,7 +256,17 @@ void Mouse(int button, int state, int x, int y) {
 }
 void Motion(int x, int y) {
 	if (mouse.any) {
-		mouse.rot.degree += -((mouse.move.x - x) + (mouse.move.z - y) )/100;
+		if (mouse.move.x > x || mouse.move.y > y) {
+			if (mouse.rot.degree > -180) {
+				mouse.rot.degree -= 1;
+			}
+		}
+		else {
+			if (mouse.rot.degree < 180) {
+				mouse.rot.degree += 1;
+			}
+		}
+		printf("%d \n", mouse.rot.degree);
 	}
 }
 
@@ -267,7 +292,7 @@ void Timerfunction(int value) {
 		{
 			ball[i].rot.y *= -1;
 		}
-		else if ((index_box_size + 10 <= ball[i].move.y))
+		else if ((index_box_size - 10 <= ball[i].move.y))
 		{
 			ball[i].rot.y *= -1;
 		}
@@ -281,6 +306,52 @@ void Timerfunction(int value) {
 			ball[i].rot.z *= -1;
 		}
 	}
+
+	//충돌체크
+	if ((-90 < abs(mouse.rot.degree)) && (abs(mouse.rot.degree) < 90)) {
+		box.pos.y = 1;
+	}
+	if ((90 < abs(mouse.rot.degree)) && (abs(mouse.rot.degree) < 180)) {
+		box.pos.y = 2;
+	}
+	if (abs(mouse.rot.degree) == 0) {
+		box.pos.y =1;
+		box.pos.x = 3;
+	}
+	if (abs(mouse.rot.degree) == 180) {
+		box.pos.y = 2;
+		box.pos.x = 3;
+	}
+
+	
+	if ((-90 < (mouse.rot.degree)) && ((mouse.rot.degree) < 90)) {
+		box.pos.x = 1;
+	}
+	if ((-90 < (mouse.rot.degree)) && ((mouse.rot.degree) < -1)) {
+		box.pos.x = 2;
+	}
+
+	if (box.pos.x == 1) {
+		if (box.move.x > -index_box_size) {
+			box.move.x -= 1;
+		}
+	}
+	else if(box.pos.x == 2){
+		if (box.move.x < index_box_size) {
+			box.move.x += 1;
+		}
+	}
+	if (box.pos.y == 1 ) {
+		if (box.move.y > -index_box_size) {
+			box.move.y -= 1;
+		}
+	}
+	else if (box.pos.y == 2) {
+		if (box.move.y < index_box_size) {
+			box.move.y += 1;
+		}
+	}
+
 	glutPostRedisplay(); //타이머에 넣는다.
 	glutTimerFunc(100, Timerfunction, 1); //타이머 다시 출력
 
