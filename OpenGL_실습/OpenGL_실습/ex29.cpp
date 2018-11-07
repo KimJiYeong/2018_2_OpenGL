@@ -188,7 +188,6 @@ void main(int argc, char *argv[]) {
 #define BOX_SIZE 200
 //2파이 r
 
-
 GLvoid drawScene(GLvoid)
 {
 	glEnable(GL_DEPTH_TEST);
@@ -210,12 +209,12 @@ GLvoid drawScene(GLvoid)
 		//들어갈 내용
 		glPushMatrix();//---------------------------------------
 		{
-			for (int i = 0; i < ck_count; i+= 2) {
+			for (int i = 0; i < ck_count; i++) {
 			
 					glMap2f(GL_MAP2_VERTEX_3,
 						0, 1, 3, 3,
-						0, 1, 9, 3,
-						&ctrlpoints[i][0][0]);
+						0, 1, 9, 2,
+						&ctrlpoints[i* 1][0][0]);
 					glEnable(GL_MAP2_VERTEX_3);
 
 					glColor3f(0, 0, 1);
@@ -227,7 +226,7 @@ GLvoid drawScene(GLvoid)
 			glPointSize(2.0);
 			glColor3f(1, 0, 1);
 			glBegin(GL_POINTS);
-			for (int i = 0; i <= ck_count; i++) {
+			for (int i = 0; i < pt_count; i++) {
 				for (int j = 0; j < 3; j++) {
 						glVertex3fv(ctrlpoints[i][j]);
 				}
@@ -255,7 +254,7 @@ void Mouse(int button, int state, int x, int y) {
 				
 				ctrlpoints[a][0][2] = ctrlpoints[a][0][1];
 				ctrlpoints[a][0][1] = 0.f;
-
+				pt_count++;
 				a_count++;
 						printf("x %f y %f z %f \n", ctrlpoints[a][0][0], ctrlpoints[a][0][1], ctrlpoints[a][0][2]);
 				
@@ -275,6 +274,8 @@ void Mouse(int button, int state, int x, int y) {
 				a_count++;
 				printf("제어점 : x %f y %f z %f \n", ctrlpoints[a][1][0], ctrlpoints[a][1][1], ctrlpoints[a][1][2]);
 				printf("2줄 : x %f y %f z %f \n", ctrlpoints[a][2][0], ctrlpoints[a][2][1], ctrlpoints[a][2][2]);
+				pt_count++;
+				pt_count++;
 			}
 			else if (a_count == 2) {
 				if (a < 8) {
