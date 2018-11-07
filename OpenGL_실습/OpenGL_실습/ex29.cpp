@@ -227,7 +227,7 @@ GLvoid drawScene(GLvoid)
 			glPointSize(2.0);
 			glColor3f(1, 0, 1);
 			glBegin(GL_POINTS);
-			for (int i = 0; i < ck_count; i++) {
+			for (int i = 0; i <= ck_count; i++) {
 				for (int j = 0; j < 3; j++) {
 						glVertex3fv(ctrlpoints[i][j]);
 				}
