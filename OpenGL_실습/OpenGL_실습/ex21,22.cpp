@@ -1260,22 +1260,74 @@ int ani_count;
 
 void SpecialKeys(int key, int x, int y) {
 	if (key == GLUT_KEY_DOWN) {
-		man_man.move.z += 1;
+		
+			if (((70 < man_man.move.z) && (-50 > man_man.move.x)) || ((30 < man_man.move.z) && (74 < man_man.move.x))) {
+				man_man.b.b_z = false;
+			}
+			else {
+			man_man.b.b_z = true;
+			}
+		
+		if (man_man.b.b_z) {
+			if (BOX_SIZE / 2  > man_man.move.z + 10) {
+				printf("%f , %f \n", man_man.move.x, man_man.move.z);
+				man_man.move.z += 1;
+			}
+		}
 		man_man.move.degree = 0;
 	}
 
 	if (key == GLUT_KEY_UP) {
-		man_man.move.z -= 1;
+	
+		if (((-50 > man_man.move.z) && (-60 > man_man.move.x)) || ((-50 > man_man.move.z) && (80 < man_man.move.x))) {
+			man_man.b.b_z = false;
+		}
+		else {
+			man_man.b.b_z = true;
+		}
+
+		if (man_man.b.b_z) {
+		if (-BOX_SIZE / 2  < man_man.move.z - 10) {
+			printf("%f , %f \n", man_man.move.x, man_man.move.z);
+			man_man.move.z -= 1;
+		}
+		}
 		man_man.move.degree = 0;
 	}
 	if (key == GLUT_KEY_LEFT) {
-		man_man.move.x -= 1;
-		man_man.move.degree = 90;
-	}
+		
+		if (((-50 > man_man.move.z) && (-60 > man_man.move.x)) || ((70 < man_man.move.z) && (-50 > man_man.move.x))) {
+			man_man.b.b_x = false;
+		}
+		else {
+			man_man.b.b_x = true;
+		}
 
+		if (man_man.b.b_x) {
+			if (-BOX_SIZE / 2 < man_man.move.x - 10) {
+				printf("%f , %f \n", man_man.move.x, man_man.move.z);
+				man_man.move.x -= 1;
+			}
+			man_man.move.degree = 90;
+		}
+	}
+	
 	if (key == GLUT_KEY_RIGHT) {
-		man_man.move.x += 1;
-		man_man.move.degree = 90;
+		
+		if (((30 < man_man.move.z) && (74 < man_man.move.x)) || ((-50 > man_man.move.z) && (67 < man_man.move.x))) {
+			man_man.b.b_x = false;
+		}
+		else {
+			man_man.b.b_x = true;
+		}
+
+		if (man_man.b.b_x) {
+			if (BOX_SIZE / 2  > man_man.move.x + 10) {
+				printf("%f , %f \n", man_man.move.x, man_man.move.z);
+				man_man.move.x += 1;
+			}
+			man_man.move.degree = 90;
+		}
 	}
 }
 
