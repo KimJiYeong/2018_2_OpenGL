@@ -440,12 +440,12 @@ GLvoid drawScene(GLvoid)
 		//들어갈 내용
 		glPushMatrix();//---------------------------------------
 		{
-			/*glPushMatrix();
+	/*		glPushMatrix();
 			{
 				Inde_Box(0, 0, 0, 110);
 			}
-			glPopMatrix();
-*/
+			glPopMatrix();*/
+
 
 			//땅
 			glPushMatrix();
@@ -1261,7 +1261,7 @@ int ani_count;
 void SpecialKeys(int key, int x, int y) {
 	if (key == GLUT_KEY_DOWN) {
 		
-			if (((70 < man_man.move.z) && (-50 > man_man.move.x)) || ((30 < man_man.move.z) && (74 < man_man.move.x))) {
+			if (((70 < man_man.move.z) && (-65 > man_man.move.x)) || ((72 < man_man.move.z) && (28 < man_man.move.x))) {
 				man_man.b.b_z = false;
 			}
 			else {
@@ -1279,7 +1279,7 @@ void SpecialKeys(int key, int x, int y) {
 
 	if (key == GLUT_KEY_UP) {
 	
-		if (((-50 > man_man.move.z) && (-60 > man_man.move.x)) || ((-50 > man_man.move.z) && (80 < man_man.move.x))) {
+		if (((-60 > man_man.move.z) && (-60 > man_man.move.x)) || ((-50 > man_man.move.z) && (60 < man_man.move.x))) {
 			man_man.b.b_z = false;
 		}
 		else {
@@ -1296,7 +1296,7 @@ void SpecialKeys(int key, int x, int y) {
 	}
 	if (key == GLUT_KEY_LEFT) {
 		
-		if (((-50 > man_man.move.z) && (-60 > man_man.move.x)) || ((70 < man_man.move.z) && (-50 > man_man.move.x))) {
+		if (((-60 > man_man.move.z) && (-60 > man_man.move.x)) || ((70 < man_man.move.z) && (-65 > man_man.move.x))) {
 			man_man.b.b_x = false;
 		}
 		else {
@@ -1314,7 +1314,7 @@ void SpecialKeys(int key, int x, int y) {
 	
 	if (key == GLUT_KEY_RIGHT) {
 		
-		if (((30 < man_man.move.z) && (74 < man_man.move.x)) || ((-50 > man_man.move.z) && (67 < man_man.move.x))) {
+		if (((-67 > man_man.move.z) && (60 < man_man.move.x)) || ((28 < man_man.move.z) && (72 < man_man.move.x))) {
 			man_man.b.b_x = false;
 		}
 		else {
