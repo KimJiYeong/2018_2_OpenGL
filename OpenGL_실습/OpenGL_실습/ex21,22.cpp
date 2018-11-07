@@ -138,9 +138,8 @@ Shape sh[100];
 void SetupRC()
 {
 	//초기화
-	glTranslated(WideSize / 2, HighSize / 2, Z_Size / 2);
-}
-void main(int argc, char *argv[]) {
+//	glTranslated(WideSize / 2, HighSize / 2, Z_Size / 2);
+
 	//초기화
 	camera.rot.x = 0;
 	camera.rot.y = 0;
@@ -181,7 +180,7 @@ void main(int argc, char *argv[]) {
 		sh[i].pos.x = 50 * cos(PI * i * 10 / 180);
 
 	}
-	
+
 
 	clain.size = 20;
 
@@ -198,6 +197,9 @@ void main(int argc, char *argv[]) {
 	for (int i = 0; i < 2; i++) {
 		sub[i].size = 10;
 	}
+	ball.stacks = 1;
+}
+void main(int argc, char *argv[]) {
 	
 
 	glutInit(&argc, argv);
@@ -207,7 +209,7 @@ void main(int argc, char *argv[]) {
 	glutCreateWindow("ex16");
 	// - 랜덤으로 시작 도형 설정하기
 	//도형 그리기
-	//SetupRC();
+	SetupRC();
 
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
@@ -854,12 +856,13 @@ void Timerfunction(int value) {
 		if (!ani) {
 			move_count += 1;//타이머 카운트
 		}
-
-		ball.rot.degree += PI * 2;
+		
+		
+		ball.rot.degree +=( PI * 2) * ball.stacks;
 		if (ball.b.b_x)
 		{
 				if ((ball.pos.x + ball.move.x  < 100)) {
-					ball.move.x += 1;
+					ball.move.x += 1;			
 				}
 			
 		}
@@ -890,6 +893,7 @@ void Timerfunction(int value) {
 		if ((clain.move.x - clain.size < ball.move.x + ball.pos.x) && ( ball.move.x + ball.pos.x < clain.move.x + clain.size)) {// z 축
 			if((clain.move.z - clain.size < ball.move.z + ball.pos.z) && (ball.move.z + ball.pos.z < clain.move.z + clain.size)) {// z 축
 				printf("clain");
+				ball.stacks *= -1;
 				if (ball.b.b_z) {
 					ball.b.b_z = false;
 				}
@@ -903,11 +907,13 @@ void Timerfunction(int value) {
 
 		if ((ball.pos.z + ball.move.z > 100)) {
 				ball.b.b_z = true;
+				ball.stacks *= -1;
 				printf("a");
 
 		}			
 		if ((ball.pos.z + ball.move.z < -100)) {
 			ball.b.b_z = false;
+			ball.stacks *= -1;
 			printf("b");
 		}
 
