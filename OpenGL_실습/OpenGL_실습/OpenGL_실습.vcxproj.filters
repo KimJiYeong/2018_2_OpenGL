@@ -81,6 +81,9 @@
     <ClCompile Include="pratice.cpp">
       <Filter>소스 파일\practice</Filter>
     </ClCompile>
+    <ClCompile Include="ex28.cpp">
+      <Filter>소스 파일\GL3</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
