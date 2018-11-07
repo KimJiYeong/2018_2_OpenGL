@@ -1,26 +1,6 @@
 #pragma once
 #include <GL/freeglut.h> 
-
-typedef struct Color
-{
-	int R;
-	int G;
-	int B;
-};
-typedef struct Translate_pos {
-	float x;
-	float y;
-	float z;
-	int degree;
-};
-
-
-typedef struct BoOL
-{
-	int b_x;
-	int b_y;
-	int b_z;
-};
+#include "base_struct.h"
 
 typedef struct QUAD
 {

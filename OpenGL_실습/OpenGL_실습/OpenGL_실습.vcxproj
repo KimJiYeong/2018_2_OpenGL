@@ -172,6 +172,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="banana.h" />
+    <ClInclude Include="base_struct.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="other_draw.h" />
   </ItemGroup>

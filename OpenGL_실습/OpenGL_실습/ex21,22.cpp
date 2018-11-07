@@ -2,6 +2,8 @@
 #include <random>
 #include <time.h>
 #include <math.h>
+//#include "other_draw.h"
+#include "base_struct.h"
 GLvoid Reshape(int w, int h);
 
 //해상도 설정
@@ -26,47 +28,10 @@ BOOL Mouse_Act_On; //마우스 활성화 여부
 				   //키보드 제어
 void Keyboard(unsigned char key, int x, int y);
 BOOL Keyboard_Act_On; //키보드 활성화 여부
-
-					  //색 선정
-typedef struct Color
-{
-	int R;
-	int G;
-	int B;
-};
-typedef struct Translate_pos {
-	float x;
-	float y;
-	float z;
-	float degree;
-};
-
-typedef struct BoOL
-{
-	int b_x;
-	int b_y;
-	int b_z;
-};
+void SpecialKeys(int key, int x, int y);
 
 #define PT 20//도형 갯수 설정
 #define PI 3.141592 //파이
-typedef struct Shape
-{
-	Color cl;//색상
-	Translate_pos pos;
-	Translate_pos move;
-	Translate_pos scale;
-	Translate_pos rot;
-
-	int size;
-	int select;
-	int height;
-	int slice;
-	int stacks;
-	BoOL b;
-	BOOL any;
-
-};
 
 int change_count;
 int next_rot;
@@ -135,6 +100,225 @@ const void camera_custom
 
 Shape sh[100];
 
+//-------------
+
+typedef struct QUAD
+{
+	Color cl[8];//색상
+	Translate_pos pos[8];
+	Translate_pos move;
+	Translate_pos scale;
+	Translate_pos rot;
+
+	int size;
+	int select;
+	int height;
+	int slice;
+	int stacks;
+	BoOL b;
+	BOOL any;
+
+};
+
+
+QUAD index;
+
+
+void Inde_Box(int pos_x, int pos_y, int pos_z, int size) {
+
+	//인덱스 버퍼 저장
+	index.pos[0].x = -1;
+	index.pos[0].y = -1;
+	index.pos[0].z = 1;
+
+	index.cl[0].R = 1;
+	index.cl[0].G = 0;
+	index.cl[0].B = 0;
+
+	index.pos[1].x = 1;
+	index.pos[1].y = -1;
+	index.pos[1].z = 1;
+
+	index.cl[1].R = 1;
+	index.cl[1].G = 0;
+	index.cl[1].B = 1;
+
+	index.pos[2].x = 1;
+	index.pos[2].y = -1;
+	index.pos[2].z = -1;
+
+	index.cl[2].R = 0;
+	index.cl[2].G = 0;
+	index.cl[2].B = 1;
+
+	index.pos[3].x = -1;
+	index.pos[3].y = -1;
+	index.pos[3].z = -1;
+
+	index.cl[3].R = 0;
+	index.cl[3].G = 0;
+	index.cl[3].B = 0;
+
+	index.pos[4].x = -1;
+	index.pos[4].y = 1;
+	index.pos[4].z = 1;
+
+	index.cl[4].R = 1;
+	index.cl[4].G = 1;
+	index.cl[4].B = 0;
+
+	index.pos[5].x = 1;
+	index.pos[5].y = 1;
+	index.pos[5].z = 1;
+
+	index.cl[5].R = 1;
+	index.cl[5].G = 1;
+	index.cl[5].B = 1;
+
+	index.pos[6].x = 1;
+	index.pos[6].y = 1;
+	index.pos[6].z = -1;
+
+	index.cl[6].R = 0;
+	index.cl[6].G = 1;
+	index.cl[6].B = 1;
+
+	index.pos[7].x = -1;
+	index.pos[7].y = 1;
+	index.pos[7].z = -1;
+
+	index.cl[7].R = 0;
+	index.cl[7].G = 1;
+	index.cl[7].B = 0;
+
+	glPushMatrix(); {
+
+		glTranslated(pos_x, pos_y, pos_z);
+		glScaled(size, size, size);
+
+		glBegin(GL_POLYGON); {//아래
+
+			glColor3f(index.cl[1].R, index.cl[1].G, index.cl[1].B);
+			glVertex3f(index.pos[1].x, index.pos[1].y, index.pos[1].z);//Yellow
+
+			glColor3f(index.cl[0].R, index.cl[0].G, index.cl[0].B);
+			glVertex3f(index.pos[0].x, index.pos[0].y, index.pos[0].z);//Yellow
+
+			glColor3f(index.cl[3].R, index.cl[3].G, index.cl[3].B);
+			glVertex3f(index.pos[3].x, index.pos[3].y, index.pos[3].z);//Yellow
+
+			glColor3f(index.cl[2].R, index.cl[2].G, index.cl[2].B);
+			glVertex3f(index.pos[2].x, index.pos[2].y, index.pos[2].z);//Yellow
+
+		}
+		glEnd();
+
+		glBegin(GL_POLYGON); {//왼
+			glColor3f(index.cl[0].R, index.cl[0].G, index.cl[0].B);
+			glVertex3f(index.pos[0].x, index.pos[0].y, index.pos[0].z);//Yellow
+
+			glColor3f(index.cl[4].R, index.cl[4].G, index.cl[4].B);
+			glVertex3f(index.pos[4].x, index.pos[4].y, index.pos[4].z);//Yellow
+
+			glColor3f(index.cl[7].R, index.cl[7].G, index.cl[7].B);
+			glVertex3f(index.pos[7].x, index.pos[7].y, index.pos[7].z);//Yellow
+
+			glColor3f(index.cl[3].R, index.cl[3].G, index.cl[3].B);
+			glVertex3f(index.pos[3].x, index.pos[3].y, index.pos[3].z);//Yellow
+
+		}
+		glEnd();
+
+		glBegin(GL_POLYGON); {//뒷면
+
+			glColor3f(index.cl[2].R, index.cl[2].G, index.cl[2].B);
+			glVertex3f(index.pos[2].x, index.pos[2].y, index.pos[2].z);//Yellow
+
+			glColor3f(index.cl[3].R, index.cl[3].G, index.cl[3].B);
+			glVertex3f(index.pos[3].x, index.pos[3].y, index.pos[3].z);//Yellow
+
+			glColor3f(index.cl[7].R, index.cl[7].G, index.cl[7].B);
+			glVertex3f(index.pos[7].x, index.pos[7].y, index.pos[7].z);//Yellow
+
+			glColor3f(index.cl[6].R, index.cl[6].G, index.cl[6].B);
+			glVertex3f(index.pos[6].x, index.pos[6].y, index.pos[6].z);//Yellow
+
+
+		}
+		glEnd();
+
+		glBegin(GL_POLYGON); {//오른쪽면
+			glColor3f(index.cl[1].R, index.cl[1].G, index.cl[1].B);
+			glVertex3f(index.pos[1].x, index.pos[1].y, index.pos[1].z);//Yellow
+
+			glColor3f(index.cl[2].R, index.cl[2].G, index.cl[2].B);
+			glVertex3f(index.pos[2].x, index.pos[2].y, index.pos[2].z);//Yellow
+
+			glColor3f(index.cl[6].R, index.cl[6].G, index.cl[6].B);
+			glVertex3f(index.pos[6].x, index.pos[6].y, index.pos[6].z);//Yellow					
+
+			glColor3f(index.cl[5].R, index.cl[5].G, index.cl[5].B);
+			glVertex3f(index.pos[5].x, index.pos[5].y, index.pos[5].z);//Yellow
+
+		}
+		glEnd();
+		glPushMatrix();
+		{
+			glTranslated(0, index.pos[7].y, index.pos[7].z);
+			glRotated(-index.move.x * 10, 1, 0, 0);
+			glTranslated(0, -index.pos[7].y, -index.pos[7].z);
+
+			glBegin(GL_POLYGON); {//뚜껑
+
+				glColor3f(index.cl[4].R, index.cl[4].G, index.cl[4].B);
+				glVertex3f(index.pos[4].x, index.pos[4].y, index.pos[4].z);//Yellow
+
+				glColor3f(index.cl[5].R, index.cl[5].G, index.cl[5].B);
+				glVertex3f(index.pos[5].x, index.pos[5].y, index.pos[5].z);//Yellow
+
+				glColor3f(index.cl[6].R, index.cl[6].G, index.cl[6].B);
+				glVertex3f(index.pos[6].x, index.pos[6].y, index.pos[6].z);//Yellow				
+
+				glColor3f(index.cl[7].R, index.cl[7].G, index.cl[7].B);
+				glVertex3f(index.pos[7].x, index.pos[7].y, index.pos[7].z);//Yellow
+
+			}
+			glEnd();
+		}
+		glPopMatrix();
+		glPushMatrix();
+		{
+			glTranslated(0, index.pos[0].y, index.pos[0].z);
+			glRotated(index.move.y * 10, 1, 0, 0);
+			glTranslated(0, -index.pos[0].y, -index.pos[0].z);
+
+			glBegin(GL_POLYGON); {//앞면
+
+				glColor3f(index.cl[0].R, index.cl[0].G, index.cl[0].B);
+				glVertex3f(index.pos[0].x, index.pos[0].y, index.pos[0].z);//Yellow
+
+				glColor3f(index.cl[1].R, index.cl[1].G, index.cl[1].B);
+				glVertex3f(index.pos[1].x, index.pos[1].y, index.pos[1].z);//Yellow
+
+				glColor3f(index.cl[5].R, index.cl[5].G, index.cl[5].B);
+				glVertex3f(index.pos[5].x, index.pos[5].y, index.pos[5].z);//Yellow
+
+
+				glColor3f(index.cl[4].R, index.cl[4].G, index.cl[4].B);
+				glVertex3f(index.pos[4].x, index.pos[4].y, index.pos[4].z);//Yellow
+			}
+			glEnd();
+		}
+		glPopMatrix();
+	}
+	glPopMatrix();
+
+}
+
+Shape man_man;
+
+//---------------
+
 void SetupRC()
 {
 	//초기화
@@ -198,6 +382,16 @@ void SetupRC()
 		sub[i].size = 10;
 	}
 	ball.stacks = 1;
+
+	plan.move.y = 90;
+	man_man.rot.x = 1;
+	man_man.move.y = 20;
+//컬링 여부
+	//glEnable(GL_CULL_FACE);
+	glShadeModel(GL_SMOOTH);
+	glEnable(GL_DEPTH_TEST);
+
+
 }
 void main(int argc, char *argv[]) {
 	
@@ -215,6 +409,7 @@ void main(int argc, char *argv[]) {
 	glutReshapeFunc(Reshape);
 	glutMouseFunc(Mouse);
 	glutKeyboardFunc(Keyboard);
+	glutSpecialFunc(SpecialKeys);
 	glutTimerFunc(100, Timerfunction, 1);
 	srand(time(NULL));
 	glutMainLoop();
@@ -222,6 +417,8 @@ void main(int argc, char *argv[]) {
 
 #define BOX_SIZE 200
 //2파이 r
+
+
 GLvoid drawScene(GLvoid)
 {
 	glEnable(GL_DEPTH_TEST);
@@ -243,6 +440,13 @@ GLvoid drawScene(GLvoid)
 		//들어갈 내용
 		glPushMatrix();//---------------------------------------
 		{
+			/*glPushMatrix();
+			{
+				Inde_Box(0, 0, 0, 110);
+			}
+			glPopMatrix();
+*/
+
 			//땅
 			glPushMatrix();
 			{
@@ -761,6 +965,87 @@ GLvoid drawScene(GLvoid)
 
 				glPopMatrix();
 			}
+			glPopMatrix();//크레인 끝
+
+			//로봇
+			glPushMatrix();
+			{
+				glTranslated(man_man.move.x, man_man.move.y, man_man.move.z);
+				glRotated(man_man.move.degree, 0, 1, 0);
+
+				glColor3f((float)255 / 255, (float)200 / 255, (float)100 / 255);
+				glPushMatrix();//머리
+				{
+					glTranslated(0, 10, 0);
+					glScaled(0.5, 1, 0.5);
+					glutSolidCube(10);
+				}
+				glPopMatrix();
+
+				glColor3f((float)255 / 255, (float)100 / 255, (float)100 / 255);
+				glPushMatrix();//몸통
+				{
+					glScaled(0.5, 1, 0.5);
+					glutSolidCube(15);
+				}
+				glPopMatrix();
+
+				glColor3f((float)100 / 255, (float)100 / 255, (float)100 / 255);
+				glPushMatrix();//팔다리
+				{
+								
+					glTranslated(0, 10, 0);
+					glRotated(man_man.rot.degree, 1, 0, 0);
+					glTranslated(-5, -10, 0);
+					glScaled(0.2, 1, 0.2);
+					
+					glutSolidCube(10);
+					
+				}
+				glPopMatrix();
+				
+				glColor3f((float)100 / 255, (float)100 / 255, (float)100 / 255);
+				glPushMatrix();//팔다리
+				{
+					glTranslated(0, 10, 0);
+					glRotated(-man_man.rot.degree, 1, 0, 0);
+					glTranslated(5, -10, 0);
+					glScaled(0.2, 1, 0.2);
+
+					glutSolidCube(10);
+
+				}
+				glPopMatrix();
+
+				glColor3f((float)100 / 255, (float)50 / 255, (float)100 / 255);
+				glPushMatrix();//팔다리
+				{
+					glTranslated(-2, -10, 0);
+
+					glTranslated(0, 10, 0);
+					glRotated(-man_man.rot.degree, 1, 0, 0);
+					glTranslated(0, -10, 0);
+
+					glScaled(0.2, 1, 0.2);
+					glutSolidCube(10);	}
+				glPopMatrix();
+
+				glColor3f((float)100 / 255, (float)50 / 255, (float)100 / 255);
+				glPushMatrix();//팔다리
+				{
+					glTranslated(2, -10, 0);
+			
+					glTranslated(0, 10, 0);
+					glRotated(man_man.rot.degree, 1, 0, 0);
+					glTranslated(0, -10, 0);
+
+					glScaled(0.2, 1, 0.2);
+					glutSolidCube(10);
+				}
+				glPopMatrix();
+
+
+			}
 			glPopMatrix();
 
 		
@@ -832,7 +1117,7 @@ void Timerfunction(int value) {
 	}
 	plan.move.degree += 10;
 
-	plan.move.y = 100;
+	plan.move.y = 90;
 	plan.move.z = sh[Time_count % Size].pos.y;
 	plan.move.x = sh[Time_count % Size].pos.x;
 
@@ -929,8 +1214,41 @@ void Timerfunction(int value) {
 			ball.cl.R = false;
 		
 
+			if (index.b.b_y) {
+				if (index.move.y < 9) {
+	
+					index.move.y += 1;
+				}
+			}
+			else {
+				if (index.move.y > 0) {
+
+					index.move.y -= 1;
+				}
+
+
+			}
+
+			if (man_man.rot.degree == 30 || man_man.rot.degree == -30) {
+				man_man.rot.x *= -1;
+			}
+			man_man.rot.degree += 5 * man_man.rot.x;
 		//키 입력 안받기
 
+
+			
+			if (man_man.b.b_y) {
+				if (man_man.move.y == 30)
+				{
+					man_man.b.b_y = false;
+				}
+				man_man.move.y += 1;
+			}
+			else {
+				if (man_man.move.y > 20) {
+					man_man.move.y -= 1;
+				}
+			}
 
 	Time_count++;
 	glutPostRedisplay(); //타이머에 넣는다.
@@ -939,6 +1257,27 @@ void Timerfunction(int value) {
 }
 int ttt;
 int ani_count;
+
+void SpecialKeys(int key, int x, int y) {
+	if (key == GLUT_KEY_DOWN) {
+		man_man.move.z += 1;
+		man_man.move.degree = 0;
+	}
+
+	if (key == GLUT_KEY_UP) {
+		man_man.move.z -= 1;
+		man_man.move.degree = 0;
+	}
+	if (key == GLUT_KEY_LEFT) {
+		man_man.move.x -= 1;
+		man_man.move.degree = 90;
+	}
+
+	if (key == GLUT_KEY_RIGHT) {
+		man_man.move.x += 1;
+		man_man.move.degree = 90;
+	}
+}
 
 void Keyboard(unsigned char key, int x, int y) {
 	switch (key)
@@ -1261,6 +1600,20 @@ void Keyboard(unsigned char key, int x, int y) {
 		sub[1].any = TRUE;
 		sub[1].rot.y++;
 		break;
+
+
+		//앞면 닫기
+	case 'j':
+		index.b.b_y = true;
+		break;
+	case 'J':
+		ball.b.b_y = false;
+		break;
+
+	case ' ':
+		man_man.b.b_y = true;
+		break;
+
 	default:
 		;
 		break;
