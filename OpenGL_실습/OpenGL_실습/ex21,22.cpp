@@ -440,11 +440,11 @@ GLvoid drawScene(GLvoid)
 		//들어갈 내용
 		glPushMatrix();//---------------------------------------
 		{
-	/*		glPushMatrix();
+			glPushMatrix();
 			{
 				Inde_Box(0, 0, 0, 110);
 			}
-			glPopMatrix();*/
+			glPopMatrix();
 
 
 			//땅
