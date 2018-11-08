@@ -4,6 +4,7 @@
 #include <math.h>
 //#include "other_draw.h"
 #include "base_struct.h"
+#include "camera.h"
 GLvoid Reshape(int w, int h);
 
 //해상도 설정
@@ -49,11 +50,7 @@ Shape sub[2];
 
 //카메라-----------------
 
-Shape camera;
-Translate_pos EYE;
-Translate_pos AT;
-Translate_pos UP;
-
+Cam camera;
 static int __x;
 static int __y;
 static int __z;
@@ -71,33 +68,6 @@ Shape press_man;
 //Shape tree;
 Shape ball;
 Shape clain;
-const void camera_custom
-(double pos_x, double pos_y, double pos_z, //위치
-	double degree, const double rot_x, const double rot_y, const double rot_z, //회전
-	const double move_x, const double move_y, const double move_z //움직임
-) {
-
-
-	EYE.x =
-		((cos(rot_y) * cos(rot_z)) +
-		(sin(rot_x) * sin(rot_y) * cos(rot_z) + cos(rot_x) * sin(rot_z)) +
-			((((-1) * cos(rot_x)) * sin(rot_y) * cos(rot_z)) + (sin(rot_x) * sin(rot_z))));
-
-	EYE.y =
-		(((-1) * cos(rot_y) * sin(rot_z)) +
-		(((-1) * sin(rot_x) * sin(rot_y) * sin(rot_z)) + (cos(rot_x) * cos(rot_z))) +
-			((cos(rot_x) * sin(rot_y) * sin(rot_z)) + (sin(rot_x) * sin(rot_z))));
-
-	EYE.z =
-		(sin(rot_y) +
-		(((-1) * sin(rot_x)) * cos(rot_y)) +
-			(cos(rot_x) * cos(rot_y)));//stay
-
-	AT.x = pos_x;
-	AT.y = pos_y;
-	AT.z = pos_z;
-
-};
 
 GLfloat trans_y[10];
 //-------------
@@ -162,6 +132,8 @@ void SetupRC()
 			}
 		}
 	}
+
+	camera.rotateEye(0, 90, 0);
 }
 void main(int argc, char *argv[]) {
 
@@ -196,15 +168,7 @@ GLvoid drawScene(GLvoid)
 
 	glPushMatrix();//-----------------------------------
 	{
-
-		//glRotated(-45, 0, 0, 1);
-		glTranslated(camera.move.x, camera.move.y, camera.move.z);
-		camera_custom(0, 0, 0, camera.rot.degree, camera.rot.x, camera.rot.y, camera.rot.z, camera.move.x, camera.move.y, camera.move.z);
-			gluLookAt(
-				EYE.x, EYE.y, EYE.z,  //위5 eye
-				0, 0, 0, //방향 center
-				0, 1, 0 //위쪽방향(건들 ㄴㄴ) up
-			);
+		camera.drawCamera();
 		
 		//들어갈 내용
 		glPushMatrix();//---------------------------------------
@@ -248,20 +212,20 @@ void Mouse(int button, int state, int x, int y) {
 	{
 		if (ani) {
 			if (a_count == 0) {
-				ctrlpoints[a][0][0] = x - 300;
-				ctrlpoints[a][0][1] = -(300 - 1 - y);
-				ctrlpoints[a][0][2] = 0.1f;
+				ctrlpoints[a][0][0] = x-300;
+				ctrlpoints[a][0][1] = -(HighSize/2 - 1 - y);
+				ctrlpoints[a][0][2] = 0;
 				
 				ctrlpoints[a][0][2] = ctrlpoints[a][0][1];
-				ctrlpoints[a][0][1] = 0.f;
+				ctrlpoints[a][0][1] = 0;
 				pt_count++;
 				a_count++;
 						printf("x %f y %f z %f \n", ctrlpoints[a][0][0], ctrlpoints[a][0][1], ctrlpoints[a][0][2]);
 				
 	}
 			else if (a_count == 1) {
-				ctrlpoints[a][2][0] =  x - 300;
-				ctrlpoints[a][2][1] = -(300 - 1 - y);
+				ctrlpoints[a][2][0] = x - 300;
+				ctrlpoints[a][2][1] = -(HighSize/2 - 1 - y);
 				ctrlpoints[a][2][2] = 0.1f;
 
 				ctrlpoints[a][2][2] = ctrlpoints[a][2][1];
@@ -352,81 +316,64 @@ void Keyboard(unsigned char key, int x, int y) {
 		//---------카메라
 		//rotate
 	case 'x':
-		__x = 1;
-		camera.rot.x -= 0.1;
+		camera.rotateEye(1, 0, 0);
 		break;
 	case 'X':
-		camera.rot.x += 0.1;
+		camera.rotateEye(-1, 0, 0);
 		break;
 
 	case 'y':
-		__y = 1;
-		camera.rot.y -= 0.1;
+		camera.rotateEye(0, 1, 0);
 		break;
 	case 'Y':
-		camera.rot.y += 0.1;
+		camera.rotateEye(0, -1, 0);
 		break;
 
 	case 'z':
-		__z = 1;
-		camera.rot.z -= 0.1;
+		camera.rotateEye(0, 0, 1);
 		break;
 	case 'Z':
-		camera.rot.z += 0.1;
+		camera.rotateEye(0, 0, -1);
 		break;
 
 		//move
 	case 'w':
-		camera.move.y += 1;
+		camera.moveEye(0, 1, 0);
 		break;
 	case 'a':
-		camera.move.x -= 1;
+		camera.moveEye(-1, 0, 0);
 		break;
 
 	case 's':
-		camera.move.y -= 1;
+		camera.moveEye(0, -1, 0);
 		break;
 
 	case 'd':
-		camera.move.x += 1;
+		camera.moveEye(1, 0, 0);
 		break;
 	case '+':
-		camera.move.z += 1;
+		camera.moveEye(0, 0, 1);
+
 		break;
 	case '-':
-		camera.move.z -= 1;
+		camera.moveEye(0, 0, -1);
 		break;
 	case 'i':
-		camera.rot.degree = 0;
-		camera.move.x = 0;
-		camera.move.y = 0;
-		camera.move.z = 0;
-		camera.rot.x = 0;
-		camera.rot.y = 0;
-		camera.rot.z = 0;
-
-		__x = 0;
-		__y = 0;
-		__z = 0;
-
+		camera.Init();
 		break;
 
 		// z는 그대로 camera.z 
 
 		//-----------카메라 끝 --------
-
 	case '0'://직각투영 유무
 		ani_count++;
 		if (ani_count % 2 == 1) {
 			ani = TRUE;//회전하는거 트루로
 			Reshape(WideSize, HighSize);
-			printf("직각투영 on \n");
+				printf("직각투영 on \n");
 		}
 		else {
 			ani = FALSE;//회전하는거 트루로
-			EYE.x = 10;
-			EYE.y = 10;
-			EYE.z = 10;
 			printf("직각투영 off \n");
 			Reshape(WideSize, HighSize);
 		}

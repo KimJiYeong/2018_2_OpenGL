@@ -35,26 +35,6 @@ BOOL Keyboard_Act_On; //키보드 활성화 여부
 #define PT 20//도형 갯수 설정
 #define PI 3.141592 //파이
 
-typedef struct Shape
-{
-	Color cl;//색상
-	Translate_pos sp_pos[36];
-	Translate_pos pos;
-	Translate_pos move;
-	Translate_pos scale;
-	Translate_pos rot;
-
-	int size;
-	int select;
-	int height;
-	int slice;
-	int stacks;
-	BoOL b;
-	BOOL any;
-
-};
-
-
 int change_count;
 int next_rot;
 int st_help;

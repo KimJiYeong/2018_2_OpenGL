@@ -120,7 +120,9 @@ typedef struct QUAD
 
 };
 
-
+//컬링
+BOOL culling;
+int culling_count;
 QUAD index;
 
 
@@ -427,6 +429,16 @@ GLvoid drawScene(GLvoid)
 	
 	glPushMatrix();//-----------------------------------
 	{
+		//컬링 여부
+		if (culling) {
+			//glFrontFace(GL_CCW);
+			glEnable(GL_CULL_FACE);
+		}
+		else {
+			//glFrontFace(GL_CCW);
+			glDisable(GL_CULL_FACE);
+		}
+
 
 		//glRotated(-45, 0, 0, 1);
 		glTranslated(camera.move.x, camera.move.y, camera.move.z);
@@ -1263,6 +1275,7 @@ void SpecialKeys(int key, int x, int y) {
 		
 			if (((70 < man_man.move.z) && (-65 > man_man.move.x)) || ((72 < man_man.move.z) && (28 < man_man.move.x))) {
 				man_man.b.b_z = false;
+				man_man.b.b_y = true;
 			}
 			else {
 			man_man.b.b_z = true;
@@ -1281,6 +1294,7 @@ void SpecialKeys(int key, int x, int y) {
 	
 		if (((-60 > man_man.move.z) && (-60 > man_man.move.x)) || ((-50 > man_man.move.z) && (60 < man_man.move.x))) {
 			man_man.b.b_z = false;
+			man_man.b.b_y = true;
 		}
 		else {
 			man_man.b.b_z = true;
@@ -1298,6 +1312,7 @@ void SpecialKeys(int key, int x, int y) {
 		
 		if (((-60 > man_man.move.z) && (-60 > man_man.move.x)) || ((70 < man_man.move.z) && (-65 > man_man.move.x))) {
 			man_man.b.b_x = false;
+			man_man.b.b_y = true;
 		}
 		else {
 			man_man.b.b_x = true;
@@ -1316,6 +1331,7 @@ void SpecialKeys(int key, int x, int y) {
 		
 		if (((-67 > man_man.move.z) && (60 < man_man.move.x)) || ((28 < man_man.move.z) && (72 < man_man.move.x))) {
 			man_man.b.b_x = false;
+			man_man.b.b_y = true;
 		}
 		else {
 			man_man.b.b_x = true;
@@ -1580,6 +1596,19 @@ void Keyboard(unsigned char key, int x, int y) {
 			ball.any = FALSE;
 		}
 		break;
+
+	case '4'://컬링
+		culling_count++;
+		if (culling_count % 2 == 1) {
+			culling = true;
+			printf("컬링 On \n");
+		}
+		else {
+			printf("컬링 Off \n");
+			culling = false;
+		}
+		break;
+
 	//크레인
 	case '7':
 		ttt++;
