@@ -67,7 +67,7 @@ Shape click_pt[10];
 int click_count = 0;
 
 GLfloat ctrlpoints[20][3];
-
+int t;
 void SetupRC()
 {
 	m_pos.degree = 15;
@@ -204,27 +204,39 @@ GLvoid drawScene(GLvoid)
 				glVertex3d(click_pt[i].pos.x, click_pt[i].pos.y , click_pt[i].pos.z);
 			}
 			glEnd();
-			for (int i = 0; i < click_count - 2; i++) {
-				glMap1f(GL_MAP1_VERTEX_3, 0, 1, 3, 3, &ctrlpoints[i * 2][0]);
-				glEnable(GL_MAP1_VERTEX_3);
-
-			glBegin(GL_LINE_STRIP);
-				for (int t = 0; t <= 10; t++) {
-					glEvalCoord1f((GLfloat)t / 10.0);
-				}
-				glEnd();
-				glDisable(GL_MAP1_VERTEX_3);
-			}
 		
-/*
+			if (click_count > 3) {//3 이상이면 계산하기
+				for (int i = 0; i < 10; i++) {
+					t = 0;
+					for (int j = 0; j < 10; j++) {
+						click_pt[i].spline[j].x =
+							(
+							((1 - t)*(1 - t)*(click_pt[i].pos.x))//원좌표
+								+ (2 * (t) * (1 - t) * (0))//컨트롤 포인트
+								+ ((t) * (t)* click_pt[i + 1].pos.x)//떨어져야 하는 좌표
+								);
+
+						click_pt[i].spline[j].z =
+							(
+							((1 - t)*(1 - t)*(click_pt[i % 10].pos.z))//원좌표
+								+ (2 * (t) * (1 - t) * (0))//컨트롤 포인트
+								+ ((t) * (t)* click_pt[(i + 1) % 10].pos.z)//떨어져야 하는 좌표
+								);
+
+						click_pt[i].spline[j].y = 10;
+
+						t += 0.1;
+					}
+				}
+			}
+
 			glBegin(GL_POINTS);
 			for (int i = 0; i < click_count -1; i++) {
 				for (int j = 0; j < 10 -1; j++) {
 					glVertex3d(click_pt[i].spline[j].x, click_pt[i].spline[j].y, click_pt[i].spline[j].z);
-					glVertex3d(click_pt[i].spline[j+1].x, click_pt[i].spline[j+1].y, click_pt[i].spline[j+1].z);
 				}
 			}
-			glEnd();*/
+			glEnd();
 		
 		}
 		glPopMatrix();
@@ -233,6 +245,7 @@ GLvoid drawScene(GLvoid)
 	glutSwapBuffers();
 }
 int vegier_count = 0;
+
 void Mouse(int button, int state, int x, int y) {
 
 	if (view_trans == FRONT) {
@@ -251,18 +264,10 @@ void Mouse(int button, int state, int x, int y) {
 		click_pt[click_count].pos.z = m_pos.y;
 		click_pt[click_count].pos.y = 10;
 
-		ctrlpoints[vegier_count][0] = click_pt[click_count].pos.x;
-		ctrlpoints[vegier_count][1] = click_pt[click_count].pos.y;
-		ctrlpoints[vegier_count][2] = click_pt[click_count].pos.z;
-
 		if (click_count < 10) {
 			click_count++;
-			vegier_count++;
-			ctrlpoints[vegier_count][0] = ctrlpoints[0][0];
-			ctrlpoints[vegier_count][1] = ctrlpoints[0][1];
-			ctrlpoints[vegier_count][2] = ctrlpoints[0][2];
-		}	
-		
+		}
+
 	}
 
 	if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
