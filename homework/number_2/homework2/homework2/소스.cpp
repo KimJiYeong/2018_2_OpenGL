@@ -4,6 +4,7 @@
 #include <math.h>
 #include "base_struct.h"
 #include "camera.h"
+
 GLvoid Reshape(int w, int h);
 
 //해상도 설정
@@ -45,7 +46,7 @@ Cam camera;
 int view_trans;
 #define FRONT 0
 #define TOP 1
-
+#define TPS 2
 //은면제거
 BOOL depth;
 int depth_count;
@@ -56,21 +57,20 @@ int culling_count;
 BOOL shade;
 int shade_count;
 
-struct Look_int
-{
-	int x;
-	int y;
-	int z;
-	int degree;
-};
-
 //피킹 검사
 Shape picking[3];
 Look_int m_pos;
 int pick_num_save = 0;
+
+Shape click_pt[10];
+
+int click_count = 0;
+
+GLfloat ctrlpoints[20][3];
+
 void SetupRC()
 {
-	m_pos.degree = 50;
+	m_pos.degree = 15;
 
 	picking[0].move.x = 0;
 	picking[0].move.y = 0;
@@ -79,6 +79,19 @@ void SetupRC()
 	picking[1].move.x = 0;
 	picking[1].move.y = 0;
 	picking[1].move.z = 100;
+	
+	for (int i = 0; i < 10; i++) {
+		
+		click_pt[i].pos.x = 0;
+		click_pt[i].pos.y = 0;
+		click_pt[i].pos.z = 0;
+		for (int j = 0; j < 10; j++) {
+			click_pt[i].spline[j].x = 0;
+			click_pt[i].spline[j].y = 0;
+			click_pt[i].spline[j].z = 0;
+		}
+		click_pt[i].t = 0;
+	}//클릭 좌표
 }
 void main(int argc, char *argv[]) {
 
@@ -144,7 +157,32 @@ GLvoid drawScene(GLvoid)
 				glShadeModel(GL_FLAT);
 			}
 			//상자 그리기
-			
+			//x - 
+			glPushMatrix();
+			//x---
+			glColor3f(1, 0, 0);
+			glLineWidth(0.3);
+			glBegin(GL_LINES);
+			glVertex3d(-WideSize, 0, 0);
+			glVertex3d(WideSize, 0, 0);
+			glEnd();
+			//y-----
+			glColor3f(0, 1, 0);
+			glLineWidth(0.3);
+			glBegin(GL_LINES);
+			glVertex3d(0, -HighSize, 0);
+			glVertex3d(0, HighSize, 0);
+			glEnd();
+			//z---
+			glColor3f(0, 0, 1);
+			glLineWidth(0.3);
+			glBegin(GL_LINES);
+			glVertex3d(0, 0, -Z_Size);
+			glVertex3d(0, 0, Z_Size);
+			glEnd();
+
+			glPopMatrix();
+
 
 			glPushMatrix();
 			glTranslated(picking[0].move.x, picking[0].move.y, picking[0].move.z);
@@ -154,17 +192,49 @@ GLvoid drawScene(GLvoid)
 
 			glPushMatrix();
 			glTranslated(picking[1].move.x, picking[1].move.y, picking[1].move.z);
-			glColor3f((float)50 / 255, (float)50 / 255, (float)200 / 255);
+			glColor3f((float)100 / 255, (float)50 / 255, (float)0 / 255);
 			glutSolidCube(50);
 			glPopMatrix();
+
+			glColor3f(1, 1, 1);
+			glPointSize(5);
+			glBegin(GL_POINTS);
+			//찍힌 점 그리기
+			for (int i = 0; i < click_count ; i++) {
+				glVertex3d(click_pt[i].pos.x, click_pt[i].pos.y , click_pt[i].pos.z);
+			}
+			glEnd();
+			for (int i = 0; i < click_count - 2; i++) {
+				glMap1f(GL_MAP1_VERTEX_3, 0, 1, 3, 3, &ctrlpoints[i * 2][0]);
+				glEnable(GL_MAP1_VERTEX_3);
+
+			glBegin(GL_LINE_STRIP);
+				for (int t = 0; t <= 10; t++) {
+					glEvalCoord1f((GLfloat)t / 10.0);
+				}
+				glEnd();
+				glDisable(GL_MAP1_VERTEX_3);
+			}
+		
+/*
+			glBegin(GL_POINTS);
+			for (int i = 0; i < click_count -1; i++) {
+				for (int j = 0; j < 10 -1; j++) {
+					glVertex3d(click_pt[i].spline[j].x, click_pt[i].spline[j].y, click_pt[i].spline[j].z);
+					glVertex3d(click_pt[i].spline[j+1].x, click_pt[i].spline[j+1].y, click_pt[i].spline[j+1].z);
+				}
+			}
+			glEnd();*/
+		
 		}
 		glPopMatrix();
 	}
 	glPopMatrix();
 	glutSwapBuffers();
 }
-
+int vegier_count = 0;
 void Mouse(int button, int state, int x, int y) {
+
 	if (view_trans == FRONT) {
 		m_pos.x = x - WideSize / 2;
 		m_pos.y = (HighSize / 2 - y);
@@ -174,48 +244,71 @@ void Mouse(int button, int state, int x, int y) {
 		m_pos.y = -(HighSize / 2 - y);
 	}
 
-
-	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+	//곡선 계산하기
+	if ((button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) && view_trans == TOP)//탑뷰일떄만
 	{
-		printf("---------------------------------------\n x : %d , y : % d \n", m_pos.x , m_pos.y);
-		if (view_trans == FRONT) {//front view
-			for (int i = 0; i < 2; i++) {
-				if ((picking[i].move.y - m_pos.degree < m_pos.y) && (m_pos.y < picking[i].move.y + m_pos.degree)) {
-					if ((picking[i].move.x - m_pos.degree <  m_pos.x) && (m_pos.x < picking[i].move.x + m_pos.degree)) {
-						Mouse_Act_On = true;
-						pick_num_save = i;
-						printf("picking-\n");
-					}
+		click_pt[click_count].pos.x = m_pos.x;
+		click_pt[click_count].pos.z = m_pos.y;
+		click_pt[click_count].pos.y = 10;
+
+		ctrlpoints[vegier_count][0] = click_pt[click_count].pos.x;
+		ctrlpoints[vegier_count][1] = click_pt[click_count].pos.y;
+		ctrlpoints[vegier_count][2] = click_pt[click_count].pos.z;
+
+		if (click_count < 10) {
+			click_count++;
+			vegier_count++;
+			ctrlpoints[vegier_count][0] = ctrlpoints[0][0];
+			ctrlpoints[vegier_count][1] = ctrlpoints[0][1];
+			ctrlpoints[vegier_count][2] = ctrlpoints[0][2];
+		}	
+		
+	}
+
+	if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
+	{
+		for (int i = 0; i < 2; i++) {
+			printf("---------------------------------------\n x : %d , y : % d \n", m_pos.x, m_pos.y);
+			if (view_trans == FRONT) {//front view
+				if ((picking[i].move.y - m_pos.degree < m_pos.y) && (m_pos.y < picking[i].move.y + m_pos.degree) && 
+					(picking[i].move.x - m_pos.degree <  m_pos.x) && (m_pos.x < picking[i].move.x + m_pos.degree)) {
+					pick_num_save = i;
+					Mouse_Act_On = true;
+					printf("--------------Front Pick------------\n");
 				}
 			}
-		}
-		else if (view_trans == TOP) {//front view
-			for (int i = 0; i < 2; i++) {
-				if ((picking[i].move.z - m_pos.degree < m_pos.z) && (m_pos.z < picking[i].move.z + m_pos.degree)) {
-					if ((picking[i].move.x - m_pos.degree <  m_pos.x) && (m_pos.x < picking[i].move.x + m_pos.degree)) {
-						Mouse_Act_On = true;
-						pick_num_save = i;
-						printf("---------------------------------------\n");
+			else if (view_trans == TOP) {//front view
+				if ((picking[i].move.z - m_pos.degree < m_pos.y) && (m_pos.y < picking[i].move.z + m_pos.degree) &&
+					(picking[i].move.x - m_pos.degree <  m_pos.x) && (m_pos.x < picking[i].move.x + m_pos.degree)) {
+					pick_num_save = i;
+					Mouse_Act_On = true;
+					printf("--------------Top Pick---------------\n");
 
-					}
 				}
 			}
 		}
 	}
-	if (button == GLUT_LEFT_BUTTON && state == GLUT_UP)
+	if (button == GLUT_RIGHT_BUTTON && state == GLUT_UP)
 	{
-		if (view_trans == FRONT) {//front view
-			picking[pick_num_save].move.x = m_pos.y;
-			picking[pick_num_save].move.y = m_pos.x;
-			pick_num_save = 3;
-			Mouse_Act_On = false;
-		}
-		else if (view_trans == TOP) {//front view
-			picking[pick_num_save].move.z = m_pos.y;
-			picking[pick_num_save].move.x = m_pos.x;
-			pick_num_save = 3; 
-			Mouse_Act_On = false;
-			
+		for (int i = 0; i < 2; i++) {
+			printf("---------------------------------------\n x : %d , y : % d \n", m_pos.x, m_pos.y);
+			if (view_trans == FRONT) {//front view
+				if ((picking[i].move.y - m_pos.degree < m_pos.y) && (m_pos.y < picking[i].move.y + m_pos.degree) &&
+					(picking[i].move.x - m_pos.degree <  m_pos.x) && (m_pos.x < picking[i].move.x + m_pos.degree)) {
+					picking[i].move.x = m_pos.x;
+					picking[i].move.y = m_pos.y;
+					Mouse_Act_On = false;
+				}
+			}
+			else if (view_trans == TOP) {//front view
+				if ((picking[i].move.z - m_pos.degree < m_pos.y) && (m_pos.y < picking[i].move.z + m_pos.degree) &&
+					(picking[i].move.x - m_pos.degree <  m_pos.x) && (m_pos.x < picking[i].move.x + m_pos.degree)) {
+					picking[i].move.x = m_pos.x;
+					picking[i].move.z = m_pos.y;
+					Mouse_Act_On = false;
+
+				}
+			}
 		}
 	}
 	glutPostRedisplay();
@@ -224,32 +317,50 @@ void Mouse(int button, int state, int x, int y) {
 void Motion(int x, int y) {
 //	m_pos.x = x - WideSize / 2;
 //	m_pos.y = (HighSize / 2 - y);
+	if (view_trans == FRONT) {
+		m_pos.x = x - WideSize / 2;
+		m_pos.y = (HighSize / 2 - y);
+	}
+	else if (view_trans == TOP) {
+		m_pos.x = x - WideSize / 2;
+		m_pos.y = -(HighSize / 2 - y);
+	}
 
 	if (Mouse_Act_On) {
 		if (view_trans == FRONT) {//front view
-
-			m_pos.x = x - WideSize / 2;
-			m_pos.y = (HighSize / 2 - y);
-			
-			picking[pick_num_save].move.x = m_pos.y;
-			picking[pick_num_save].move.y = m_pos.x;
+			printf("%d", pick_num_save);
+			picking[pick_num_save].move.x = m_pos.x;
+			picking[pick_num_save].move.y = m_pos.y;
 		
 		}
 		else if (view_trans == TOP) {//top view
-			m_pos.x = x - WideSize / 2;
-			m_pos.y = -(HighSize / 2 - y);
 
 			picking[pick_num_save].move.x = m_pos.x;
 			picking[pick_num_save].move.z = m_pos.y;
-}
 		}
+	}
 }
 
 void Passive(int x , int y) {
-	printf("x %d ", x - WideSize / 2);
-	printf("y %d \n", (HighSize / 2 - y));
-	m_pos.x = x - WideSize / 2;
-	m_pos.y = (HighSize / 2 - y);
+	if (view_trans == FRONT) {//front view
+
+
+		m_pos.x = x - WideSize / 2;
+		m_pos.y = (HighSize / 2 - y);
+
+		printf("x %d ", m_pos.x);
+		printf("y %d \n", m_pos.y);
+
+		printf("y %d \n", (int)picking[0].move.x);
+
+	}
+	else if (view_trans == TOP) {//top view
+		m_pos.x = x - WideSize / 2;
+		m_pos.y = -(HighSize / 2 - y);
+
+		printf("x %d ", m_pos.x);
+		printf("z %d \n", m_pos.y);
+	}
 
 }
 
@@ -261,7 +372,7 @@ void Timerfunction(int value) {
 
 }
 int ttt;
-int ani_count;
+int ani_count,ani_count2;
 void Keyboard(unsigned char key, int x, int y) {
 	switch (key)
 	{
@@ -373,26 +484,29 @@ void Keyboard(unsigned char key, int x, int y) {
 	//투영 변환
 	case 'l':
 	case 'L':
-		ani_count++;
-		if (ani_count % 2) {
-			camera.Init();
-			camera.rotateEye(0, 90, 0);
-			view_trans = TOP;
-			printf("top \n");
+		if (ani) {//직각투영 상태에서만 피킹이 된다.
+			ani_count2++;
+			if (ani_count2 % 2) {
+				camera.Init();
+				camera.rotateEye(0, 90, 0);
+				view_trans = TOP;
+				printf("top \n");
+			}
+			else {
+				camera.Init();
+				camera.rotateEye(0, 0, 90);
+				view_trans = FRONT;
+				printf("front \n");
+			}
+
 		}
-		else {
-			camera.Init();
-			camera.rotateEye(0, 0, 90);
-			view_trans = FRONT;
-			printf("front \n");
-		}
-		
 	break;
 
 	case 'k':
-		camera.Init();
-		camera.rotateEye(10, 45,0);
+		camera.rotateEye(10, 10,0);
 		break;
+
+
 	default:
 		;
 		break;
