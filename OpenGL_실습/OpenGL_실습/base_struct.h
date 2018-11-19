@@ -38,3 +38,13 @@ typedef struct Shape
 	bool any;
 
 };
+
+
+typedef struct Custom_Light {
+	GLfloat ambient[4];//앰비언트
+	GLfloat diffuse[4];//디퓨즈
+	GLfloat specular[4];//스펙큘러
+	GLfloat pos[4];//위치
+
+	bool turn;//조명 키기
+};
