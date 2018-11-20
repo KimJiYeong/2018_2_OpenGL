@@ -1,5 +1,5 @@
 #pragma once
-
+#include <GL/freeglut.h> 
 typedef struct Color
 {
 	int R;

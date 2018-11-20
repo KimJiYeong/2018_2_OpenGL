@@ -1,9 +1,8 @@
-#include <GL/freeglut.h> 
 #include <random>
 #include <time.h>
 #include <math.h>
-#include "camera.h"
 #include "base_struct.h"
+#include "camera.h"
 GLvoid Reshape(int w, int h);
 
 //해상도 설정
@@ -28,8 +27,7 @@ BOOL Mouse_Act_On; //마우스 활성화 여부
 				   //키보드 제어
 void Keyboard(unsigned char key, int x, int y);
 BOOL Keyboard_Act_On; //키보드 활성화 여부
-					  //색 선정
-
+					 
 #define PT 20//도형 갯수 설정
 #define PI 3.141592 //파이
 
@@ -40,8 +38,8 @@ BOOL Save = false;
 BOOL ani = FALSE;
 BOOL Look = FALSE;
 
-
 //카메라-----------------
+
 
 Translate_pos EYE;
 Translate_pos AT;
