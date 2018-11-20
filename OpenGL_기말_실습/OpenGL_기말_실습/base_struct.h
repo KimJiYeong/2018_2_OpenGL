@@ -39,6 +39,21 @@ typedef struct Shape
 
 };
 
+typedef struct Piramid_Shape
+{
+	Color cl;//색상
+	Translate_pos pos;
+	Translate_pos index[5];
+	Translate_pos move;
+	Translate_pos scale;
+	Translate_pos rot;
+
+	
+	int size;
+	BoOL b;
+	bool any;
+
+};
 
 typedef struct Custom_Light {
 	GLfloat ambient[4];//앰비언트
@@ -50,3 +65,4 @@ typedef struct Custom_Light {
 	bool moving;//움직임
 	Translate_pos move;
 };
+
