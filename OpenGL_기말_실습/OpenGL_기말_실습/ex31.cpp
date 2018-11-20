@@ -226,6 +226,18 @@ void Motion(int x, int y, BOOL state) {
 
 void Timerfunction(int value) {
 
+	if (lamp1.moving) {
+
+		lamp1.move.degree += 0.1;
+		lamp2.move.degree += 0.1;
+
+		lamp1.pos[0] = 100 * cos(lamp1.move.degree * PI);
+		lamp1.pos[2] = 100 * sin(lamp1.move.degree * PI);
+
+		lamp2.pos[0] = 100 * cos(lamp2.move.degree * PI + 180);
+		lamp2.pos[2] = 100 * sin(lamp2.move.degree * PI + 180);
+
+	}
 
 	glutPostRedisplay(); //타이머에 넣는다.
 	glutTimerFunc(100, Timerfunction, 1); //타이머 다시 출력
@@ -233,7 +245,7 @@ void Timerfunction(int value) {
 }
 int ttt;
 int ani_count;
-float count = 0.1;
+
 void Keyboard(unsigned char key, int x, int y) {
 	switch (key)
 	{
@@ -361,11 +373,36 @@ void Keyboard(unsigned char key, int x, int y) {
 		}
 		break;
 
+	case 'm':
+	case 'M':
+		lamp1.move.y += 0.1;
+		lamp1.pos[1] = 100 * cos(lamp1.move.y * PI);
+		lamp1.pos[2] = 100 * sin(lamp1.move.y * PI);
+
+		break;
+	//산란반사값? 거울 반사값?
+	case 'h':
+		lamp1.specular[0] += 0.1;
+		lamp1.specular[1] += 0.1;
+		lamp1.specular[2] += 0.1;
+		break;
+
+	case 'H':
+		lamp1.specular[0] -= 0.1;
+		lamp1.specular[1] -= 0.1;
+		lamp1.specular[2] -= 0.1;
+		break;
+
 	case 'l':
 	case 'L':
-		count += 0.1;
-		lamp1.pos[0] = 100 * cos(count * PI);
-		lamp1.pos[2] = 100 * sin(count * PI);
+		if (!lamp1.moving) {
+			lamp1.moving = true;
+			lamp2.moving = true;
+		}
+		else {
+			lamp1.moving = false;
+			lamp2.moving = false;
+		}
 		break;
 
 	default:

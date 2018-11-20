@@ -10,7 +10,7 @@ typedef struct Translate_pos {
 	float x;
 	float y;
 	float z;
-	int degree;
+	float degree;
 };
 
 
@@ -47,5 +47,6 @@ typedef struct Custom_Light {
 	GLfloat pos[4];//위치
 
 	bool turn;//조명 키기
-	bool move;
+	bool moving;//움직임
+	Translate_pos move;
 };
